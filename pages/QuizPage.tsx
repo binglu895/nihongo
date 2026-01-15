@@ -189,7 +189,7 @@ const QuizPage: React.FC = () => {
             dangerouslySetInnerHTML={{ __html: (currentQuestion?.sentence || '').replace('（　　）', `<span class="text-primary px-3 italic">（　　）</span>`) }}
           />
           <p className="text-ghost-grey dark:text-slate-500 text-sm font-bold tracking-[0.1em] uppercase">
-            {preferredLang === 'Chinese' ? currentQuestion.sentence_translation_zh : currentQuestion.sentence_translation}
+            {preferredLang === 'Chinese' ? (currentQuestion.sentence_translation_zh || currentQuestion.sentence_translation) : currentQuestion.sentence_translation}
           </p>
         </div>
 
@@ -281,7 +281,13 @@ const QuizPage: React.FC = () => {
                   <span className="text-xs font-black uppercase tracking-widest">Sensei's Commentary</span>
                 </div>
                 <div className="text-charcoal dark:text-slate-200 prose dark:prose-invert max-w-none text-sm font-medium leading-relaxed">
-                  {explanation.split('\n').map((line, i) => <p key={i} className="mb-2">{line}</p>)}
+                  {explanation.split('\n').map((line, i) => (
+                    <p key={i} className="mb-2" dangerouslySetInnerHTML={{
+                      __html: line
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    }} />
+                  ))}
                 </div>
               </div>
             )}
