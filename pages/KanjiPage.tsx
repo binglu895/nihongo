@@ -8,6 +8,7 @@ const KanjiPage: React.FC = () => {
     const navigate = useNavigate();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
+    const [showAnswer, setShowAnswer] = useState(false);
     const [currentQuestion, setCurrentQuestion] = useState({
         sentence: "道に（　　）が立っています。",
         translation: "A sign is standing by the road.",
@@ -34,16 +35,27 @@ const KanjiPage: React.FC = () => {
                 ctx.lineJoin = 'round';
             }
         }
-    }, [kanjiCount]);
+    }, [kanjiCount, showAnswer]);
+
+    const handleCheckAnswer = () => {
+        if (showAnswer) {
+            // In a real app, this would fetch the next question
+            setShowAnswer(false);
+            clearCanvas();
+        } else {
+            setShowAnswer(true);
+        }
+    };
 
     const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
+        if (showAnswer) return;
         setIsDrawing(true);
         const pos = getCoordinates(e);
         lastPos.current = pos;
     };
 
     const draw = (e: React.MouseEvent | React.TouchEvent) => {
-        if (!isDrawing) return;
+        if (!isDrawing || showAnswer) return;
         const canvas = canvasRef.current;
         const ctx = canvas?.getContext('2d');
         if (!ctx) return;
@@ -88,6 +100,7 @@ const KanjiPage: React.FC = () => {
         if (ctx && canvas) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
+        setShowAnswer(false);
     };
 
     return (
@@ -113,8 +126,8 @@ const KanjiPage: React.FC = () => {
                             <React.Fragment key={i}>
                                 {part}
                                 {i < arr.length - 1 && (
-                                    <span className="text-primary underline decoration-4 underline-offset-8 decoration-primary/30 mx-2">
-                                        {currentQuestion.targetKanji.split('').map(() => '　').join('')}
+                                    <span className={`transition-colors duration-500 ${showAnswer ? 'text-emerald-500 underline decoration-emerald-500/30' : 'text-primary underline decoration-primary/30'} mx-2`}>
+                                        {showAnswer ? currentQuestion.targetKanji : currentQuestion.targetKanji.split('').map(() => '　').join('')}
                                     </span>
                                 )}
                             </React.Fragment>
@@ -141,12 +154,21 @@ const KanjiPage: React.FC = () => {
                                 >
                                     {/* Background Grid Layer (Traditional Red Genkouyoushi) */}
                                     <div className="absolute inset-0 flex">
-                                        {currentQuestion.targetKanji.split('').map((_, idx) => (
+                                        {currentQuestion.targetKanji.split('').map((char, idx) => (
                                             <div
                                                 key={idx}
                                                 className={`relative flex-shrink-0 border-2 border-red-500/60 dark:border-red-600/40 ${idx !== 0 ? 'border-l-0' : 'rounded-l-2xl'} ${idx === kanjiCount - 1 ? 'rounded-r-2xl' : ''}`}
                                                 style={{ width: `${squareSize}px`, height: `${squareSize}px` }}
                                             >
+                                                {/* Correct Kanji Hint Layer (Shown on Check) */}
+                                                {showAnswer && (
+                                                    <div className="absolute inset-0 flex items-center justify-center animate-in fade-in duration-700">
+                                                        <span className="text-[170px] text-slate-100 dark:text-slate-800/80 font-serif select-none pointer-events-none opacity-90">
+                                                            {char}
+                                                        </span>
+                                                    </div>
+                                                )}
+
                                                 {/* Rice Grid Helper Lines (Red Dashed) */}
                                                 <div className="absolute top-1/2 left-0 w-full h-[1px] border-t border-dashed border-red-400/40 dark:border-red-800/30"></div>
                                                 <div className="absolute top-0 left-1/2 w-[1px] h-full border-l border-dashed border-red-400/40 dark:border-red-800/30"></div>
@@ -185,10 +207,11 @@ const KanjiPage: React.FC = () => {
                             Clear
                         </button>
                         <button
-                            className="flex-1 py-4 rounded-2xl bg-primary text-white font-black text-sm hover:bg-primary-hover shadow-xl shadow-primary/30 transition-all flex items-center justify-center gap-2"
+                            onClick={handleCheckAnswer}
+                            className={`flex-1 py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/30 ${showAnswer ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-primary hover:bg-primary-hover'} text-white`}
                         >
-                            Check Answer
-                            <span className="material-symbols-outlined">verified</span>
+                            <span>{showAnswer ? 'Next Kanji' : 'Check Answer'}</span>
+                            <span className="material-symbols-outlined">{showAnswer ? 'arrow_forward' : 'verified'}</span>
                         </button>
                     </div>
                 </div>
