@@ -10,6 +10,23 @@ const QuizPage: React.FC = () => {
   const [isExplaining, setIsExplaining] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const [currentLevel, setCurrentLevel] = useState('N3');
+
+  React.useEffect(() => {
+    fetchUserLevel();
+  }, []);
+
+  const fetchUserLevel = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase
+        .from('profiles')
+        .select('current_level')
+        .eq('id', user.id)
+        .single();
+      if (data) setCurrentLevel(data.current_level);
+    }
+  };
 
   const question = "昨日の会議の内容を（　　）してください。";
   const options = ["ようやく", "要約 (ようやく)", "ようす", "ようりょう"];
@@ -36,22 +53,37 @@ const QuizPage: React.FC = () => {
       // Log quiz history
       await supabase.from('quiz_history').insert({
         user_id: user.id,
-        level: 'N2', // Ideally dynamic
+        level: currentLevel,
         score: isCorrect ? 1 : 0
       });
 
-      // Update stats
+      // Update stats and progress
       if (isCorrect) {
-        const { data: currentStats } = await supabase
+        // Update Vocab count
+        const { data: statsData } = await supabase
           .from('stats')
           .select('vocab_count')
           .eq('user_id', user.id)
           .single();
 
-        if (currentStats) {
+        if (statsData) {
           await supabase.from('stats').update({
-            vocab_count: currentStats.vocab_count + 1
+            vocab_count: statsData.vocab_count + 1
           }).eq('user_id', user.id);
+        }
+
+        // Increment completion percentage (capped at 100)
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('completion_percentage')
+          .eq('id', user.id)
+          .single();
+
+        if (profileData) {
+          const nextPercentage = Math.min(100, (profileData.completion_percentage || 0) + 1);
+          await supabase.from('profiles').update({
+            completion_percentage: nextPercentage
+          }).eq('id', user.id);
         }
       }
 
@@ -72,7 +104,7 @@ const QuizPage: React.FC = () => {
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-primary material-symbols-outlined text-3xl">auto_stories</span>
-            <span className="font-black tracking-[0.2em] text-xs uppercase">N2 Vocabulary</span>
+            <span className="font-black tracking-[0.2em] text-xs uppercase">{currentLevel} Vocabulary</span>
           </div>
           <div className="flex items-center gap-5">
             <span className="text-xs font-black text-ghost-grey dark:text-slate-500 uppercase tracking-widest bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-lg">Item 12 / 50</span>
