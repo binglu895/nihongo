@@ -77,7 +77,7 @@ const DashboardPage: React.FC = () => {
                   type="radio"
                   value={l}
                   checked={level === l}
-                  onChange={() => setLevel(l)}
+                  onChange={() => updateLevel(l)}
                 />
               </label>
             ))}
