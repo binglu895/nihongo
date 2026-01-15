@@ -149,7 +149,7 @@ const KanjiPage: React.FC = () => {
         );
     }
 
-    const kanjiCount = currentQuestion.word.length;
+    const kanjiCount = currentQuestion?.word?.length || 0;
     const squareSize = 240;
     const canvasWidth = squareSize * kanjiCount;
 
@@ -172,12 +172,12 @@ const KanjiPage: React.FC = () => {
                 {/* Question Area */}
                 <div className="w-full text-center mb-10 animate-in fade-in zoom-in-95 duration-500">
                     <h1 className="text-4xl md:text-6xl font-black leading-[1.4] mb-3 text-charcoal dark:text-white tracking-tight">
-                        {currentQuestion.sentence.split('（　　）').map((part: string, i: number, arr: any[]) => (
+                        {(currentQuestion?.sentence || '').split('（　　）').map((part: string, i: number, arr: any[]) => (
                             <React.Fragment key={i}>
                                 {part}
                                 {i < arr.length - 1 && (
                                     <span className={`transition-colors duration-500 ${showAnswer ? 'text-emerald-500 underline decoration-emerald-500/30' : 'text-primary underline decoration-primary/30'} mx-2`}>
-                                        {showAnswer ? currentQuestion.word : currentQuestion.word.split('').map(() => '　').join('')}
+                                        {showAnswer ? currentQuestion?.word : (currentQuestion?.word || '').split('').map(() => '　').join('')}
                                     </span>
                                 )}
                             </React.Fragment>
@@ -204,7 +204,7 @@ const KanjiPage: React.FC = () => {
                                 >
                                     {/* Background Grid Layer (Traditional Red Genkouyoushi) */}
                                     <div className="absolute inset-0 flex">
-                                        {currentQuestion.word.split('').map((char: string, idx: number) => (
+                                        {(currentQuestion?.word || '').split('').map((char: string, idx: number) => (
                                             <div
                                                 key={idx}
                                                 className={`relative flex-shrink-0 border-2 border-red-500/60 dark:border-red-600/40 ${idx !== 0 ? 'border-l-0' : 'rounded-l-2xl'} ${idx === kanjiCount - 1 ? 'rounded-r-2xl' : ''}`}

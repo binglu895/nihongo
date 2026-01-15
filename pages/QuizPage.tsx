@@ -50,7 +50,8 @@ const QuizPage: React.FC = () => {
     if (data && !error) {
       // Shuffle distractors and include correct answer
       const formatted = data.map(q => {
-        const allOptions = [...q.distractors, q.word].sort(() => Math.random() - 0.5);
+        const distractors = Array.isArray(q.distractors) ? q.distractors : [];
+        const allOptions = [...distractors, q.word].sort(() => Math.random() - 0.5);
         return {
           ...q,
           options: allOptions
@@ -182,7 +183,7 @@ const QuizPage: React.FC = () => {
         <div className="w-full text-center mb-16 animate-in fade-in zoom-in-95 duration-500">
           <h1
             className="text-3xl md:text-5xl font-black leading-[1.4] mb-6 text-charcoal dark:text-white tracking-tight"
-            dangerouslySetInnerHTML={{ __html: currentQuestion.sentence.replace('（　　）', `<span class="text-primary px-3 italic">（　　）</span>`) }}
+            dangerouslySetInnerHTML={{ __html: (currentQuestion?.sentence || '').replace('（　　）', `<span class="text-primary px-3 italic">（　　）</span>`) }}
           />
           <p className="text-ghost-grey dark:text-slate-500 text-sm font-bold tracking-[0.1em] uppercase">
             {currentQuestion.sentence_translation}
@@ -190,7 +191,7 @@ const QuizPage: React.FC = () => {
         </div>
 
         <div className="w-full max-w-xl space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-          {currentQuestion.options.map((opt: string, i: number) => {
+          {(currentQuestion?.options || []).map((opt: string, i: number) => {
             const isCorrect = opt === currentQuestion.word;
             const isSelected = selectedIdx === i;
 
