@@ -47,17 +47,10 @@ const Header: React.FC<HeaderProps> = ({ title = "JLPT Study", showNav = true })
               </button>
             </>
           )}
-          <div className="flex items-center gap-4">
-            <Link to="/settings" className="hidden sm:flex items-center justify-center rounded-lg h-10 w-10 bg-gray-100 dark:bg-white/10 text-charcoal dark:text-white hover:bg-gray-200 dark:hover:bg-white/20 transition-colors">
+          <div className="flex items-center">
+            <Link to="/settings" className="flex items-center justify-center rounded-xl h-10 w-10 bg-gray-50 dark:bg-white/5 text-charcoal dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors border border-gray-100 dark:border-white/5 shadow-sm">
               <span className="material-symbols-outlined !text-2xl">account_circle</span>
             </Link>
-            <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden">
-              <img
-                src="https://picsum.photos/seed/user123/100/100"
-                alt="User profile"
-                className="w-full h-full object-cover"
-              />
-            </div>
           </div>
         </div>
       </header>
