@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage';
 import ProgressPage from './pages/ProgressPage';
 import SettingsPage from './pages/SettingsPage';
 import QuizPage from './pages/QuizPage';
+import KanjiPage from './pages/KanjiPage';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -21,7 +22,7 @@ const App: React.FC = () => {
   return (
     <HashRouter>
       <div className="flex flex-col min-h-screen">
-        <button 
+        <button
           onClick={() => setDarkMode(!darkMode)}
           className="fixed bottom-4 left-4 z-[9999] bg-white dark:bg-slate-800 p-3 rounded-full shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all hover:scale-110 active:scale-95"
           aria-label="Toggle dark mode"
@@ -36,6 +37,7 @@ const App: React.FC = () => {
           <Route path="/progress" element={<ProgressPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/quiz" element={<QuizPage />} />
+          <Route path="/kanji" element={<KanjiPage />} />
         </Routes>
       </div>
     </HashRouter>

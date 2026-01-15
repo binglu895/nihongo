@@ -56,7 +56,7 @@ const DashboardPage: React.FC = () => {
   };
 
   const categories = [
-    { title: "Kanji", icon: "draw", desc: "Master the brush strokes and meanings of essential characters.", btn: "Start Kanji", path: "/quiz" },
+    { title: "Kanji", icon: "draw", desc: "Master the brush strokes and meanings of essential characters.", btn: "Start Kanji", path: "/kanji" },
     { title: "Vocabulary", icon: "menu_book", desc: "Build your lexicon with core words for your level.", btn: "Start Practice", path: "/quiz" },
     { title: "Grammar", icon: "architecture", desc: "Build complex structures and understand particle usage.", btn: "Start Learning", path: "/quiz" },
     { title: "Listening", icon: "hearing", desc: "Improve comprehension with native audio exercises.", btn: "Start Session", path: "/quiz" }
