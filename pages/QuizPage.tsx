@@ -6,6 +6,10 @@ import { supabase } from '../services/supabaseClient';
 
 const QuizPage: React.FC = () => {
   const navigate = useNavigate();
+  const [answered, setAnswered] = useState(false);
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const [isExplaining, setIsExplaining] = useState(false);
+  const [explanation, setExplanation] = useState<string | null>(null);
   const [questions, setQuestions] = useState<any[]>([]);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -232,17 +236,17 @@ const QuizPage: React.FC = () => {
           <div className="w-full max-w-4xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-[32px] shadow-[0_20px_50px_-20px_rgba(0,0,0,0.3)] p-8 flex flex-col gap-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-6 text-center md:text-left">
-                <div className={`size-16 shrink-0 rounded-full flex items-center justify-center shadow-inner ${selectedIdx === 1 ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'}`}>
+                <div className={`size-16 shrink-0 rounded-full flex items-center justify-center shadow-inner ${currentQuestion.options[selectedIdx!] === currentQuestion.word ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'}`}>
                   <span className="material-symbols-outlined font-black !text-4xl">
-                    {selectedIdx === 1 ? 'check_circle' : 'cancel'}
+                    {currentQuestion.options[selectedIdx!] === currentQuestion.word ? 'check_circle' : 'cancel'}
                   </span>
                 </div>
                 <div>
-                  <h3 className={`text-2xl font-black mb-1 ${selectedIdx === 1 ? 'text-emerald-600' : 'text-red-600'}`}>
-                    {selectedIdx === 1 ? 'Splendid!' : 'Not quite...'}
+                  <h3 className={`text-2xl font-black mb-1 ${currentQuestion.options[selectedIdx!] === currentQuestion.word ? 'text-emerald-600' : 'text-red-600'}`}>
+                    {currentQuestion.options[selectedIdx!] === currentQuestion.word ? 'Splendid!' : 'Not quite...'}
                   </h3>
                   <p className="text-base text-ghost-grey dark:text-slate-400 font-medium">
-                    The correct answer is <span className="font-black text-charcoal dark:text-white underline decoration-emerald-500 decoration-2 underline-offset-4">{correctAnswer} (Summarize)</span>.
+                    The correct answer is <span className="font-black text-charcoal dark:text-white underline decoration-emerald-500 decoration-2 underline-offset-4">{currentQuestion.word} ({currentQuestion.reading})</span>.
                   </p>
                 </div>
               </div>

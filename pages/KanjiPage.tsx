@@ -8,10 +8,14 @@ const KanjiPage: React.FC = () => {
     const navigate = useNavigate();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
+    const [showAnswer, setShowAnswer] = useState(false);
     const [questions, setQuestions] = useState<any[]>([]);
     const [currentIdx, setCurrentIdx] = useState(0);
     const [loading, setLoading] = useState(true);
     const [currentQuestion, setCurrentQuestion] = useState<any>(null);
+
+    // Canvas drawing state
+    const lastPos = useRef({ x: 0, y: 0 });
 
     useEffect(() => {
         const initPractice = async () => {
