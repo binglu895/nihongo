@@ -163,7 +163,10 @@ const KanjiPage: React.FC = () => {
                                                 {/* Correct Kanji Hint Layer (Shown on Check) */}
                                                 {showAnswer && (
                                                     <div className="absolute inset-0 flex items-center justify-center animate-in fade-in duration-700">
-                                                        <span className="text-[170px] text-emerald-500/15 dark:text-emerald-500/10 font-serif select-none pointer-events-none">
+                                                        <span
+                                                            className="text-[170px] text-emerald-500/15 dark:text-emerald-500/10 font-display select-none pointer-events-none"
+                                                            style={{ fontFamily: 'var(--preferred-font)' }}
+                                                        >
                                                             {char}
                                                         </span>
                                                     </div>
