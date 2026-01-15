@@ -67,6 +67,7 @@ const SettingsPage: React.FC = () => {
       .eq('id', session.user.id);
 
     if (error) {
+      console.error('Error saving settings:', error);
       setSaveStatus('error');
     } else {
       setSaveStatus('success');
