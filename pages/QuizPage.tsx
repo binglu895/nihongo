@@ -54,7 +54,7 @@ const QuizPage: React.FC = () => {
     let query = supabase.from('vocabulary').select('*');
 
     if (isReview) {
-      // Fetch priority due items
+      // Review Mode: Fetch due items
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data: progressData } = await supabase
@@ -74,6 +74,19 @@ const QuizPage: React.FC = () => {
         }
       }
     } else {
+      // Practice Mode: Skip words already in progress
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: seenData } = await supabase
+          .from('user_vocabulary_progress')
+          .select('vocabulary_id')
+          .eq('user_id', user.id);
+
+        if (seenData && seenData.length > 0) {
+          const seenIds = seenData.map(p => p.vocabulary_id);
+          query = query.not('id', 'in', `(${seenIds.join(',')})`);
+        }
+      }
       query = query.eq('level', level);
     }
 
