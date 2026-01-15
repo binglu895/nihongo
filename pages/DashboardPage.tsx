@@ -56,7 +56,8 @@ const DashboardPage: React.FC = () => {
   };
 
   const categories = [
-    { title: "Vocabulary", icon: "menu_book", desc: "Master the essential core words and kanji for your level.", btn: "Start Practice", path: "/quiz" },
+    { title: "Kanji", icon: "draw", desc: "Master the brush strokes and meanings of essential characters.", btn: "Start Kanji", path: "/quiz" },
+    { title: "Vocabulary", icon: "menu_book", desc: "Build your lexicon with core words for your level.", btn: "Start Practice", path: "/quiz" },
     { title: "Grammar", icon: "architecture", desc: "Build complex structures and understand particle usage.", btn: "Start Learning", path: "/quiz" },
     { title: "Listening", icon: "hearing", desc: "Improve comprehension with native audio exercises.", btn: "Start Session", path: "/quiz" }
   ];
@@ -87,7 +88,7 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 w-full max-w-[960px] px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 w-full max-w-[1200px] px-4">
           {categories.map((card, i) => (
             <div
               key={i}
