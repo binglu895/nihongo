@@ -134,9 +134,9 @@ const KanjiPage: React.FC = () => {
                                     className="relative flex"
                                     style={{ width: `${canvasWidth}px`, height: `${squareSize}px` }}
                                 >
-                                    {/* Grid Labels Layer */}
-                                    <div className="absolute top-4 left-4 z-10">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 dark:text-slate-700">Writing Area</span>
+                                    {/* Grid Label Moved Above */}
+                                    <div className="absolute -top-10 left-0">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-600">Writing Area</span>
                                     </div>
 
                                     {/* Background Grid Layer (Traditional Red Genkouyoushi) */}
