@@ -1,4 +1,11 @@
-
+import React, { useState, useEffect } from 'react';
+import { HashRouter, Routes, Route } from 'react-router-dom';
+import AuthPage from './pages/AuthPage';
+import DashboardPage from './pages/DashboardPage';
+import ProgressPage from './pages/ProgressPage';
+import SettingsPage from './pages/SettingsPage';
+import QuizPage from './pages/QuizPage';
+import KanjiPage from './pages/KanjiPage';
 import { supabase } from './services/supabaseClient';
 
 const App: React.FC = () => {
