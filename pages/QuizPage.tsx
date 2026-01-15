@@ -189,7 +189,7 @@ const QuizPage: React.FC = () => {
             dangerouslySetInnerHTML={{ __html: (currentQuestion?.sentence || '').replace('（　　）', `<span class="text-primary px-3 italic">（　　）</span>`) }}
           />
           <p className="text-ghost-grey dark:text-slate-500 text-sm font-bold tracking-[0.1em] uppercase">
-            {currentQuestion.sentence_translation}
+            {preferredLang === 'Chinese' ? currentQuestion.sentence_translation_zh : currentQuestion.sentence_translation}
           </p>
         </div>
 

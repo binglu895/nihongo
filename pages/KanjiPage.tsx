@@ -187,7 +187,7 @@ const KanjiPage: React.FC = () => {
                         ))}
                     </h1>
                     <p className="text-ghost-grey dark:text-slate-500 text-base md:text-lg font-medium italic">
-                        "{currentQuestion.sentence_translation}"
+                        "{preferredLang === 'Chinese' ? currentQuestion.sentence_translation_zh : currentQuestion.sentence_translation}"
                     </p>
                 </div>
 
@@ -279,7 +279,7 @@ const KanjiPage: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined !text-base">lightbulb</span>
-                        <span className="text-xs md:text-sm font-medium">Meaning: {currentQuestion.meaning}</span>
+                        <span className="text-xs md:text-sm font-medium">Meaning: {preferredLang === 'Chinese' ? currentQuestion.meaning_zh : currentQuestion.meaning}</span>
                     </div>
                 </div>
             </main>
