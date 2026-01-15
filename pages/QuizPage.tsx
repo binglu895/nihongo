@@ -31,13 +31,11 @@ const QuizPage: React.FC = () => {
     if (user) {
       const { data } = await supabase
         .from('profiles')
-        .select('current_level, preferred_language')
+        .select('current_level')
         .eq('id', user.id)
         .single();
       const level = data?.current_level || 'N3';
-      const lang = data?.preferred_language || 'English';
       setCurrentLevel(level);
-      setPreferredLang(lang);
       return level;
     }
     return 'N3';
@@ -76,7 +74,7 @@ const QuizPage: React.FC = () => {
   const handleExplain = async () => {
     if (!currentQuestion) return;
     setIsExplaining(true);
-    const text = await getExplanation(currentQuestion.sentence, currentQuestion.options, currentQuestion.word, preferredLang);
+    const text = await getExplanation(currentQuestion.sentence, currentQuestion.options, currentQuestion.word, language);
     setExplanation(text);
     setIsExplaining(false);
   };

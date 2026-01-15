@@ -19,11 +19,20 @@ const colors = [
   { id: 'Midnight', hex: '#312e81', name: 'Midnight' },
 ];
 
-const SettingsPage: React.FC = () => {
+import { Language, translations } from '../utils/translations';
+
+interface SettingsPageProps {
+  language: Language;
+  onLanguageChange: (lang: Language) => void;
+}
+
+const SettingsPage: React.FC<SettingsPageProps> = ({ language, onLanguageChange }) => {
+  const navigate = useNavigate();
+  const t = translations[language];
   const [session, setSession] = useState<any>(null);
   const [selectedFont, setSelectedFont] = useState('Outfit');
   const [selectedColor, setSelectedColor] = useState('#6366f1');
-  const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(language);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -46,7 +55,7 @@ const SettingsPage: React.FC = () => {
     if (data && !error) {
       if (data.preferred_font) setSelectedFont(data.preferred_font);
       if (data.preferred_color) setSelectedColor(data.preferred_color);
-      if (data.preferred_language) setSelectedLanguage(data.preferred_language);
+      if (data.preferred_language) setSelectedLanguage(data.preferred_language as Language);
     }
   };
 
@@ -77,6 +86,8 @@ const SettingsPage: React.FC = () => {
       document.documentElement.style.setProperty('--primary-hover', selectedColor + 'ee');
       document.documentElement.style.setProperty('--primary-active', selectedColor + 'dd');
 
+      onLanguageChange(selectedLanguage);
+
       setTimeout(() => setSaveStatus('idle'), 3000);
     }
     setIsSaving(false);
@@ -84,17 +95,17 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark transition-all duration-300">
-      <Header />
+      <Header language={language} />
       <main className="flex flex-1 justify-center py-16 px-6">
         <div className="flex flex-col max-w-[800px] w-full gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div className="flex flex-col gap-3 px-2">
-            <h1 className="text-charcoal dark:text-white text-5xl font-black leading-tight tracking-tighter">Settings</h1>
+            <h1 className="text-charcoal dark:text-white text-5xl font-black leading-tight tracking-tighter">{t.settings}</h1>
             <p className="text-ghost-grey dark:text-slate-400 text-lg font-medium">Personalize your JLPT learning experience.</p>
           </div>
 
           {/* Account Section */}
           <section className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl transition-all">
-            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Account</h2>
+            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">{t.account}</h2>
             <div className="p-4">
               <div className="flex items-center gap-4 px-6 min-h-[96px] py-4 justify-between group">
                 <div className="flex items-center gap-5">
@@ -102,7 +113,7 @@ const SettingsPage: React.FC = () => {
                     <span className="material-symbols-outlined !text-3xl">mail</span>
                   </div>
                   <div className="flex flex-col justify-center">
-                    <p className="text-charcoal dark:text-white text-base font-black leading-normal">Email Address</p>
+                    <p className="text-charcoal dark:text-white text-base font-black leading-normal">{t.email_address}</p>
                     <p className="text-ghost-grey dark:text-slate-400 text-sm font-medium">{session?.user?.email || 'Guest User'}</p>
                   </div>
                 </div>
@@ -112,7 +123,7 @@ const SettingsPage: React.FC = () => {
 
           {/* Appearance Section - Font */}
           <section className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl transition-all">
-            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Font Preference</h2>
+            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">{t.font_preference}</h2>
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-4">
               {fonts.map((font) => (
                 <button
@@ -137,7 +148,7 @@ const SettingsPage: React.FC = () => {
 
           {/* Appearance Section - Color */}
           <section className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl transition-all">
-            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Accent Color</h2>
+            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">{t.accent_color}</h2>
             <div className="p-8 flex flex-wrap gap-6">
               {colors.map((color) => (
                 <button
@@ -164,9 +175,9 @@ const SettingsPage: React.FC = () => {
           </section>
           {/* Language Section */}
           <section className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl transition-all">
-            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Preferred Language</h2>
+            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">{t.preferred_language}</h2>
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-              {['English', 'Chinese'].map((lang) => (
+              {(['English', 'Chinese'] as Language[]).map((lang) => (
                 <button
                   key={lang}
                   onClick={() => setSelectedLanguage(lang)}
@@ -186,12 +197,12 @@ const SettingsPage: React.FC = () => {
               ))}
             </div>
             <div className="px-8 pb-8">
-              <p className="text-xs text-ghost-grey dark:text-slate-500 font-medium">This language will be used for hints, translations, and AI-powered explanations from Sensei.</p>
+              <p className="text-xs text-ghost-grey dark:text-slate-500 font-medium">{t.language_hint}</p>
             </div>
           </section>
 
           <section className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl">
-            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Notifications</h2>
+            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">{t.notifications}</h2>
             <div className="p-2">
               {[
                 { label: "Daily Study Reminder", desc: "Receive a nudge to maintain your daily streak", id: "rem", checked: true },
@@ -222,27 +233,27 @@ const SettingsPage: React.FC = () => {
               ) : (
                 <span className="material-symbols-outlined">save</span>
               )}
-              {isSaving ? 'Saving...' : 'Save All Changes'}
+              {isSaving ? 'Saving...' : t.save_all}
             </button>
             <button
               onClick={() => window.location.reload()}
               className="px-10 bg-slate-50 dark:bg-slate-800 text-charcoal dark:text-white font-black py-5 rounded-3xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-sm"
             >
-              Cancel
+              {t.cancel}
             </button>
           </div>
 
           {saveStatus === 'success' && (
             <div className="fixed bottom-10 right-10 bg-emerald-500 text-white px-8 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-right duration-500 font-black flex items-center gap-3">
               <span className="material-symbols-outlined">check_circle</span>
-              Settings saved successfully!
+              {t.save_success}
             </div>
           )}
 
           {saveStatus === 'error' && (
             <div className="fixed bottom-10 right-10 bg-error-red text-white px-8 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-right duration-500 font-black flex items-center gap-3">
               <span className="material-symbols-outlined">error</span>
-              Failed to save settings.
+              {t.save_error}
             </div>
           )}
         </div>

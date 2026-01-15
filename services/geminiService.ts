@@ -25,3 +25,20 @@ export const getExplanation = async (sentence: string, options: string[], answer
     return "The sensei is currently busy. Please try again later.";
   }
 };
+
+export const translateContent = async (text: string, targetLanguage: string): Promise<string> => {
+  if (targetLanguage === 'English') return text;
+
+  const prompt = `Translate the following text into ${targetLanguage}. Keep it simple and clear. Text: "${text}"`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash-latest',
+      contents: prompt,
+    });
+    return response.text || text;
+  } catch (error) {
+    console.error("Gemini Translation Error:", error);
+    return text;
+  }
+};

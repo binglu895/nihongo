@@ -10,6 +10,7 @@ import { supabase } from './services/supabaseClient';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
+  const [appLanguage, setAppLanguage] = useState<'English' | 'Chinese'>('English');
 
   useEffect(() => {
     if (darkMode) {
@@ -42,7 +43,7 @@ const App: React.FC = () => {
   const applyUserSettings = async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('preferred_font, preferred_color')
+      .select('preferred_font, preferred_color, preferred_language')
       .eq('id', userId)
       .single();
 
@@ -57,6 +58,9 @@ const App: React.FC = () => {
         // Generate variations
         document.documentElement.style.setProperty('--primary-hover', color + 'ee');
         document.documentElement.style.setProperty('--primary-active', color + 'dd');
+      }
+      if (data.preferred_language) {
+        setAppLanguage(data.preferred_language as 'English' | 'Chinese');
       }
     }
   };
@@ -75,11 +79,11 @@ const App: React.FC = () => {
         </button>
         <Routes>
           <Route path="/" element={<AuthPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/progress" element={<ProgressPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/quiz" element={<QuizPage />} />
-          <Route path="/kanji" element={<KanjiPage />} />
+          <Route path="/dashboard" element={<DashboardPage language={appLanguage} />} />
+          <Route path="/progress" element={<ProgressPage language={appLanguage} />} />
+          <Route path="/settings" element={<SettingsPage language={appLanguage} onLanguageChange={setAppLanguage} />} />
+          <Route path="/quiz" element={<QuizPage language={appLanguage} />} />
+          <Route path="/kanji" element={<KanjiPage language={appLanguage} />} />
         </Routes>
       </div>
     </HashRouter>

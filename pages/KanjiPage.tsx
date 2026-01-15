@@ -33,11 +33,9 @@ const KanjiPage: React.FC = () => {
         if (user) {
             const { data } = await supabase
                 .from('profiles')
-                .select('current_level, preferred_language')
+                .select('current_level')
                 .eq('id', user.id)
                 .single();
-            const lang = data?.preferred_language || 'English';
-            setPreferredLang(lang);
             return data?.current_level || 'N3';
         }
         return 'N3';

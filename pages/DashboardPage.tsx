@@ -6,8 +6,11 @@ import Footer from '../components/Footer';
 import { JLPTLevel } from '../types';
 import { supabase } from '../services/supabaseClient';
 
-const DashboardPage: React.FC = () => {
+import { Language, translations } from '../utils/translations';
+
+const DashboardPage: React.FC<{ language: Language }> = ({ language }) => {
   const navigate = useNavigate();
+  const t = translations[language];
   const [level, setLevel] = useState<JLPTLevel>('N3');
   const [loading, setLoading] = useState(true);
 
@@ -56,18 +59,18 @@ const DashboardPage: React.FC = () => {
   };
 
   const categories = [
-    { title: "Kanji", icon: "draw", desc: "Master the brush strokes and meanings of essential characters.", btn: "Start Kanji", path: "/kanji" },
-    { title: "Vocabulary", icon: "menu_book", desc: "Build your lexicon with core words for your level.", btn: "Start Practice", path: "/quiz" },
-    { title: "Grammar", icon: "architecture", desc: "Build complex structures and understand particle usage.", btn: "Start Learning", path: "/quiz" },
-    { title: "Listening", icon: "hearing", desc: "Improve comprehension with native audio exercises.", btn: "Start Session", path: "/quiz" }
+    { title: t.kanji, icon: "draw", desc: t.kanji_desc, btn: t.kanji_btn, path: "/kanji" },
+    { title: t.vocabulary, icon: "menu_book", desc: t.vocabulary_desc, btn: t.vocabulary_btn, path: "/quiz" },
+    { title: t.grammar, icon: "architecture", desc: t.grammar_desc, btn: t.grammar_btn, path: "/quiz" },
+    { title: t.listening, icon: "hearing", desc: t.listening_desc, btn: t.listening_btn, path: "/quiz" }
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark transition-colors duration-300">
-      <Header />
+      <Header language={language} />
       <main className="flex-1 flex flex-col items-center py-16 px-4">
         <div className="w-full max-w-[960px] flex flex-col items-center mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <p className="text-ghost-grey dark:text-gray-400 text-xs font-black uppercase tracking-[0.2em] mb-6">Select Proficiency Level</p>
+          <p className="text-ghost-grey dark:text-gray-400 text-xs font-black uppercase tracking-[0.2em] mb-6">{t.proficiency_level}</p>
           <div className="flex w-full max-w-lg h-14 items-center justify-center rounded-2xl bg-white dark:bg-slate-900 p-1.5 shadow-xl border border-gray-100 dark:border-white/10">
             {(['N5', 'N4', 'N3', 'N2', 'N1'] as JLPTLevel[]).map((l) => (
               <label
@@ -115,7 +118,7 @@ const DashboardPage: React.FC = () => {
 
         <div className="mt-20 text-ghost-grey dark:text-gray-500 text-sm font-semibold tracking-wide flex items-center gap-3">
           <span className="material-symbols-outlined !text-lg">timer</span>
-          Daily goal: 15 / 30 minutes completed
+          {t.daily_goal}: 15 / 30 {t.minutes_completed}
         </div>
       </main>
       <Footer />

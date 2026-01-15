@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Language, translations } from '../utils/translations';
 
 interface HeaderProps {
   title?: string;
   showNav?: boolean;
+  language?: Language;
 }
 
-const Header: React.FC<HeaderProps> = ({ title = "JLPT Study", showNav = true }) => {
+const Header: React.FC<HeaderProps> = ({ title, showNav = true, language = 'English' }) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const t = translations[language];
 
   const navLinks = [
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Progress', path: '/progress' },
-    { name: 'Settings', path: '/settings' },
+    { name: t.dashboard, path: '/dashboard' },
+    { name: t.progress, path: '/progress' },
+    { name: t.settings, path: '/settings' },
   ];
 
   return (
