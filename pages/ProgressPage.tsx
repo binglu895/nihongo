@@ -9,6 +9,7 @@ const ProgressPage: React.FC = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({ kanji: 0, vocab: 0, grammar: 0 });
   const [profile, setProfile] = useState({ streak: 0, completion: 0, level: 'N3' });
+  const [dueCount, setDueCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,6 +53,15 @@ const ProgressPage: React.FC = () => {
         vocab: statsData.vocab_count,
         grammar: statsData.grammar_score
       });
+
+      // Fetch due items count
+      const { count } = await supabase
+        .from('user_vocabulary_progress')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .lte('next_review_at', new Date().toISOString());
+
+      setDueCount(count || 0);
 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -121,13 +131,14 @@ const ProgressPage: React.FC = () => {
                 Consistent daily practice is the key to Japanese language retention.
               </p>
               <button
-                onClick={() => navigate('/quiz')}
-                className="w-full max-w-md bg-primary hover:bg-primary-hover text-white font-black py-4 md:py-6 px-8 md:px-10 rounded-2xl transition-all flex items-center justify-center gap-4 shadow-2xl shadow-primary/30 active:scale-95 group"
+                onClick={() => navigate('/quiz?mode=review')}
+                disabled={dueCount === 0}
+                className={`w-full max-w-md ${dueCount === 0 ? 'bg-slate-200 dark:bg-slate-800 cursor-not-allowed text-ghost-grey' : 'bg-primary hover:bg-primary-hover text-white shadow-2xl shadow-primary/30'} font-black py-4 md:py-6 px-8 md:px-10 rounded-2xl transition-all flex items-center justify-center gap-4 active:scale-95 group`}
               >
                 <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">quiz</span>
-                <span className="text-lg md:text-xl">Review 25 items</span>
+                <span className="text-lg md:text-xl">{dueCount > 0 ? `Review ${dueCount} items` : 'No reviews due'}</span>
               </button>
-              <p className="mt-6 text-[10px] font-black text-ghost-grey dark:text-slate-500 uppercase tracking-[0.2em]">Approx. 12 minutes</p>
+              <p className="mt-6 text-[10px] font-black text-ghost-grey dark:text-slate-500 uppercase tracking-[0.2em]">Approx. {Math.ceil(dueCount * 0.5)} minutes</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
