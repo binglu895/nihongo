@@ -139,20 +139,20 @@ const KanjiPage: React.FC = () => {
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 dark:text-slate-700">Writing Area</span>
                                     </div>
 
-                                    {/* Background Grid Layer */}
+                                    {/* Background Grid Layer (Traditional Red Genkouyoushi) */}
                                     <div className="absolute inset-0 flex">
                                         {currentQuestion.targetKanji.split('').map((_, idx) => (
                                             <div
                                                 key={idx}
-                                                className={`relative flex-shrink-0 border-r border-slate-100 dark:border-slate-800/50 last:border-r-0`}
+                                                className={`relative flex-shrink-0 border-2 border-red-500/60 dark:border-red-600/40 ${idx !== 0 ? 'border-l-0' : 'rounded-l-2xl'} ${idx === kanjiCount - 1 ? 'rounded-r-2xl' : ''}`}
                                                 style={{ width: `${squareSize}px`, height: `${squareSize}px` }}
                                             >
-                                                {/* Rice Grid Helper Lines */}
-                                                <div className="absolute top-1/2 left-0 w-full h-[1px] bg-slate-100 dark:bg-slate-800/30"></div>
-                                                <div className="absolute top-0 left-1/2 w-[1px] h-full bg-slate-100 dark:bg-slate-800/30"></div>
-                                                <svg className="absolute inset-0 w-full h-full text-slate-100 dark:text-slate-800/20" viewBox="0 0 100 100">
-                                                    <line x1="0" y1="0" x2="100" y2="100" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4" />
-                                                    <line x1="100" y1="0" x2="0" y2="100" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4" />
+                                                {/* Rice Grid Helper Lines (Red Dashed) */}
+                                                <div className="absolute top-1/2 left-0 w-full h-[1px] border-t border-dashed border-red-400/40 dark:border-red-800/30"></div>
+                                                <div className="absolute top-0 left-1/2 w-[1px] h-full border-l border-dashed border-red-400/40 dark:border-red-800/30"></div>
+                                                <svg className="absolute inset-0 w-full h-full text-red-300/30 dark:text-red-900/20" viewBox="0 0 100 100">
+                                                    <line x1="0" y1="0" x2="100" y2="100" stroke="currentColor" strokeWidth="0.8" strokeDasharray="4" />
+                                                    <line x1="100" y1="0" x2="0" y2="100" stroke="currentColor" strokeWidth="0.8" strokeDasharray="4" />
                                                 </svg>
                                             </div>
                                         ))}
