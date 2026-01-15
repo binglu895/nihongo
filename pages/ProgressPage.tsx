@@ -5,11 +5,8 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { supabase } from '../services/supabaseClient';
 
-import { Language, translations } from '../utils/translations';
-
-const ProgressPage: React.FC<{ language: Language }> = ({ language }) => {
+const ProgressPage: React.FC = () => {
   const navigate = useNavigate();
-  const t = translations[language];
   const [stats, setStats] = useState({ kanji: 0, vocab: 0, grammar: 0 });
   const [profile, setProfile] = useState({ streak: 0, completion: 0, level: 'N3' });
   const [loading, setLoading] = useState(true);
@@ -65,16 +62,16 @@ const ProgressPage: React.FC<{ language: Language }> = ({ language }) => {
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark transition-colors duration-300">
-      <Header language={language} />
+      <Header />
       <div className="max-w-[1200px] mx-auto px-6 lg:px-20 py-12 animate-in fade-in duration-700">
         <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div className="space-y-4">
-            <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-charcoal dark:text-white">{t.your_journey}</h1>
-            <p className="text-ghost-grey dark:text-slate-400 text-lg md:text-xl font-medium">{t.prepare_desc || 'Preparing for mastery'} - JLPT {profile.level} {t.preparation}</p>
+            <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-charcoal dark:text-white">Your Journey</h1>
+            <p className="text-ghost-grey dark:text-slate-400 text-lg md:text-xl font-medium">Daily mastery and JLPT {profile.level} preparation</p>
           </div>
           <div className="flex items-center gap-3 bg-primary/5 dark:bg-primary/10 px-6 py-3 rounded-2xl border border-primary/20 shadow-sm animate-bounce-subtle">
             <span className="material-symbols-outlined text-orange-500 fill-orange-500 text-3xl">local_fire_department</span>
-            <span className="text-2xl font-black text-primary">{profile.streak} {t.streak}</span>
+            <span className="text-2xl font-black text-primary">{profile.streak} Day Streak</span>
           </div>
         </div>
 
@@ -110,39 +107,40 @@ const ProgressPage: React.FC<{ language: Language }> = ({ language }) => {
               </div>
             </div>
             <div className="mt-8 md:mt-10 text-center">
-              <p className="text-charcoal dark:text-white text-lg md:text-xl font-black">{t.overall_completion}</p>
+              <p className="text-charcoal dark:text-white text-lg md:text-xl font-black">Overall Completion</p>
               <p className="text-ghost-grey dark:text-slate-500 text-xs md:text-sm mt-2 font-medium italic">
-                {profile.completion >= 100 ? t.mastered : t.almost_there}
+                {profile.completion >= 100 ? 'Mastered!' : 'Almost there! Keep pushing.'}
               </p>
             </div>
           </div>
 
           <div className="lg:col-span-7 flex flex-col gap-6 md:gap-8">
             <div className="p-8 md:p-12 bg-white dark:bg-slate-900 rounded-[32px] md:rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl dark:shadow-2xl flex flex-col items-center text-center">
-              <h3 className="text-xl md:text-2xl font-black mb-2 md:mb-3">{t.ready_for_today}</h3>
+              <h3 className="text-xl md:text-2xl font-black mb-2 md:mb-3">Ready for today?</h3>
               <p className="text-ghost-grey dark:text-slate-500 mb-8 md:mb-10 max-w-sm text-sm md:text-base font-medium leading-relaxed">
-                {t.practice_key}
+                Consistent daily practice is the key to Japanese language retention.
               </p>
               <button
                 onClick={() => navigate('/quiz')}
                 className="w-full max-w-md bg-primary hover:bg-primary-hover text-white font-black py-4 md:py-6 px-8 md:px-10 rounded-2xl transition-all flex items-center justify-center gap-4 shadow-2xl shadow-primary/30 active:scale-95 group"
               >
                 <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">quiz</span>
-                <span className="text-lg md:text-xl">{t.review_items}</span>
+                <span className="text-lg md:text-xl">Review 25 items</span>
               </button>
-              <p className="mt-6 text-[10px] font-black text-ghost-grey dark:text-slate-500 uppercase tracking-[0.2em]">{t.approx} 12 {t.minutes}</p>
+              <p className="mt-6 text-[10px] font-black text-ghost-grey dark:text-slate-500 uppercase tracking-[0.2em]">Approx. 12 minutes</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
               {[
-                { label: t.kanji, value: stats.kanji.toString(), detail: t.total_items, color: "text-emerald-500" },
-                { label: t.vocabulary, value: (stats.vocab / 1000).toFixed(1) + 'k', detail: t.total_items, color: "text-emerald-500" },
-                { label: t.grammar, value: stats.grammar.toString(), detail: t.mastery_points, color: "text-slate-400" }
+                { label: "Kanji", value: stats.kanji.toString(), detail: "Total items", color: "text-emerald-500" },
+                { label: "Vocab", value: (stats.vocab / 1000).toFixed(1) + 'k', detail: "Total items", color: "text-emerald-500" },
+                { label: "Grammar", value: stats.grammar.toString(), detail: "Mastery points", color: "text-slate-400" }
               ].map((s, i) => (
                 <div key={i} className="flex flex-col gap-2 rounded-2xl md:rounded-3xl p-6 md:p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-hover hover:shadow-md">
                   <p className="text-ghost-grey dark:text-slate-500 text-[10px] font-black uppercase tracking-widest">{s.label}</p>
                   <p className="text-2xl md:text-3xl font-black text-charcoal dark:text-white">{s.value}</p>
                   <p className={`${s.color} text-xs font-bold flex items-center gap-1.5`}>
+                    {s.detail.includes('+') && <span className="material-symbols-outlined !text-sm">trending_up</span>}
                     {s.detail}
                   </p>
                 </div>
@@ -152,7 +150,7 @@ const ProgressPage: React.FC<{ language: Language }> = ({ language }) => {
         </div>
 
         <div className="mt-16 md:mt-20 pt-10 md:pt-12 border-t border-slate-200 dark:border-slate-800">
-          <h4 className="text-[10px] md:text-sm font-black uppercase tracking-[0.3em] text-ghost-grey dark:text-slate-500 mb-8 md:mb-10">{t.jlpt_milestones}</h4>
+          <h4 className="text-[10px] md:text-sm font-black uppercase tracking-[0.3em] text-ghost-grey dark:text-slate-500 mb-8 md:mb-10">JLPT Milestones</h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-8">
             {(['N5', 'N4', 'N3', 'N2', 'N1']).map((l, i) => {
               const levels = ['N5', 'N4', 'N3', 'N2', 'N1'];
