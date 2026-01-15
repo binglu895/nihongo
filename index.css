@@ -1,0 +1,21 @@
+/* Global styles and dynamic variable defaults */
+:root {
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --primary-active: #4338ca;
+    --preferred-font: 'Outfit';
+}
+
+body {
+    font-family: var(--preferred-font), 'Outfit', sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hide scrollbar but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

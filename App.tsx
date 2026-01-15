@@ -1,12 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
-import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
-import AuthPage from './pages/AuthPage';
-import DashboardPage from './pages/DashboardPage';
-import ProgressPage from './pages/ProgressPage';
-import SettingsPage from './pages/SettingsPage';
-import QuizPage from './pages/QuizPage';
-import KanjiPage from './pages/KanjiPage';
+import { supabase } from './services/supabaseClient';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -18,6 +11,48 @@ const App: React.FC = () => {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        applyUserSettings(session.user.id);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        applyUserSettings(session.user.id);
+      } else {
+        // Reset to defaults on logout
+        document.documentElement.style.setProperty('--preferred-font', "'Outfit'");
+        document.documentElement.style.setProperty('--primary-color', '#6366f1');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const applyUserSettings = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('preferred_font, preferred_color')
+      .eq('id', userId)
+      .single();
+
+    if (data && !error) {
+      if (data.preferred_font) {
+        document.documentElement.style.setProperty('--preferred-font', `'${data.preferred_font}'`);
+      }
+      if (data.preferred_color) {
+        const color = data.preferred_color;
+        document.documentElement.style.setProperty('--primary-color', color);
+
+        // Generate variations
+        document.documentElement.style.setProperty('--primary-hover', color + 'ee');
+        document.documentElement.style.setProperty('--primary-active', color + 'dd');
+      }
+    }
+  };
 
   return (
     <HashRouter>
