@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { supabase } from '../services/supabaseClient';
+import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,6 +14,10 @@ const AuthPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isSupabaseConfigured) {
+      setError('App is not configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to environment variables in Vercel.');
+      return;
+    }
     setIsLoading(true);
     setError(null);
 
@@ -73,10 +77,10 @@ const AuthPage: React.FC = () => {
             <div className="space-y-4">
               <div className="flex flex-col gap-2">
                 <label className="text-charcoal dark:text-white/80 text-xs font-bold uppercase tracking-widest px-1">Email</label>
-                <input 
-                  className="w-full rounded-xl border border-black/10 dark:border-white/10 bg-transparent px-4 py-3.5 text-charcoal dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-black/30 dark:placeholder:text-white/20" 
-                  placeholder="your@email.com" 
-                  type="email" 
+                <input
+                  className="w-full rounded-xl border border-black/10 dark:border-white/10 bg-transparent px-4 py-3.5 text-charcoal dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-black/30 dark:placeholder:text-white/20"
+                  placeholder="your@email.com"
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -87,10 +91,10 @@ const AuthPage: React.FC = () => {
                   <label className="text-charcoal dark:text-white/80 text-xs font-bold uppercase tracking-widest">Password</label>
                   {!isSignUp && <a className="text-primary text-[10px] font-bold uppercase tracking-wider hover:underline" href="#">Forgot?</a>}
                 </div>
-                <input 
-                  className="w-full rounded-xl border border-black/10 dark:border-white/10 bg-transparent px-4 py-3.5 text-charcoal dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-black/30 dark:placeholder:text-white/20" 
-                  placeholder="••••••••" 
-                  type="password" 
+                <input
+                  className="w-full rounded-xl border border-black/10 dark:border-white/10 bg-transparent px-4 py-3.5 text-charcoal dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-black/30 dark:placeholder:text-white/20"
+                  placeholder="••••••••"
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -98,8 +102,8 @@ const AuthPage: React.FC = () => {
               </div>
             </div>
 
-            <button 
-              className="w-full bg-primary hover:bg-primary-hover active:bg-primary-active text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98] relative overflow-hidden h-[56px]" 
+            <button
+              className="w-full bg-primary hover:bg-primary-hover active:bg-primary-active text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98] relative overflow-hidden h-[56px]"
               type="submit"
               disabled={isLoading}
             >
@@ -131,9 +135,9 @@ const AuthPage: React.FC = () => {
 
           <div className="mt-10 text-center">
             <p className="text-charcoal/60 dark:text-white/60 text-sm">
-              {isSignUp ? 'Already have an account?' : 'New to Nihongo?'} 
-              <button 
-                className="text-primary font-bold hover:underline ml-1" 
+              {isSignUp ? 'Already have an account?' : 'New to Nihongo?'}
+              <button
+                className="text-primary font-bold hover:underline ml-1"
                 onClick={() => setIsSignUp(!isSignUp)}
               >
                 {isSignUp ? 'Log in' : 'Create an account'}
