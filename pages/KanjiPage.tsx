@@ -8,40 +8,58 @@ const KanjiPage: React.FC = () => {
     const navigate = useNavigate();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
-    const [showAnswer, setShowAnswer] = useState(false);
-    const [currentQuestion, setCurrentQuestion] = useState({
-        sentence: "道に（　　）が立っています。",
-        translation: "A sign is standing by the road.",
-        targetKanji: "看板",
-        kanjiMeaning: "Signboard / Poster",
-        level: "N3"
-    });
-
-    const kanjiCount = currentQuestion.targetKanji.length;
-    const squareSize = 240; // Size per square item
-    const canvasWidth = squareSize * kanjiCount;
-
-    // Canvas drawing state
-    const lastPos = useRef({ x: 0, y: 0 });
+    const [questions, setQuestions] = useState<any[]>([]);
+    const [currentIdx, setCurrentIdx] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [currentQuestion, setCurrentQuestion] = useState<any>(null);
 
     useEffect(() => {
-        const canvas = canvasRef.current;
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-                ctx.strokeStyle = '#2d3436';
-                ctx.lineWidth = 6;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-            }
+        const initPractice = async () => {
+            setLoading(true);
+            const level = await fetchUserLevel();
+            await fetchQuestions(level);
+            setLoading(false);
+        };
+        initPractice();
+    }, []);
+
+    const fetchUserLevel = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const { data } = await supabase
+                .from('profiles')
+                .select('current_level')
+                .eq('id', user.id)
+                .single();
+            return data?.current_level || 'N3';
         }
-    }, [kanjiCount, showAnswer]);
+        return 'N3';
+    };
+
+    const fetchQuestions = async (level: string) => {
+        const { data, error } = await supabase
+            .from('vocabulary')
+            .select('*')
+            .eq('level', level)
+            .limit(15);
+
+        if (data && !error) {
+            setQuestions(data);
+            setCurrentQuestion(data[0]);
+        }
+    };
 
     const handleCheckAnswer = () => {
         if (showAnswer) {
-            // In a real app, this would fetch the next question
-            setShowAnswer(false);
-            clearCanvas();
+            if (currentIdx < questions.length - 1) {
+                const nextIdx = currentIdx + 1;
+                setCurrentIdx(nextIdx);
+                setCurrentQuestion(questions[nextIdx]);
+                setShowAnswer(false);
+                clearCanvas();
+            } else {
+                navigate('/dashboard');
+            }
         } else {
             setShowAnswer(true);
         }
@@ -103,6 +121,34 @@ const KanjiPage: React.FC = () => {
         setShowAnswer(false);
     };
 
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-background-light dark:bg-background-dark flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <span className="loader !size-12 border-primary border-t-transparent"></span>
+                    <p className="font-black text-ghost-grey animate-pulse">Preparing Rice Paper...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!currentQuestion) {
+        return (
+            <div className="min-h-screen bg-background-light dark:bg-background-dark flex items-center justify-center p-6 text-center">
+                <div className="max-w-md flex flex-col items-center gap-6">
+                    <span className="material-symbols-outlined !text-7xl text-slate-300">brush</span>
+                    <h2 className="text-2xl font-black">No Kanji found for your level</h2>
+                    <p className="text-ghost-grey font-medium">Please select a level with seeded vocabulary to start practicing your handwriting.</p>
+                    <button onClick={() => navigate('/dashboard')} className="px-8 py-4 bg-primary text-white rounded-2xl font-black">Back to Dashboard</button>
+                </div>
+            </div>
+        );
+    }
+
+    const kanjiCount = currentQuestion.word.length;
+    const squareSize = 240;
+    const canvasWidth = squareSize * kanjiCount;
+
     return (
         <div className="min-h-screen bg-background-light dark:bg-background-dark flex flex-col transition-colors duration-300 overflow-x-hidden">
             <Header />
@@ -112,29 +158,29 @@ const KanjiPage: React.FC = () => {
                 <div className="w-full max-w-md mb-8">
                     <div className="flex justify-between items-center mb-3">
                         <span className="text-[10px] font-black uppercase tracking-widest text-ghost-grey dark:text-slate-500">Practice Session</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">3 / 15 Kanji</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">{currentIdx + 1} / {questions.length} Kanji</span>
                     </div>
                     <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                        <div className="h-full bg-primary transition-all duration-500" style={{ width: '20%' }}></div>
+                        <div className="h-full bg-primary transition-all duration-500" style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }}></div>
                     </div>
                 </div>
 
                 {/* Question Area */}
                 <div className="w-full text-center mb-10 animate-in fade-in zoom-in-95 duration-500">
                     <h1 className="text-4xl md:text-6xl font-black leading-[1.4] mb-3 text-charcoal dark:text-white tracking-tight">
-                        {currentQuestion.sentence.split('（　　）').map((part, i, arr) => (
+                        {currentQuestion.sentence.split('（　　）').map((part: string, i: number, arr: any[]) => (
                             <React.Fragment key={i}>
                                 {part}
                                 {i < arr.length - 1 && (
                                     <span className={`transition-colors duration-500 ${showAnswer ? 'text-emerald-500 underline decoration-emerald-500/30' : 'text-primary underline decoration-primary/30'} mx-2`}>
-                                        {showAnswer ? currentQuestion.targetKanji : currentQuestion.targetKanji.split('').map(() => '　').join('')}
+                                        {showAnswer ? currentQuestion.word : currentQuestion.word.split('').map(() => '　').join('')}
                                     </span>
                                 )}
                             </React.Fragment>
                         ))}
                     </h1>
                     <p className="text-ghost-grey dark:text-slate-500 text-base md:text-lg font-medium italic">
-                        "{currentQuestion.translation}"
+                        "{currentQuestion.sentence_translation}"
                     </p>
                 </div>
 
@@ -154,7 +200,7 @@ const KanjiPage: React.FC = () => {
                                 >
                                     {/* Background Grid Layer (Traditional Red Genkouyoushi) */}
                                     <div className="absolute inset-0 flex">
-                                        {currentQuestion.targetKanji.split('').map((char, idx) => (
+                                        {currentQuestion.word.split('').map((char: string, idx: number) => (
                                             <div
                                                 key={idx}
                                                 className={`relative flex-shrink-0 border-2 border-red-500/60 dark:border-red-600/40 ${idx !== 0 ? 'border-l-0' : 'rounded-l-2xl'} ${idx === kanjiCount - 1 ? 'rounded-r-2xl' : ''}`}
@@ -213,7 +259,7 @@ const KanjiPage: React.FC = () => {
                             onClick={handleCheckAnswer}
                             className={`flex-1 py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/30 ${showAnswer ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-primary hover:bg-primary-hover'} text-white`}
                         >
-                            <span>{showAnswer ? 'Next Kanji' : 'Check Answer'}</span>
+                            <span>{showAnswer ? (currentIdx < questions.length - 1 ? 'Next Kanji' : 'Finish') : 'Check Answer'}</span>
                             <span className="material-symbols-outlined">{showAnswer ? 'arrow_forward' : 'verified'}</span>
                         </button>
                     </div>
@@ -222,11 +268,11 @@ const KanjiPage: React.FC = () => {
                 <div className="mt-12 flex flex-wrap justify-center gap-6 md:gap-12 text-ghost-grey dark:text-slate-500 italic px-4">
                     <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined !text-base">info</span>
-                        <span className="text-xs md:text-sm font-medium">Draw: <span className="font-black text-charcoal dark:text-white not-italic text-lg ml-1">{currentQuestion.targetKanji}</span></span>
+                        <span className="text-xs md:text-sm font-medium">Draw: <span className="font-black text-charcoal dark:text-white not-italic text-lg ml-1">{currentQuestion.word}</span></span>
                     </div>
                     <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined !text-base">lightbulb</span>
-                        <span className="text-xs md:text-sm font-medium">Meaning: {currentQuestion.kanjiMeaning}</span>
+                        <span className="text-xs md:text-sm font-medium">Meaning: {currentQuestion.meaning}</span>
                     </div>
                 </div>
             </main>

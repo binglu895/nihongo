@@ -6,14 +6,19 @@ import { supabase } from '../services/supabaseClient';
 
 const QuizPage: React.FC = () => {
   const navigate = useNavigate();
-  const [answered, setAnswered] = useState(false);
-  const [isExplaining, setIsExplaining] = useState(false);
-  const [explanation, setExplanation] = useState<string | null>(null);
-  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [currentLevel, setCurrentLevel] = useState('N3');
 
   React.useEffect(() => {
-    fetchUserLevel();
+    const initQuiz = async () => {
+      setLoading(true);
+      const level = await fetchUserLevel();
+      await fetchQuestions(level);
+      setLoading(false);
+    };
+    initQuiz();
   }, []);
 
   const fetchUserLevel = async () => {
@@ -24,13 +29,35 @@ const QuizPage: React.FC = () => {
         .select('current_level')
         .eq('id', user.id)
         .single();
-      if (data) setCurrentLevel(data.current_level);
+      const level = data?.current_level || 'N3';
+      setCurrentLevel(level);
+      return level;
+    }
+    return 'N3';
+  };
+
+  const fetchQuestions = async (level: string) => {
+    const { data, error } = await supabase
+      .from('vocabulary')
+      .select('*')
+      .eq('level', level)
+      .limit(20);
+
+    if (data && !error) {
+      // Shuffle distractors and include correct answer
+      const formatted = data.map(q => {
+        const allOptions = [...q.distractors, q.word].sort(() => Math.random() - 0.5);
+        return {
+          ...q,
+          options: allOptions
+        };
+      });
+      setQuestions(formatted);
     }
   };
 
-  const question = "昨日の会議の内容を（　　）してください。";
-  const options = ["ようやく", "要約 (ようやく)", "ようす", "ようりょう"];
-  const correctAnswer = "要約 (ようやく)";
+  const currentQuestion = questions[currentQuestionIdx];
+
 
   const handleSelect = (idx: number) => {
     if (answered) return;
@@ -39,13 +66,14 @@ const QuizPage: React.FC = () => {
   };
 
   const handleExplain = async () => {
+    if (!currentQuestion) return;
     setIsExplaining(true);
-    const text = await getExplanation(question, options, correctAnswer);
+    const text = await getExplanation(currentQuestion.sentence, currentQuestion.options, currentQuestion.word);
     setExplanation(text);
     setIsExplaining(false);
   };
 
-  const handleFinish = async (isCorrect: boolean) => {
+  const handleNext = async (isCorrect: boolean) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -59,7 +87,6 @@ const QuizPage: React.FC = () => {
 
       // Update stats and progress
       if (isCorrect) {
-        // Update Vocab count
         const { data: statsData } = await supabase
           .from('stats')
           .select('vocab_count')
@@ -72,7 +99,6 @@ const QuizPage: React.FC = () => {
           }).eq('user_id', user.id);
         }
 
-        // Increment completion percentage (capped at 100)
         const { data: profileData } = await supabase
           .from('profiles')
           .select('completion_percentage')
@@ -87,19 +113,49 @@ const QuizPage: React.FC = () => {
         }
       }
 
-      setAnswered(false);
-      setSelectedIdx(null);
-      setExplanation(null);
+      if (currentQuestionIdx < questions.length - 1) {
+        setCurrentQuestionIdx(prev => prev + 1);
+        setAnswered(false);
+        setSelectedIdx(null);
+        setExplanation(null);
+      } else {
+        // Quiz complete
+        navigate('/progress');
+      }
     } catch (error) {
       console.error('Error saving progress:', error);
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background-light dark:bg-background-dark flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <span className="loader !size-12 border-primary border-t-transparent"></span>
+          <p className="font-black text-ghost-grey animate-pulse">Summoning Sensei...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentQuestion) {
+    return (
+      <div className="min-h-screen bg-background-light dark:bg-background-dark flex items-center justify-center p-6 text-center">
+        <div className="max-w-md flex flex-col items-center gap-6">
+          <span className="material-symbols-outlined !text-7xl text-slate-300">sentiment_dissatisfied</span>
+          <h2 className="text-2xl font-black">No questions found for {currentLevel}</h2>
+          <p className="text-ghost-grey font-medium">It seems our library is empty for this level. Please try another one.</p>
+          <button onClick={() => navigate('/dashboard')} className="px-8 py-4 bg-primary text-white rounded-2xl font-black">Back to Dashboard</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-slate-100 min-h-screen flex flex-col font-display transition-colors duration-300">
       <header className="fixed top-0 left-0 w-full z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-black/5 dark:border-white/5">
         <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800">
-          <div className="h-full bg-primary transition-all duration-500" style={{ width: '24%' }}></div>
+          <div className="h-full bg-primary transition-all duration-500" style={{ width: `${((currentQuestionIdx + 1) / questions.length) * 100}%` }}></div>
         </div>
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -107,7 +163,7 @@ const QuizPage: React.FC = () => {
             <span className="font-black tracking-[0.2em] text-xs uppercase">{currentLevel} Vocabulary</span>
           </div>
           <div className="flex items-center gap-5">
-            <span className="text-xs font-black text-ghost-grey dark:text-slate-500 uppercase tracking-widest bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-lg">Item 12 / 50</span>
+            <span className="text-xs font-black text-ghost-grey dark:text-slate-500 uppercase tracking-widest bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-lg">Item {currentQuestionIdx + 1} / {questions.length}</span>
             <button
               onClick={() => navigate('/dashboard')}
               className="flex items-center justify-center size-10 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-ghost-grey hover:text-red-500 transition-all"
@@ -120,17 +176,18 @@ const QuizPage: React.FC = () => {
 
       <main className="flex-grow flex flex-col items-center justify-center px-6 pt-32 pb-48 max-w-4xl mx-auto w-full">
         <div className="w-full text-center mb-16 animate-in fade-in zoom-in-95 duration-500">
-          <h1 className="text-3xl md:text-5xl font-black leading-[1.4] mb-6 text-charcoal dark:text-white tracking-tight">
-            昨日の会議の内容を（<span className="text-primary px-3 italic">　　</span>）してください。
-          </h1>
+          <h1
+            className="text-3xl md:text-5xl font-black leading-[1.4] mb-6 text-charcoal dark:text-white tracking-tight"
+            dangerouslySetInnerHTML={{ __html: currentQuestion.sentence.replace('（　　）', `<span class="text-primary px-3 italic">（　　）</span>`) }}
+          />
           <p className="text-ghost-grey dark:text-slate-500 text-sm font-bold tracking-[0.1em] uppercase">
-            Select the word that best fits the sentence context.
+            {currentQuestion.sentence_translation}
           </p>
         </div>
 
         <div className="w-full max-w-xl space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-          {options.map((opt, i) => {
-            const isCorrect = opt === correctAnswer;
+          {currentQuestion.options.map((opt: string, i: number) => {
+            const isCorrect = opt === currentQuestion.word;
             const isSelected = selectedIdx === i;
 
             let buttonClass = "group w-full flex items-center justify-between px-8 py-5 rounded-2xl border-2 transition-all duration-300 ";
@@ -199,10 +256,10 @@ const QuizPage: React.FC = () => {
                   Sensei Explains
                 </button>
                 <button
-                  onClick={() => handleFinish(selectedIdx === 1)}
+                  onClick={() => handleNext(currentQuestion.options[selectedIdx!] === currentQuestion.word)}
                   className="flex-1 md:flex-none h-14 px-12 rounded-2xl bg-primary text-white text-sm font-black hover:bg-primary-hover transition-all shadow-xl shadow-primary/30 active:scale-95 flex items-center justify-center gap-2"
                 >
-                  Next
+                  {currentQuestionIdx < questions.length - 1 ? 'Next' : 'Finish'}
                   <span className="material-symbols-outlined !text-xl">arrow_forward</span>
                 </button>
               </div>
