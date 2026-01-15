@@ -61,8 +61,8 @@ const QuizPage: React.FC = () => {
           .from('user_vocabulary_progress')
           .select('vocabulary_id')
           .eq('user_id', user.id)
-          .order('next_review_at', { ascending: true })
-          .limit(goal);
+          .order('next_review_at', { ascending: true });
+        // Limit removed to review all learned items
 
         if (progressData && progressData.length > 0) {
           const ids = progressData.map(p => p.vocabulary_id);
@@ -89,7 +89,7 @@ const QuizPage: React.FC = () => {
       query = query.eq('level', level);
     }
 
-    const { data, error } = await query.limit(goal);
+    const { data, error } = isReview ? await query : await query.limit(goal);
 
     if (data && !error) {
       // Shuffle distractors and include correct answer

@@ -10,6 +10,7 @@ const ProgressPage: React.FC = () => {
   const [stats, setStats] = useState({ kanji: 0, vocab: 0, grammar: 0 });
   const [profile, setProfile] = useState({ streak: 0, completion: 0, level: 'N3' });
   const [dueCount, setDueCount] = useState(0);
+  const [learnedCount, setLearnedCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -55,13 +56,20 @@ const ProgressPage: React.FC = () => {
       });
 
       // Fetch due items count
-      const { count } = await supabase
+      const { count: due } = await supabase
         .from('user_vocabulary_progress')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id)
         .lte('next_review_at', new Date().toISOString());
 
-      setDueCount(count || 0);
+      // Fetch total learned items count
+      const { count: learned } = await supabase
+        .from('user_vocabulary_progress')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+
+      setDueCount(due || 0);
+      setLearnedCount(learned || 0);
 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -132,10 +140,10 @@ const ProgressPage: React.FC = () => {
                 className="w-full max-w-md bg-primary hover:bg-primary-hover text-white shadow-2xl shadow-primary/30 font-black py-4 md:py-6 px-8 md:px-10 rounded-2xl transition-all flex items-center justify-center gap-4 active:scale-95 group"
               >
                 <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">quiz</span>
-                <span className="text-lg md:text-xl">{dueCount > 0 ? `Review ${dueCount} items` : 'Review learned items'}</span>
+                <span className="text-lg md:text-xl">{learnedCount > 0 ? `Review ${learnedCount} items` : 'Start Learning'}</span>
               </button>
               <p className="mt-6 text-[10px] font-black text-ghost-grey dark:text-slate-500 uppercase tracking-[0.2em]">
-                {dueCount > 0 ? `Approx. ${Math.ceil(dueCount * 0.5)} minutes` : 'Review all mastered vocabulary'}
+                {learnedCount > 0 ? `Approx. ${Math.ceil(learnedCount * 0.5)} minutes` : 'No words learned yet'}
               </p>
             </div>
 
