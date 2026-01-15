@@ -84,23 +84,23 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-[960px] px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 w-full max-w-[960px] px-4">
           {categories.map((card, i) => (
             <div
               key={i}
-              className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-white/10 rounded-3xl p-10 flex flex-col items-center transition-all hover:shadow-2xl hover:-translate-y-2 group animate-in fade-in slide-in-from-bottom-8 duration-700"
+              className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-white/10 rounded-[32px] p-8 md:p-10 flex flex-col items-center transition-all hover:shadow-2xl hover:-translate-y-2 group animate-in fade-in slide-in-from-bottom-8 duration-700"
               style={{ animationDelay: `${i * 100}ms` }}
             >
-              <div className="mb-8 text-primary group-hover:scale-125 transition-transform duration-500">
-                <span className="material-symbols-outlined !text-6xl">{card.icon}</span>
+              <div className="mb-6 md:mb-8 text-primary group-hover:scale-125 transition-transform duration-500">
+                <span className="material-symbols-outlined !text-5xl md:text-6xl">{card.icon}</span>
               </div>
-              <h3 className="text-charcoal dark:text-white text-2xl font-black mb-3">{card.title}</h3>
-              <p className="text-ghost-grey dark:text-gray-400 text-center text-sm mb-10 leading-relaxed font-medium">
+              <h3 className="text-charcoal dark:text-white text-xl md:text-2xl font-black mb-2 md:mb-3">{card.title}</h3>
+              <p className="text-ghost-grey dark:text-gray-400 text-center text-xs md:text-sm mb-8 md:mb-10 leading-relaxed font-medium">
                 {card.desc}
               </p>
               <button
                 onClick={() => navigate(card.path)}
-                className="w-full py-4 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-hover transition-all flex items-center justify-center gap-3 shadow-lg shadow-primary/20 active:scale-95"
+                className="w-full py-3.5 md:py-4 bg-primary text-white text-sm font-bold rounded-2xl hover:bg-primary-hover transition-all flex items-center justify-center gap-3 shadow-lg shadow-primary/20 active:scale-95"
               >
                 <span>{card.btn}</span>
                 <span className="material-symbols-outlined !text-xl">arrow_forward</span>

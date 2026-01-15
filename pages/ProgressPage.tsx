@@ -75,11 +75,10 @@ const ProgressPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-5 flex flex-col items-center justify-center p-12 bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl dark:shadow-2xl">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+          <div className="lg:col-span-5 flex flex-col items-center justify-center p-8 md:p-12 bg-white dark:bg-slate-900 rounded-[32px] md:rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl dark:shadow-2xl">
             <div className="relative flex items-center justify-center">
-              {/* Added viewBox for precise coordinate mapping */}
-              <svg className="w-72 h-72 transform -rotate-90" viewBox="0 0 288 288">
+              <svg className="w-64 h-64 md:w-72 md:h-72 transform -rotate-90" viewBox="0 0 288 288">
                 <circle
                   className="text-slate-100 dark:text-slate-800"
                   cx="144"
@@ -103,44 +102,44 @@ const ProgressPage: React.FC = () => {
                 ></circle>
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-6xl font-black text-charcoal dark:text-white tracking-tighter">{profile.completion}%</span>
-                <span className="text-ghost-grey dark:text-slate-500 text-xs font-black uppercase tracking-[0.2em] mt-2">JLPT {profile.level}</span>
+                <span className="text-5xl md:text-6xl font-black text-charcoal dark:text-white tracking-tighter">{profile.completion}%</span>
+                <span className="text-ghost-grey dark:text-slate-500 text-[10px] md:text-xs font-black uppercase tracking-[0.2em] mt-2">JLPT {profile.level}</span>
               </div>
             </div>
-            <div className="mt-10 text-center">
-              <p className="text-charcoal dark:text-white text-xl font-black">Overall Completion</p>
-              <p className="text-ghost-grey dark:text-slate-500 text-sm mt-2 font-medium italic">
+            <div className="mt-8 md:mt-10 text-center">
+              <p className="text-charcoal dark:text-white text-lg md:text-xl font-black">Overall Completion</p>
+              <p className="text-ghost-grey dark:text-slate-500 text-xs md:text-sm mt-2 font-medium italic">
                 {profile.completion >= 100 ? 'Mastered!' : 'Almost there! Keep pushing.'}
               </p>
             </div>
           </div>
 
-          <div className="lg:col-span-7 flex flex-col gap-8">
-            <div className="p-12 bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl dark:shadow-2xl flex flex-col items-center text-center">
-              <h3 className="text-2xl font-black mb-3">Ready for today?</h3>
-              <p className="text-ghost-grey dark:text-slate-500 mb-10 max-w-sm font-medium leading-relaxed">
+          <div className="lg:col-span-7 flex flex-col gap-6 md:gap-8">
+            <div className="p-8 md:p-12 bg-white dark:bg-slate-900 rounded-[32px] md:rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl dark:shadow-2xl flex flex-col items-center text-center">
+              <h3 className="text-xl md:text-2xl font-black mb-2 md:mb-3">Ready for today?</h3>
+              <p className="text-ghost-grey dark:text-slate-500 mb-8 md:mb-10 max-w-sm text-sm md:text-base font-medium leading-relaxed">
                 Consistent daily practice is the key to Japanese language retention.
               </p>
               <button
                 onClick={() => navigate('/quiz')}
-                className="w-full max-w-md bg-primary hover:bg-primary-hover text-white font-black py-6 px-10 rounded-2xl transition-all flex items-center justify-center gap-4 shadow-2xl shadow-primary/30 active:scale-95 group"
+                className="w-full max-w-md bg-primary hover:bg-primary-hover text-white font-black py-4 md:py-6 px-8 md:px-10 rounded-2xl transition-all flex items-center justify-center gap-4 shadow-2xl shadow-primary/30 active:scale-95 group"
               >
                 <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">quiz</span>
-                <span className="text-xl">Review 25 items</span>
+                <span className="text-lg md:text-xl">Review 25 items</span>
               </button>
-              <p className="mt-6 text-xs font-black text-ghost-grey dark:text-slate-500 uppercase tracking-[0.2em]">Approx. 12 minutes</p>
+              <p className="mt-6 text-[10px] font-black text-ghost-grey dark:text-slate-500 uppercase tracking-[0.2em]">Approx. 12 minutes</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
               {[
                 { label: "Kanji", value: stats.kanji.toString(), detail: "Total items", color: "text-emerald-500" },
                 { label: "Vocab", value: (stats.vocab / 1000).toFixed(1) + 'k', detail: "Total items", color: "text-emerald-500" },
                 { label: "Grammar", value: stats.grammar.toString(), detail: "Mastery points", color: "text-slate-400" }
               ].map((s, i) => (
-                <div key={i} className="flex flex-col gap-2 rounded-3xl p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-hover hover:shadow-md">
-                  <p className="text-ghost-grey dark:text-slate-500 text-xs font-black uppercase tracking-widest">{s.label}</p>
-                  <p className="text-3xl font-black text-charcoal dark:text-white">{s.value}</p>
-                  <p className={`${s.color} text-sm font-bold flex items-center gap-1.5`}>
+                <div key={i} className="flex flex-col gap-2 rounded-2xl md:rounded-3xl p-6 md:p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-hover hover:shadow-md">
+                  <p className="text-ghost-grey dark:text-slate-500 text-[10px] font-black uppercase tracking-widest">{s.label}</p>
+                  <p className="text-2xl md:text-3xl font-black text-charcoal dark:text-white">{s.value}</p>
+                  <p className={`${s.color} text-xs font-bold flex items-center gap-1.5`}>
                     {s.detail.includes('+') && <span className="material-symbols-outlined !text-sm">trending_up</span>}
                     {s.detail}
                   </p>
@@ -150,9 +149,9 @@ const ProgressPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-20 pt-12 border-t border-slate-200 dark:border-slate-800">
-          <h4 className="text-sm font-black uppercase tracking-[0.3em] text-ghost-grey dark:text-slate-500 mb-10">JLPT Milestones</h4>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+        <div className="mt-16 md:mt-20 pt-10 md:pt-12 border-t border-slate-200 dark:border-slate-800">
+          <h4 className="text-[10px] md:text-sm font-black uppercase tracking-[0.3em] text-ghost-grey dark:text-slate-500 mb-8 md:mb-10">JLPT Milestones</h4>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-8">
             {[
               { l: "N5", p: "100%", c: "text-emerald-500", b: "bg-emerald-500", w: "100%" },
               { l: "N4", p: "100%", c: "text-emerald-500", b: "bg-emerald-500", w: "100%" },
@@ -160,12 +159,12 @@ const ProgressPage: React.FC = () => {
               { l: "N2", p: "75%", c: "text-primary", b: "bg-primary", w: "75%" },
               { l: "N1", p: "0%", c: "opacity-40", b: "bg-slate-200 dark:bg-slate-700", w: "0%" }
             ].map((m, i) => (
-              <div key={i} className="flex flex-col gap-3 group">
-                <div className={`flex justify-between text-xs font-black uppercase ${m.c}`}>
+              <div key={i} className="flex flex-col gap-2 md:gap-3 group">
+                <div className={`flex justify-between text-[10px] md:text-xs font-black uppercase ${m.c}`}>
                   <span>{m.l}</span>
                   <span>{m.p}</span>
                 </div>
-                <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-black/5 dark:border-white/5">
+                <div className="h-2 md:h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-black/5 dark:border-white/5">
                   <div className={`h-full ${m.b} transition-all duration-1000 group-hover:brightness-110`} style={{ width: m.w }}></div>
                 </div>
               </div>
