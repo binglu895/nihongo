@@ -250,7 +250,8 @@ const QuizPage: React.FC = () => {
                     {(currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word ? 'Splendid!' : 'Not quite...'}
                   </h3>
                   <p className="text-base text-ghost-grey dark:text-slate-400 font-medium">
-                    The correct answer is <span className="font-black text-charcoal dark:text-white underline decoration-emerald-500 decoration-2 underline-offset-4">{currentQuestion.word} ({currentQuestion.reading})</span>.
+                    {preferredLang === 'Chinese' ? '正确答案是' : 'The correct answer is'}{' '}
+                    <span className="font-black text-charcoal dark:text-white underline decoration-emerald-500 decoration-2 underline-offset-4">{currentQuestion.word} ({currentQuestion.reading})</span>.
                   </p>
                 </div>
               </div>

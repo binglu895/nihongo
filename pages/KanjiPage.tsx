@@ -260,13 +260,19 @@ const KanjiPage: React.FC = () => {
                             className="px-8 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-ghost-grey hover:bg-slate-50 dark:hover:bg-slate-800/50 font-black text-sm transition-all flex items-center justify-center gap-2"
                         >
                             <span className="material-symbols-outlined">restart_alt</span>
-                            Clear
+                            {preferredLang === 'Chinese' ? '清除' : 'Clear'}
                         </button>
                         <button
                             onClick={handleCheckAnswer}
                             className={`flex-1 py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/30 ${showAnswer ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-primary hover:bg-primary-hover'} text-white`}
                         >
-                            <span>{showAnswer ? (currentIdx < questions.length - 1 ? 'Next Kanji' : 'Finish') : 'Check Answer'}</span>
+                            <span>
+                                {showAnswer
+                                    ? (currentIdx < questions.length - 1
+                                        ? (preferredLang === 'Chinese' ? '下一题' : 'Next Kanji')
+                                        : (preferredLang === 'Chinese' ? '完成' : 'Finish'))
+                                    : (preferredLang === 'Chinese' ? '检查答案' : 'Check Answer')}
+                            </span>
                             <span className="material-symbols-outlined">{showAnswer ? 'arrow_forward' : 'verified'}</span>
                         </button>
                     </div>
@@ -275,11 +281,14 @@ const KanjiPage: React.FC = () => {
                 <div className="mt-12 flex flex-wrap justify-center gap-6 md:gap-12 text-ghost-grey dark:text-slate-500 italic px-4">
                     <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined !text-base">info</span>
-                        <span className="text-xs md:text-sm font-medium">Draw: <span className="font-black text-charcoal dark:text-white not-italic text-lg ml-1">{currentQuestion.word}</span></span>
+                        <span className="text-xs md:text-sm font-medium">
+                            {preferredLang === 'Chinese' ? '书写:' : 'Draw:'}
+                            <span className="font-black text-charcoal dark:text-white not-italic text-lg ml-1">{currentQuestion.word}</span>
+                        </span>
                     </div>
                     <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined !text-base">lightbulb</span>
-                        <span className="text-xs md:text-sm font-medium">Meaning: {preferredLang === 'Chinese' ? currentQuestion.meaning_zh : currentQuestion.meaning}</span>
+                        <span className="text-xs md:text-sm font-medium">{preferredLang === 'Chinese' ? '含义:' : 'Meaning:'} {preferredLang === 'Chinese' ? currentQuestion.meaning_zh : currentQuestion.meaning}</span>
                     </div>
                 </div>
             </main>
