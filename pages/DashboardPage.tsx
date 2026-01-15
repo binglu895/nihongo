@@ -10,6 +10,8 @@ const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [level, setLevel] = useState<JLPTLevel>('N3');
   const [loading, setLoading] = useState(true);
+  const [dueCount, setDueCount] = useState(0);
+  const [dailyGoal, setDailyGoal] = useState(20);
 
   useEffect(() => {
     fetchProfile();
@@ -22,12 +24,24 @@ const DashboardPage: React.FC = () => {
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('current_level')
+        .select('current_level, daily_goal')
         .eq('id', user.id)
         .single();
 
       if (error) throw error;
-      if (data) setLevel(data.current_level as JLPTLevel);
+      if (data) {
+        setLevel(data.current_level as JLPTLevel);
+        setDailyGoal(data.daily_goal || 20);
+      }
+
+      // Fetch due items count
+      const { count } = await supabase
+        .from('user_vocabulary_progress')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .lte('next_review_at', new Date().toISOString());
+
+      setDueCount(count || 0);
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {
@@ -88,6 +102,35 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
 
+        {/* SRS Review Card */}
+        {dueCount > 0 && (
+          <div className="w-full max-w-[960px] mb-20 animate-in fade-in zoom-in-95 duration-1000">
+            <div className="bg-white dark:bg-slate-900 border-2 border-primary/20 rounded-[48px] p-12 md:p-16 flex flex-col items-center text-center shadow-[0_32px_64px_-16px_rgba(99,102,241,0.2)] dark:shadow-none relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-2 bg-primary"></div>
+              <div className="absolute -top-24 -right-24 size-64 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors duration-700"></div>
+
+              <h2 className="text-4xl md:text-5xl font-black text-charcoal dark:text-white mb-4 tracking-tight">Ready for today?</h2>
+              <p className="text-ghost-grey dark:text-gray-400 text-lg font-medium mb-12 max-w-lg leading-relaxed">
+                Consistent daily practice is the key to Japanese language retention.
+              </p>
+
+              <button
+                onClick={() => navigate('/quiz?mode=review')}
+                className="group relative flex items-center justify-center gap-4 bg-primary text-white font-black py-6 px-12 rounded-[28px] text-xl shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all duration-300"
+              >
+                <div className="size-10 rounded-xl bg-white/20 flex items-center justify-center">
+                  <span className="material-symbols-outlined !text-2xl">fact_check</span>
+                </div>
+                <span>Review {dueCount} items</span>
+              </button>
+
+              <p className="mt-8 text-[10px] font-black text-ghost-grey/60 dark:text-gray-500 uppercase tracking-[0.3em]">
+                APPROX. {Math.ceil(dueCount * 0.5)} MINUTES
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 w-full max-w-[1200px] px-4">
           {categories.map((card, i) => (
             <div
@@ -115,7 +158,7 @@ const DashboardPage: React.FC = () => {
 
         <div className="mt-20 text-ghost-grey dark:text-gray-500 text-sm font-semibold tracking-wide flex items-center gap-3">
           <span className="material-symbols-outlined !text-lg">timer</span>
-          Daily goal: 15 / 30 minutes completed
+          Focus: {level} Proficiency / SRS Priority Mode
         </div>
       </main>
       <Footer />

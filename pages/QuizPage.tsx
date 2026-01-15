@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getExplanation } from '../services/geminiService';
 import { supabase } from '../services/supabaseClient';
 
@@ -15,16 +15,22 @@ const QuizPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentLevel, setCurrentLevel] = useState('N3');
   const [preferredLang, setPreferredLang] = useState('English');
+  const [isReviewMode, setIsReviewMode] = useState(false);
+  const location = useLocation();
 
   React.useEffect(() => {
     const initQuiz = async () => {
       setLoading(true);
+      const params = new URLSearchParams(location.search);
+      const mode = params.get('mode');
+      setIsReviewMode(mode === 'review');
+
       const { level, goal } = await fetchUserLevel();
-      await fetchQuestions(level, goal);
+      await fetchQuestions(level, goal, mode === 'review');
       setLoading(false);
     };
     initQuiz();
-  }, []);
+  }, [location.search]);
 
   const fetchUserLevel = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -44,12 +50,34 @@ const QuizPage: React.FC = () => {
     return { level: 'N3', goal: 20 };
   };
 
-  const fetchQuestions = async (level: string, goal: number) => {
-    const { data, error } = await supabase
-      .from('vocabulary')
-      .select('*')
-      .eq('level', level)
-      .limit(goal);
+  const fetchQuestions = async (level: string, goal: number, isReview: boolean) => {
+    let query = supabase.from('vocabulary').select('*');
+
+    if (isReview) {
+      // Fetch priority due items
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: progressData } = await supabase
+          .from('user_vocabulary_progress')
+          .select('vocabulary_id')
+          .eq('user_id', user.id)
+          .lte('next_review_at', new Date().toISOString())
+          .order('next_review_at', { ascending: true })
+          .limit(goal);
+
+        if (progressData && progressData.length > 0) {
+          const ids = progressData.map(p => p.vocabulary_id);
+          query = query.in('id', ids);
+        } else {
+          // Nothing to review, fallback to normal level practice
+          query = query.eq('level', level);
+        }
+      }
+    } else {
+      query = query.eq('level', level);
+    }
+
+    const { data, error } = await query.limit(goal);
 
     if (data && !error) {
       // Shuffle distractors and include correct answer
@@ -82,11 +110,67 @@ const QuizPage: React.FC = () => {
     setIsExplaining(false);
   };
 
+  const updateSRS = async (isCorrect: boolean) => {
+    if (!currentQuestion) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Fetch existing progress
+    const { data: existing } = await supabase
+      .from('user_vocabulary_progress')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('vocabulary_id', currentQuestion.id)
+      .single();
+
+    let srs_stage = existing?.srs_stage || 0;
+    let ease_factor = existing?.ease_factor || 2.5;
+    let interval = existing?.interval || 0;
+
+    if (isCorrect) {
+      if (srs_stage === 0) {
+        interval = 1;
+      } else if (srs_stage === 1) {
+        interval = 6;
+      } else {
+        interval = Math.round(interval * ease_factor);
+      }
+      srs_stage++;
+      ease_factor = Math.min(2.5, ease_factor + 0.1);
+    } else {
+      srs_stage = 1;
+      interval = 1;
+      ease_factor = Math.max(1.3, ease_factor - 0.2);
+    }
+
+    const next_review_at = new Date();
+    next_review_at.setDate(next_review_at.getDate() + interval);
+
+    const updateData = {
+      user_id: user.id,
+      vocabulary_id: currentQuestion.id,
+      srs_stage,
+      ease_factor,
+      interval,
+      next_review_at: next_review_at.toISOString(),
+      last_reviewed_at: new Date().toISOString(),
+      [isCorrect ? 'correct_count' : 'incorrect_count']: (existing?.[isCorrect ? 'correct_count' : 'incorrect_count'] || 0) + 1
+    };
+
+    if (existing) {
+      await supabase.from('user_vocabulary_progress').update(updateData).eq('id', existing.id);
+    } else {
+      await supabase.from('user_vocabulary_progress').insert(updateData);
+    }
+  };
+
   const handleNext = async (isCorrect: boolean) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Update SRS
+      await updateSRS(isCorrect);
       // Log quiz history
       await supabase.from('quiz_history').insert({
         user_id: user.id,
@@ -168,8 +252,8 @@ const QuizPage: React.FC = () => {
         </div>
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-primary material-symbols-outlined text-3xl">auto_stories</span>
-            <span className="font-black tracking-[0.2em] text-xs uppercase">{currentLevel} Vocabulary</span>
+            <span className="text-primary material-symbols-outlined text-3xl">{isReviewMode ? 'auto_awesome' : 'auto_stories'}</span>
+            <span className="font-black tracking-[0.2em] text-xs uppercase">{isReviewMode ? 'SRS Priority Review' : `${currentLevel} Vocabulary`}</span>
           </div>
           <div className="flex items-center gap-5">
             <span className="text-xs font-black text-ghost-grey dark:text-slate-500 uppercase tracking-widest bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-lg">Item {currentQuestionIdx + 1} / {questions.length}</span>
