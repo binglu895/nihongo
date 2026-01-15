@@ -43,7 +43,10 @@ const DashboardPage: React.FC = () => {
 
       const { error } = await supabase
         .from('profiles')
-        .update({ current_level: newLevel })
+        .update({
+          current_level: newLevel,
+          completion_percentage: 0
+        })
         .eq('id', user.id);
 
       if (error) throw error;
