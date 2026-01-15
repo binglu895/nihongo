@@ -152,23 +152,34 @@ const ProgressPage: React.FC = () => {
         <div className="mt-16 md:mt-20 pt-10 md:pt-12 border-t border-slate-200 dark:border-slate-800">
           <h4 className="text-[10px] md:text-sm font-black uppercase tracking-[0.3em] text-ghost-grey dark:text-slate-500 mb-8 md:mb-10">JLPT Milestones</h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-8">
-            {[
-              { l: "N5", p: "100%", c: "text-emerald-500", b: "bg-emerald-500", w: "100%" },
-              { l: "N4", p: "100%", c: "text-emerald-500", b: "bg-emerald-500", w: "100%" },
-              { l: "N3", p: "100%", c: "text-emerald-500", b: "bg-emerald-500", w: "100%" },
-              { l: "N2", p: "75%", c: "text-primary", b: "bg-primary", w: "75%" },
-              { l: "N1", p: "0%", c: "opacity-40", b: "bg-slate-200 dark:bg-slate-700", w: "0%" }
-            ].map((m, i) => (
-              <div key={i} className="flex flex-col gap-2 md:gap-3 group">
-                <div className={`flex justify-between text-[10px] md:text-xs font-black uppercase ${m.c}`}>
-                  <span>{m.l}</span>
-                  <span>{m.p}</span>
+            {(['N5', 'N4', 'N3', 'N2', 'N1']).map((l, i) => {
+              const levels = ['N5', 'N4', 'N3', 'N2', 'N1'];
+              const currentIdx = levels.indexOf(profile.level);
+              const milestoneIdx = levels.indexOf(l);
+
+              let percentage = 0;
+              if (milestoneIdx < currentIdx) percentage = 100;
+              else if (milestoneIdx === currentIdx) percentage = profile.completion;
+
+              const isCompleted = percentage === 100;
+              const isCurrent = milestoneIdx === currentIdx;
+              const opacity = milestoneIdx > currentIdx ? 'opacity-40' : '';
+
+              return (
+                <div key={l} className={`flex flex-col gap-2 md:gap-3 group ${opacity}`}>
+                  <div className={`flex justify-between text-[10px] md:text-xs font-black uppercase ${isCompleted ? 'text-emerald-500' : isCurrent ? 'text-primary' : 'text-slate-400'}`}>
+                    <span>{l}</span>
+                    <span>{percentage}%</span>
+                  </div>
+                  <div className="h-2 md:h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-black/5 dark:border-white/5">
+                    <div
+                      className={`h-full ${isCompleted ? 'bg-emerald-500' : 'bg-primary'} transition-all duration-1000 group-hover:brightness-110`}
+                      style={{ width: `${percentage}%` }}
+                    ></div>
+                  </div>
                 </div>
-                <div className="h-2 md:h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-black/5 dark:border-white/5">
-                  <div className={`h-full ${m.b} transition-all duration-1000 group-hover:brightness-110`} style={{ width: m.w }}></div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
