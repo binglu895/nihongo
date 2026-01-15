@@ -127,18 +127,16 @@ const ProgressPage: React.FC = () => {
           <div className="lg:col-span-7 flex flex-col gap-6 md:gap-8">
             <div className="p-8 md:p-12 bg-white dark:bg-slate-900 rounded-[32px] md:rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl dark:shadow-2xl flex flex-col items-center text-center">
               <h3 className="text-xl md:text-2xl font-black mb-2 md:mb-3">Ready for today?</h3>
-              <p className="text-ghost-grey dark:text-slate-500 mb-8 md:mb-10 max-w-sm text-sm md:text-base font-medium leading-relaxed">
-                Consistent daily practice is the key to Japanese language retention.
-              </p>
               <button
                 onClick={() => navigate('/quiz?mode=review')}
-                disabled={dueCount === 0}
-                className={`w-full max-w-md ${dueCount === 0 ? 'bg-slate-200 dark:bg-slate-800 cursor-not-allowed text-ghost-grey' : 'bg-primary hover:bg-primary-hover text-white shadow-2xl shadow-primary/30'} font-black py-4 md:py-6 px-8 md:px-10 rounded-2xl transition-all flex items-center justify-center gap-4 active:scale-95 group`}
+                className="w-full max-w-md bg-primary hover:bg-primary-hover text-white shadow-2xl shadow-primary/30 font-black py-4 md:py-6 px-8 md:px-10 rounded-2xl transition-all flex items-center justify-center gap-4 active:scale-95 group"
               >
                 <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">quiz</span>
-                <span className="text-lg md:text-xl">{dueCount > 0 ? `Review ${dueCount} items` : 'No reviews due'}</span>
+                <span className="text-lg md:text-xl">{dueCount > 0 ? `Review ${dueCount} items` : 'Review learned items'}</span>
               </button>
-              <p className="mt-6 text-[10px] font-black text-ghost-grey dark:text-slate-500 uppercase tracking-[0.2em]">Approx. {Math.ceil(dueCount * 0.5)} minutes</p>
+              <p className="mt-6 text-[10px] font-black text-ghost-grey dark:text-slate-500 uppercase tracking-[0.2em]">
+                {dueCount > 0 ? `Approx. ${Math.ceil(dueCount * 0.5)} minutes` : 'Review all mastered vocabulary'}
+              </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">

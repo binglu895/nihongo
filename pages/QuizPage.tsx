@@ -61,7 +61,6 @@ const QuizPage: React.FC = () => {
           .from('user_vocabulary_progress')
           .select('vocabulary_id')
           .eq('user_id', user.id)
-          .lte('next_review_at', new Date().toISOString())
           .order('next_review_at', { ascending: true })
           .limit(goal);
 
