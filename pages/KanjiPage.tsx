@@ -16,6 +16,10 @@ const KanjiPage: React.FC = () => {
         level: "N3"
     });
 
+    const kanjiCount = currentQuestion.targetKanji.length;
+    const squareSize = 240; // Size per square item
+    const canvasWidth = squareSize * kanjiCount;
+
     // Canvas drawing state
     const lastPos = useRef({ x: 0, y: 0 });
 
@@ -25,12 +29,12 @@ const KanjiPage: React.FC = () => {
             const ctx = canvas.getContext('2d');
             if (ctx) {
                 ctx.strokeStyle = '#2d3436';
-                ctx.lineWidth = 8;
+                ctx.lineWidth = 6;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
             }
         }
-    }, []);
+    }, [kanjiCount]);
 
     const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
         setIsDrawing(true);
@@ -58,11 +62,23 @@ const KanjiPage: React.FC = () => {
         const canvas = canvasRef.current;
         if (!canvas) return { x: 0, y: 0 };
         const rect = canvas.getBoundingClientRect();
-        const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
-        const clientY = 'touches' in e ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
+
+        let clientX, clientY;
+        if ('touches' in e && e.touches.length > 0) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = (e as React.MouseEvent).clientX;
+            clientY = (e as React.MouseEvent).clientY;
+        }
+
+        // Precise scaling
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
         return {
-            x: clientX - rect.left,
-            y: clientY - rect.top
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
         };
     };
 
@@ -75,13 +91,13 @@ const KanjiPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background-light dark:bg-background-dark flex flex-col transition-colors duration-300">
+        <div className="min-h-screen bg-background-light dark:bg-background-dark flex flex-col transition-colors duration-300 overflow-x-hidden">
             <Header />
 
-            <main className="flex-grow flex flex-col items-center justify-center px-6 pt-24 pb-12 max-w-4xl mx-auto w-full">
+            <main className="flex-grow flex flex-col items-center justify-center px-6 pt-24 pb-12 w-full">
                 {/* Progress indicator */}
-                <div className="w-full max-w-md mb-12">
-                    <div className="flex justify-between items-center mb-4">
+                <div className="w-full max-w-md mb-8">
+                    <div className="flex justify-between items-center mb-3">
                         <span className="text-[10px] font-black uppercase tracking-widest text-ghost-grey dark:text-slate-500">Practice Session</span>
                         <span className="text-[10px] font-black uppercase tracking-widest text-primary">3 / 15 Kanji</span>
                     </div>
@@ -91,8 +107,8 @@ const KanjiPage: React.FC = () => {
                 </div>
 
                 {/* Question Area */}
-                <div className="w-full text-center mb-12 animate-in fade-in zoom-in-95 duration-500">
-                    <h1 className="text-3xl md:text-5xl font-black leading-[1.4] mb-4 text-charcoal dark:text-white tracking-tight">
+                <div className="w-full text-center mb-10 animate-in fade-in zoom-in-95 duration-500">
+                    <h1 className="text-4xl md:text-6xl font-black leading-[1.4] mb-3 text-charcoal dark:text-white tracking-tight">
                         {currentQuestion.sentence.split('（　　）').map((part, i, arr) => (
                             <React.Fragment key={i}>
                                 {part}
@@ -104,56 +120,72 @@ const KanjiPage: React.FC = () => {
                             </React.Fragment>
                         ))}
                     </h1>
-                    <p className="text-ghost-grey dark:text-slate-500 text-lg font-medium italic">
+                    <p className="text-ghost-grey dark:text-slate-500 text-base md:text-lg font-medium italic">
                         "{currentQuestion.translation}"
                     </p>
                 </div>
 
-                {/* Rice Grid Drawing Area */}
-                <div className="relative group p-4 bg-white dark:bg-slate-900 rounded-[40px] shadow-2xl border border-slate-100 dark:border-slate-800">
-                    <div className="absolute top-8 left-8 z-10">
-                        <span className="text-xs font-black uppercase tracking-widest text-slate-300 dark:text-slate-700">Drawing Board</span>
-                    </div>
+                {/* Dynamic Multi-Kanji Grid */}
+                <div className="w-full flex flex-col items-center">
+                    <div className="max-w-full overflow-x-auto pb-6 px-4 no-scrollbar scroll-smooth">
+                        <div className="inline-block">
+                            <div className="relative p-6 bg-white dark:bg-slate-900 rounded-[48px] shadow-2xl border border-slate-100 dark:border-slate-800 transition-all">
+                                <div
+                                    className="relative flex"
+                                    style={{ width: `${canvasWidth}px`, height: `${squareSize}px` }}
+                                >
+                                    {/* Grid Labels Layer */}
+                                    <div className="absolute top-4 left-4 z-10">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 dark:text-slate-700">Writing Area</span>
+                                    </div>
 
-                    <div className="relative w-[320px] h-[320px] md:w-[400px] md:h-[400px]">
-                        {/* Rice Grid Helper Lines */}
-                        <div className="absolute inset-0 pointer-events-none border-4 border-slate-100 dark:border-slate-800 rounded-2xl">
-                            {/* Horizontal line */}
-                            <div className="absolute top-1/2 left-0 w-full h-[1px] bg-slate-100 dark:bg-slate-800/50"></div>
-                            {/* Vertical line */}
-                            <div className="absolute top-0 left-1/2 w-[1px] h-full bg-slate-100 dark:bg-slate-800/50"></div>
-                            {/* Diagonals */}
-                            <svg className="absolute inset-0 w-full h-full text-slate-50/50 dark:text-slate-800/20" viewBox="0 0 100 100">
-                                <line x1="0" y1="0" x2="100" y2="100" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2" />
-                                <line x1="100" y1="0" x2="0" y2="100" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2" />
-                            </svg>
+                                    {/* Background Grid Layer */}
+                                    <div className="absolute inset-0 flex">
+                                        {currentQuestion.targetKanji.split('').map((_, idx) => (
+                                            <div
+                                                key={idx}
+                                                className={`relative flex-shrink-0 border-r border-slate-100 dark:border-slate-800/50 last:border-r-0`}
+                                                style={{ width: `${squareSize}px`, height: `${squareSize}px` }}
+                                            >
+                                                {/* Rice Grid Helper Lines */}
+                                                <div className="absolute top-1/2 left-0 w-full h-[1px] bg-slate-100 dark:bg-slate-800/30"></div>
+                                                <div className="absolute top-0 left-1/2 w-[1px] h-full bg-slate-100 dark:bg-slate-800/30"></div>
+                                                <svg className="absolute inset-0 w-full h-full text-slate-100 dark:text-slate-800/20" viewBox="0 0 100 100">
+                                                    <line x1="0" y1="0" x2="100" y2="100" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4" />
+                                                    <line x1="100" y1="0" x2="0" y2="100" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4" />
+                                                </svg>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <canvas
+                                        ref={canvasRef}
+                                        width={canvasWidth}
+                                        height={squareSize}
+                                        className="relative z-20 cursor-crosshair touch-none"
+                                        onMouseDown={startDrawing}
+                                        onMouseMove={draw}
+                                        onMouseUp={stopDrawing}
+                                        onMouseLeave={stopDrawing}
+                                        onTouchStart={startDrawing}
+                                        onTouchMove={draw}
+                                        onTouchEnd={stopDrawing}
+                                    />
+                                </div>
+                            </div>
                         </div>
-
-                        <canvas
-                            ref={canvasRef}
-                            width={400}
-                            height={400}
-                            className="relative z-20 w-full h-full cursor-crosshair touch-none"
-                            onMouseDown={startDrawing}
-                            onMouseMove={draw}
-                            onMouseUp={stopDrawing}
-                            onMouseLeave={stopDrawing}
-                            onTouchStart={startDrawing}
-                            onTouchMove={draw}
-                            onTouchEnd={stopDrawing}
-                        />
                     </div>
 
-                    <div className="mt-8 flex gap-4">
+                    <div className="mt-8 flex gap-4 w-full max-w-lg px-4">
                         <button
                             onClick={clearCanvas}
-                            className="flex-1 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-ghost-grey hover:bg-slate-50 dark:hover:bg-slate-800/50 font-black text-sm transition-all flex items-center justify-center gap-2"
+                            className="px-8 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-ghost-grey hover:bg-slate-50 dark:hover:bg-slate-800/50 font-black text-sm transition-all flex items-center justify-center gap-2"
                         >
                             <span className="material-symbols-outlined">restart_alt</span>
                             Clear
                         </button>
                         <button
-                            className="flex-[2] py-4 rounded-2xl bg-primary text-white font-black text-sm hover:bg-primary-hover shadow-xl shadow-primary/30 transition-all flex items-center justify-center gap-2"
+                            className="flex-1 py-4 rounded-2xl bg-primary text-white font-black text-sm hover:bg-primary-hover shadow-xl shadow-primary/30 transition-all flex items-center justify-center gap-2"
                         >
                             Check Answer
                             <span className="material-symbols-outlined">verified</span>
@@ -161,14 +193,14 @@ const KanjiPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="mt-12 flex items-center gap-8 text-ghost-grey dark:text-slate-500 italic">
+                <div className="mt-12 flex flex-wrap justify-center gap-6 md:gap-12 text-ghost-grey dark:text-slate-500 italic px-4">
                     <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-sm">info</span>
-                        <span className="text-xs font-medium">Draw the kanji: <span className="font-black text-charcoal dark:text-white not-italic">{currentQuestion.targetKanji}</span></span>
+                        <span className="material-symbols-outlined !text-base">info</span>
+                        <span className="text-xs md:text-sm font-medium">Draw: <span className="font-black text-charcoal dark:text-white not-italic text-lg ml-1">{currentQuestion.targetKanji}</span></span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-sm">lightbulb</span>
-                        <span className="text-xs font-medium">Meaning: {currentQuestion.kanjiMeaning}</span>
+                        <span className="material-symbols-outlined !text-base">lightbulb</span>
+                        <span className="text-xs md:text-sm font-medium">Meaning: {currentQuestion.kanjiMeaning}</span>
                     </div>
                 </div>
             </main>
