@@ -13,6 +13,7 @@ const KanjiPage: React.FC = () => {
     const [currentIdx, setCurrentIdx] = useState(0);
     const [loading, setLoading] = useState(true);
     const [currentQuestion, setCurrentQuestion] = useState<any>(null);
+    const [preferredLang, setPreferredLang] = useState('English');
 
     // Canvas drawing state
     const lastPos = useRef({ x: 0, y: 0 });
@@ -32,9 +33,11 @@ const KanjiPage: React.FC = () => {
         if (user) {
             const { data } = await supabase
                 .from('profiles')
-                .select('current_level')
+                .select('current_level, preferred_language')
                 .eq('id', user.id)
                 .single();
+            const lang = data?.preferred_language || 'English';
+            setPreferredLang(lang);
             return data?.current_level || 'N3';
         }
         return 'N3';

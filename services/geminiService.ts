@@ -3,14 +3,15 @@ import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || '' });
 
-export const getExplanation = async (question: string, options: string[], correctAnswer: string): Promise<string> => {
+export const getExplanation = async (sentence: string, options: string[], answer: string, language: string = 'English'): Promise<string> => {
   const prompt = `
     Context: Japanese JLPT Study App.
-    Question: "${question}"
+    Language: ${language}
+    Sentence: "${sentence}"
+    Answer: "${answer}"
     Choices: ${options.join(", ")}
-    Correct Answer: "${correctAnswer}"
     
-    Task: Briefly explain why the correct answer is right and why the other common mistakes (like the other choices) are wrong. Keep it concise, educational, and encouraging. Use Markdown. Focus on the nuance between the options.
+    Task: Explain in ${language} why "${answer}" is correct and why other choices might be confusing. Keep it concise, educational, and encouraging. Use Markdown.
   `;
 
   try {
