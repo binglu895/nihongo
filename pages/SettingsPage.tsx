@@ -23,6 +23,7 @@ const SettingsPage: React.FC = () => {
   const [session, setSession] = useState<any>(null);
   const [selectedFont, setSelectedFont] = useState('Outfit');
   const [selectedColor, setSelectedColor] = useState('#6366f1');
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -38,13 +39,14 @@ const SettingsPage: React.FC = () => {
   const fetchProfile = async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('preferred_font, preferred_color')
+      .select('preferred_font, preferred_color, preferred_language')
       .eq('id', userId)
       .single();
 
     if (data && !error) {
       if (data.preferred_font) setSelectedFont(data.preferred_font);
       if (data.preferred_color) setSelectedColor(data.preferred_color);
+      if (data.preferred_language) setSelectedLanguage(data.preferred_language);
     }
   };
 
@@ -59,6 +61,7 @@ const SettingsPage: React.FC = () => {
       .update({
         preferred_font: selectedFont,
         preferred_color: selectedColor,
+        preferred_language: selectedLanguage,
         updated_at: new Date().toISOString(),
       })
       .eq('id', session.user.id);
@@ -156,6 +159,33 @@ const SettingsPage: React.FC = () => {
                   </span>
                 </button>
               ))}
+            </div>
+          </section>
+          {/* Language Section */}
+          <section className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl transition-all">
+            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Preferred Language</h2>
+            <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {['English', 'Chinese'].map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => setSelectedLanguage(lang)}
+                  className={`flex items-center justify-between p-6 rounded-2xl border-2 transition-all group
+                    ${selectedLanguage === lang
+                      ? 'border-primary bg-primary/5'
+                      : 'border-slate-50 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700'}`}
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="material-symbols-outlined text-primary">language</span>
+                    <span className="text-base font-black text-charcoal dark:text-white">{lang}</span>
+                  </div>
+                  {selectedLanguage === lang && (
+                    <span className="material-symbols-outlined text-primary">check_circle</span>
+                  )}
+                </button>
+              ))}
+            </div>
+            <div className="px-8 pb-8">
+              <p className="text-xs text-ghost-grey dark:text-slate-500 font-medium">This language will be used for hints, translations, and AI-powered explanations from Sensei.</p>
             </div>
           </section>
 
