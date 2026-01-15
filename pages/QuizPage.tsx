@@ -19,8 +19,8 @@ const QuizPage: React.FC = () => {
   React.useEffect(() => {
     const initQuiz = async () => {
       setLoading(true);
-      const level = await fetchUserLevel();
-      await fetchQuestions(level);
+      const { level, goal } = await fetchUserLevel();
+      await fetchQuestions(level, goal);
       setLoading(false);
     };
     initQuiz();
@@ -31,24 +31,25 @@ const QuizPage: React.FC = () => {
     if (user) {
       const { data } = await supabase
         .from('profiles')
-        .select('current_level, preferred_language')
+        .select('current_level, preferred_language, daily_goal')
         .eq('id', user.id)
         .single();
       const level = data?.current_level || 'N3';
       const lang = data?.preferred_language || 'English';
+      const goal = data?.daily_goal || 20;
       setCurrentLevel(level);
       setPreferredLang(lang);
-      return level;
+      return { level, goal };
     }
-    return 'N3';
+    return { level: 'N3', goal: 20 };
   };
 
-  const fetchQuestions = async (level: string) => {
+  const fetchQuestions = async (level: string, goal: number) => {
     const { data, error } = await supabase
       .from('vocabulary')
       .select('*')
       .eq('level', level)
-      .limit(20);
+      .limit(goal);
 
     if (data && !error) {
       // Shuffle distractors and include correct answer
