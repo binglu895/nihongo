@@ -129,16 +129,16 @@ const KanjiPage: React.FC = () => {
                 <div className="w-full flex flex-col items-center">
                     <div className="max-w-full overflow-x-auto pb-6 px-4 no-scrollbar scroll-smooth">
                         <div className="inline-block">
-                            <div className="relative p-6 bg-white dark:bg-slate-900 rounded-[48px] shadow-2xl border border-slate-100 dark:border-slate-800 transition-all">
+                            <div className="relative p-10 md:p-14 bg-white dark:bg-slate-900 rounded-[48px] shadow-2xl border border-slate-100 dark:border-slate-800 transition-all">
+                                {/* Grid Label inside card flow */}
+                                <div className="mb-10 pl-1">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-600">Writing Area</span>
+                                </div>
+
                                 <div
                                     className="relative flex"
                                     style={{ width: `${canvasWidth}px`, height: `${squareSize}px` }}
                                 >
-                                    {/* Grid Label Moved Above */}
-                                    <div className="absolute -top-10 left-0">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-600">Writing Area</span>
-                                    </div>
-
                                     {/* Background Grid Layer (Traditional Red Genkouyoushi) */}
                                     <div className="absolute inset-0 flex">
                                         {currentQuestion.targetKanji.split('').map((_, idx) => (
