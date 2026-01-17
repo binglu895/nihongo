@@ -93,18 +93,15 @@ const QuizPage: React.FC = () => {
           const allOptions = [...distractors, gp.title].sort(() => Math.random() - 0.5);
 
           // Create placeholder sentence
-          // Handle '～' in title for replacement
+          // Handle complex titles like 'は/が' or '～なければならない'
           let placeholderSentence = example.sentence;
-          if (gp.title.includes('～')) {
-            const particle = gp.title.replace('～', '');
-            if (particle && example.sentence.includes(particle)) {
-              placeholderSentence = example.sentence.replace(particle, '（　　）');
-            } else {
-              // Fallback: search for a portion or just append if not found (though examples SHOULD contain it)
-              placeholderSentence = example.sentence.replace(gp.title.replace('～', ''), '（　　）');
+          const searchTargets = gp.title.split(/[/／]/).map(t => t.replace('～', '').trim()).filter(Boolean);
+
+          for (const target of searchTargets) {
+            if (placeholderSentence.includes(target)) {
+              placeholderSentence = placeholderSentence.replace(target, '（　　）');
+              break; // Only replace one
             }
-          } else {
-            placeholderSentence = example.sentence.replace(gp.title, '（　　）');
           }
 
           return {
@@ -131,12 +128,11 @@ const QuizPage: React.FC = () => {
         const { data: progressData } = await supabase
           .from('user_vocabulary_progress')
           .select('vocabulary_id')
-          .eq('user_id', user.id)
-          .order('next_review_at', { ascending: true });
+          .eq('user_id', user.id);
 
         if (progressData && progressData.length > 0) {
           const ids = progressData.map(p => p.vocabulary_id);
-          query = query.in('id', ids);
+          query = query.in('id', ids).order('next_review_at', { ascending: true });
         } else {
           query = query.eq('level', level);
         }
@@ -151,10 +147,23 @@ const QuizPage: React.FC = () => {
 
         if (seenData && seenData.length > 0) {
           const seenIds = seenData.map(p => p.vocabulary_id);
-          query = query.not('id', 'in', `(${seenIds.join(',')})`);
+          // Try to get unseen words first
+          const { data: unseen } = await supabase.from('vocabulary')
+            .select('*')
+            .eq('level', level)
+            .not('id', 'in', `(${seenIds.join(',')})`)
+            .limit(goal);
+
+          if (unseen && unseen.length > 0) {
+            setQuestions(unseen.map(q => ({ ...q, options: [...(q.distractors || []), q.word].sort(() => Math.random() - 0.5) })));
+            return;
+          }
+          // If no unseen words, just fetch all for the level to allow repetition/practice
+          query = query.eq('level', level);
+        } else {
+          query = query.eq('level', level);
         }
       }
-      query = query.eq('level', level);
     }
 
     const { data, error } = isReview ? await query : await query.limit(goal);
