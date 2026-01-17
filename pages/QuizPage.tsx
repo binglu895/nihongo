@@ -179,9 +179,7 @@ const QuizPage: React.FC = () => {
     });
 
     setQuestions(isReview ? formatted.sort(() => Math.random() - 0.5) : formatted.sort(() => Math.random() - 0.5).slice(0, goal));
-    if (isReview) {
-      setTotalInitialDue(formatted.length);
-    }
+    setTotalInitialDue(isReview ? formatted.length : Math.min(formatted.length, goal));
   };
 
   const currentQuestion = questions[currentQuestionIdx];
@@ -363,13 +361,11 @@ const QuizPage: React.FC = () => {
       }
 
       if (isCorrect) {
-        if (isReviewMode) {
-          setCorrectlyReviewedIds(prev => {
-            const next = new Set(prev);
-            next.add(currentQuestion.id);
-            return next;
-          });
-        }
+        setCorrectlyReviewedIds(prev => {
+          const next = new Set(prev);
+          next.add(currentQuestion.id);
+          return next;
+        });
       } else {
         // Re-queue incorrect answer for all modes
         setQuestions(prev => [...prev, { ...currentQuestion }]);
@@ -422,7 +418,7 @@ const QuizPage: React.FC = () => {
     <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-slate-100 min-h-screen flex flex-col font-display transition-colors duration-300">
       <header className="fixed top-0 left-0 w-full z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-black/5 dark:border-white/5">
         <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800">
-          <div className="h-full bg-primary transition-all duration-500" style={{ width: `${((currentQuestionIdx + 1) / questions.length) * 100}%` }}></div>
+          <div className="h-full bg-primary transition-all duration-500" style={{ width: `${(correctlyReviewedIds.size / totalInitialDue) * 100}%` }}></div>
         </div>
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -432,21 +428,27 @@ const QuizPage: React.FC = () => {
                 {isReviewMode ? 'SRS Priority Review' : `${currentLevel} ${quizType === 'grammar' ? 'Grammar' : 'Vocabulary'}`}
               </span>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Mastery</span>
+                <span className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Session Mastery</span>
                 <span className="text-xs font-black text-charcoal dark:text-white">
-                  {isReviewMode
-                    ? `${correctlyReviewedIds.size} / ${totalInitialDue}`
-                    : `${overallProgress.learned} / ${overallProgress.total}`}
+                  {correctlyReviewedIds.size} / {totalInitialDue}
                 </span>
               </div>
             </div>
           </div>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="flex items-center justify-center size-10 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-ghost-grey hover:text-red-500 transition-all"
-          >
-            <span className="material-symbols-outlined text-2xl">close</span>
-          </button>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl border border-black/5 dark:border-white/5">
+              <span className="text-[10px] font-black uppercase text-ghost-grey tracking-widest leading-none">Session</span>
+              <span className="text-sm font-black text-primary leading-none">
+                {currentQuestionIdx + 1} / {questions.length}
+              </span>
+            </div>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center justify-center size-10 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-ghost-grey hover:text-red-500 transition-all"
+            >
+              <span className="material-symbols-outlined text-2xl">close</span>
+            </button>
+          </div>
         </div>
       </header>
 
