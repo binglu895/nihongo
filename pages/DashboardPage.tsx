@@ -114,10 +114,10 @@ const DashboardPage: React.FC = () => {
   };
 
   const categories = [
-    { title: "Kanji", icon: "draw", desc: "Master characters.", btn: "开始练习", path: "/kanji", stats: stats.kanji },
-    { title: "Vocabulary", icon: "menu_book", desc: "Build your lexicon.", btn: "开始练习", path: "/quiz", stats: stats.vocabulary },
-    { title: "Grammar", icon: "architecture", desc: "Understand particles.", btn: "开始练习", path: "/quiz?type=grammar", stats: stats.grammar },
-    { title: "Listening", icon: "hearing", desc: "Native audio.", btn: "开始练习", path: "/quiz?type=listening", stats: stats.listening }
+    { title: "Kanji", icon: "draw", desc: "Master characters.", btn: "Start Practice", path: "/kanji", stats: stats.kanji },
+    { title: "Vocabulary", icon: "menu_book", desc: "Build your lexicon.", btn: "Start Practice", path: "/quiz", stats: stats.vocabulary },
+    { title: "Grammar", icon: "architecture", desc: "Understand particles.", btn: "Start Practice", path: "/quiz?type=grammar", stats: stats.grammar },
+    { title: "Listening", icon: "hearing", desc: "Native audio.", btn: "Start Practice", path: "/quiz?type=listening", stats: stats.listening }
   ];
 
   return (
