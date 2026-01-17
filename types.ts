@@ -15,10 +15,31 @@ export interface QuizQuestion {
   explanationPrompt: string;
 }
 
+
 export interface UserStats {
   kanji: number;
-  vocab: string;
+  vocab: number;
   grammar: number;
   streak: number;
   completion: number;
+}
+
+export interface GrammarPoint {
+  id: string;
+  level: JLPTLevel;
+  title: string;
+  reading: string;
+  meaning: string;
+  usage: string;
+  category: string;
+}
+
+export interface GrammarExample {
+  id: string;
+  grammar_point_id: string;
+  sentence: string;
+  reading: string;
+  translation: string;
+  translation_zh: string;
+  difficulty: number;
 }

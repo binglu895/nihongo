@@ -149,17 +149,13 @@ const ProgressPage: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
               {[
-                { label: "Kanji", value: stats.kanji.toString(), detail: "Total items", color: "text-emerald-500" },
-                { label: "Vocab", value: (stats.vocab / 1000).toFixed(1) + 'k', detail: "Total items", color: "text-emerald-500" },
-                { label: "Grammar", value: stats.grammar.toString(), detail: "Mastery points", color: "text-slate-400" }
+                { label: 'Kanji', value: stats.kanji, color: 'text-emerald-500', icon: 'brush' },
+                { label: 'Vocabulary', value: stats.vocab, color: 'text-emerald-500', icon: 'menu_book' },
+                { label: 'Grammar', value: stats.grammar, color: 'text-amber-500', icon: 'architecture' },
               ].map((s, i) => (
                 <div key={i} className="flex flex-col gap-2 rounded-2xl md:rounded-3xl p-6 md:p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-hover hover:shadow-md">
                   <p className="text-ghost-grey dark:text-slate-500 text-[10px] font-black uppercase tracking-widest">{s.label}</p>
                   <p className="text-2xl md:text-3xl font-black text-charcoal dark:text-white">{s.value}</p>
-                  <p className={`${s.color} text-xs font-bold flex items-center gap-1.5`}>
-                    {s.detail.includes('+') && <span className="material-symbols-outlined !text-sm">trending_up</span>}
-                    {s.detail}
-                  </p>
                 </div>
               ))}
             </div>
