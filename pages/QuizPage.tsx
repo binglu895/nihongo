@@ -76,8 +76,6 @@ const QuizPage: React.FC = () => {
       if (data && !error) {
         // Prepare grammar questions
         const formatted = data.map(gp => {
-          // Select an example based on SRS stage or randomness
-          // For now, take a random example from the fetched ones
           const examples = gp.grammar_examples || [];
           const example = examples[Math.floor(Math.random() * examples.length)] || {
             sentence: gp.title,
@@ -85,7 +83,7 @@ const QuizPage: React.FC = () => {
             reading: gp.reading
           };
 
-          // Simple distractors for now: other grammar titles
+          // Simple distractors: other grammar titles
           const distractors = data
             .filter(d => d.id !== gp.id)
             .map(d => d.title)
@@ -94,11 +92,26 @@ const QuizPage: React.FC = () => {
 
           const allOptions = [...distractors, gp.title].sort(() => Math.random() - 0.5);
 
+          // Create placeholder sentence
+          // Handle '～' in title for replacement
+          let placeholderSentence = example.sentence;
+          if (gp.title.includes('～')) {
+            const particle = gp.title.replace('～', '');
+            if (particle && example.sentence.includes(particle)) {
+              placeholderSentence = example.sentence.replace(particle, '（　　）');
+            } else {
+              // Fallback: search for a portion or just append if not found (though examples SHOULD contain it)
+              placeholderSentence = example.sentence.replace(gp.title.replace('～', ''), '（　　）');
+            }
+          } else {
+            placeholderSentence = example.sentence.replace(gp.title, '（　　）');
+          }
+
           return {
             id: gp.id,
-            word: gp.title, // used for check
+            word: gp.title,
             reading: gp.reading,
-            sentence: example.sentence,
+            sentence: placeholderSentence,
             sentence_translation: example.translation,
             sentence_translation_zh: example.translation_zh,
             options: allOptions,
@@ -111,7 +124,52 @@ const QuizPage: React.FC = () => {
     }
 
     let query = supabase.from('vocabulary').select('*');
-    // ... (rest of vocabulary logic stays same)
+
+    if (isReview) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: progressData } = await supabase
+          .from('user_vocabulary_progress')
+          .select('vocabulary_id')
+          .eq('user_id', user.id)
+          .order('next_review_at', { ascending: true });
+
+        if (progressData && progressData.length > 0) {
+          const ids = progressData.map(p => p.vocabulary_id);
+          query = query.in('id', ids);
+        } else {
+          query = query.eq('level', level);
+        }
+      }
+    } else {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: seenData } = await supabase
+          .from('user_vocabulary_progress')
+          .select('vocabulary_id')
+          .eq('user_id', user.id);
+
+        if (seenData && seenData.length > 0) {
+          const seenIds = seenData.map(p => p.vocabulary_id);
+          query = query.not('id', 'in', `(${seenIds.join(',')})`);
+        }
+      }
+      query = query.eq('level', level);
+    }
+
+    const { data, error } = isReview ? await query : await query.limit(goal);
+
+    if (data && !error) {
+      const formatted = data.map(q => {
+        const distractors = Array.isArray(q.distractors) ? q.distractors : [];
+        const allOptions = [...distractors, q.word].sort(() => Math.random() - 0.5);
+        return {
+          ...q,
+          options: allOptions
+        };
+      });
+      setQuestions(formatted);
+    }
   };
 
   const currentQuestion = questions[currentQuestionIdx];
