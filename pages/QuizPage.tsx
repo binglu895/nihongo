@@ -18,6 +18,8 @@ const QuizPage: React.FC = () => {
   const [isReviewMode, setIsReviewMode] = useState(false);
   const [overallProgress, setOverallProgress] = useState({ learned: 0, total: 0 });
   const [quizType, setQuizType] = useState('vocabulary');
+  const [totalInitialDue, setTotalInitialDue] = useState(0);
+  const [correctlyReviewedIds, setCorrectlyReviewedIds] = useState<Set<string>>(new Set());
   const location = useLocation();
 
   // Handwriting canvas state (from KanjiPage)
@@ -166,7 +168,10 @@ const QuizPage: React.FC = () => {
       return q;
     });
 
-    setQuestions(formatted.sort(() => Math.random() - 0.5).slice(0, goal));
+    setQuestions(isReview ? formatted.sort(() => Math.random() - 0.5) : formatted.sort(() => Math.random() - 0.5).slice(0, goal));
+    if (isReview) {
+      setTotalInitialDue(formatted.length);
+    }
   };
 
   const currentQuestion = questions[currentQuestionIdx];
@@ -343,15 +348,26 @@ const QuizPage: React.FC = () => {
         }
       }
 
+      if (isReviewMode) {
+        if (isCorrect) {
+          setCorrectlyReviewedIds(prev => {
+            const next = new Set(prev);
+            next.add(currentQuestion.id);
+            return next;
+          });
+        } else {
+          // Re-queue incorrect answer
+          setQuestions(prev => [...prev, { ...currentQuestion }]);
+        }
+      }
+
       if (currentQuestionIdx < questions.length - 1) {
         setCurrentQuestionIdx(prev => prev + 1);
         setAnswered(false);
         setSelectedIdx(null);
         setExplanation(null);
         setShowKanjiAnswer(false);
-        // Canvas is cleared automatically if we use a key on the container
       } else {
-        // Quiz complete
         handleLevelComplete();
       }
     } catch (error) {
@@ -398,21 +414,20 @@ const QuizPage: React.FC = () => {
               </span>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Mastery</span>
-                <span className="text-xs font-black text-charcoal dark:text-white">{overallProgress.learned} / {overallProgress.total}</span>
+                <span className="text-xs font-black text-charcoal dark:text-white">
+                  {isReviewMode
+                    ? `${correctlyReviewedIds.size} / ${totalInitialDue}`
+                    : `${overallProgress.learned} / ${overallProgress.total}`}
+                </span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-5">
-            <span className="text-xs font-black text-ghost-grey dark:text-slate-500 uppercase tracking-widest bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-black/5 dark:border-white/5 shadow-sm">
-              Session Progress: <span className="text-primary">{currentQuestionIdx + 1}</span> / {questions.length}
-            </span>
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center justify-center size-10 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-ghost-grey hover:text-red-500 transition-all"
-            >
-              <span className="material-symbols-outlined text-2xl">close</span>
-            </button>
-          </div>
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center justify-center size-10 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-ghost-grey hover:text-red-500 transition-all"
+          >
+            <span className="material-symbols-outlined text-2xl">close</span>
+          </button>
         </div>
       </header>
 
@@ -521,66 +536,68 @@ const QuizPage: React.FC = () => {
         )}
       </main>
 
-      {answered && (
-        <div className="fixed bottom-0 left-0 w-full p-6 flex justify-center z-50 animate-in slide-in-from-bottom-full duration-500 cubic-bezier(0.16, 1, 0.3, 1)">
-          <div className="w-full max-w-4xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-[32px] shadow-[0_20px_50px_-20px_rgba(0,0,0,0.3)] p-8 flex flex-col gap-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-6 text-center md:text-left">
-                <div className={`size-16 shrink-0 rounded-full flex items-center justify-center shadow-inner ${((currentQuestion.type === 'kanji' && showKanjiAnswer) || (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word) ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'}`}>
-                  <span className="material-symbols-outlined font-black !text-4xl">
-                    {((currentQuestion.type === 'kanji' && showKanjiAnswer) || (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word) ? 'check_circle' : 'cancel'}
-                  </span>
+      {
+        answered && (
+          <div className="fixed bottom-0 left-0 w-full p-6 flex justify-center z-50 animate-in slide-in-from-bottom-full duration-500 cubic-bezier(0.16, 1, 0.3, 1)">
+            <div className="w-full max-w-4xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-[32px] shadow-[0_20px_50px_-20px_rgba(0,0,0,0.3)] p-8 flex flex-col gap-8">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-6 text-center md:text-left">
+                  <div className={`size-16 shrink-0 rounded-full flex items-center justify-center shadow-inner ${((currentQuestion.type === 'kanji' && showKanjiAnswer) || (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word) ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'}`}>
+                    <span className="material-symbols-outlined font-black !text-4xl">
+                      {((currentQuestion.type === 'kanji' && showKanjiAnswer) || (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word) ? 'check_circle' : 'cancel'}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className={`text-2xl font-black mb-1 ${((currentQuestion.type === 'kanji' && showKanjiAnswer) || (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word) ? 'text-emerald-600' : 'text-red-600'}`}>
+                      {((currentQuestion.type === 'kanji' && showKanjiAnswer) || (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word) ? 'Splendid!' : 'Not quite...'}
+                    </h3>
+                    <p className="text-base text-ghost-grey dark:text-slate-400 font-medium">
+                      {preferredLang === 'Chinese' ? '正确答案是' : 'The correct answer is'}{' '}
+                      <span className="font-black text-charcoal dark:text-white underline decoration-emerald-500 decoration-2 underline-offset-4">{currentQuestion.word} ({currentQuestion.reading})</span>.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className={`text-2xl font-black mb-1 ${((currentQuestion.type === 'kanji' && showKanjiAnswer) || (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word) ? 'text-emerald-600' : 'text-red-600'}`}>
-                    {((currentQuestion.type === 'kanji' && showKanjiAnswer) || (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word) ? 'Splendid!' : 'Not quite...'}
-                  </h3>
-                  <p className="text-base text-ghost-grey dark:text-slate-400 font-medium">
-                    {preferredLang === 'Chinese' ? '正确答案是' : 'The correct answer is'}{' '}
-                    <span className="font-black text-charcoal dark:text-white underline decoration-emerald-500 decoration-2 underline-offset-4">{currentQuestion.word} ({currentQuestion.reading})</span>.
-                  </p>
+                <div className="flex items-center gap-3 w-full md:w-auto">
+                  <button
+                    onClick={handleExplain}
+                    disabled={isExplaining}
+                    className="flex-1 md:flex-none h-14 px-8 rounded-2xl text-sm font-black text-primary border-2 border-primary/20 hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
+                  >
+                    {isExplaining ? <span className="loader border-primary border-t-transparent"></span> : <span className="material-symbols-outlined !text-xl">psychology</span>}
+                    Sensei Explains
+                  </button>
+                  <button
+                    onClick={() => handleNext(currentQuestion.type === 'kanji' ? true : (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word)}
+                    className="flex-1 md:flex-none h-14 px-12 rounded-2xl bg-primary text-white text-sm font-black hover:bg-primary-hover transition-all shadow-xl shadow-primary/30 active:scale-95 flex items-center justify-center gap-2"
+                  >
+                    {currentQuestionIdx < questions.length - 1 ? 'Next' : 'Finish'}
+                    <span className="material-symbols-outlined !text-xl">arrow_forward</span>
+                  </button>
                 </div>
               </div>
-              <div className="flex items-center gap-3 w-full md:w-auto">
-                <button
-                  onClick={handleExplain}
-                  disabled={isExplaining}
-                  className="flex-1 md:flex-none h-14 px-8 rounded-2xl text-sm font-black text-primary border-2 border-primary/20 hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
-                >
-                  {isExplaining ? <span className="loader border-primary border-t-transparent"></span> : <span className="material-symbols-outlined !text-xl">psychology</span>}
-                  Sensei Explains
-                </button>
-                <button
-                  onClick={() => handleNext(currentQuestion.type === 'kanji' ? true : (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word)}
-                  className="flex-1 md:flex-none h-14 px-12 rounded-2xl bg-primary text-white text-sm font-black hover:bg-primary-hover transition-all shadow-xl shadow-primary/30 active:scale-95 flex items-center justify-center gap-2"
-                >
-                  {currentQuestionIdx < questions.length - 1 ? 'Next' : 'Finish'}
-                  <span className="material-symbols-outlined !text-xl">arrow_forward</span>
-                </button>
-              </div>
-            </div>
 
-            {explanation && (
-              <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-6 border border-gray-100 dark:border-white/5 animate-in fade-in slide-in-from-top-4 duration-500">
-                <div className="flex items-center gap-2 mb-4 text-primary">
-                  <span className="material-symbols-outlined">lightbulb</span>
-                  <span className="text-xs font-black uppercase tracking-widest">Sensei's Commentary</span>
+              {explanation && (
+                <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-6 border border-gray-100 dark:border-white/5 animate-in fade-in slide-in-from-top-4 duration-500">
+                  <div className="flex items-center gap-2 mb-4 text-primary">
+                    <span className="material-symbols-outlined">lightbulb</span>
+                    <span className="text-xs font-black uppercase tracking-widest">Sensei's Commentary</span>
+                  </div>
+                  <div className="text-charcoal dark:text-slate-200 prose dark:prose-invert max-w-none text-sm font-medium leading-relaxed">
+                    {explanation.split('\n').map((line, i) => (
+                      <p key={i} className="mb-2" dangerouslySetInnerHTML={{
+                        __html: line
+                          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                      }} />
+                    ))}
+                  </div>
                 </div>
-                <div className="text-charcoal dark:text-slate-200 prose dark:prose-invert max-w-none text-sm font-medium leading-relaxed">
-                  {explanation.split('\n').map((line, i) => (
-                    <p key={i} className="mb-2" dangerouslySetInnerHTML={{
-                      __html: line
-                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    }} />
-                  ))}
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 };
 
