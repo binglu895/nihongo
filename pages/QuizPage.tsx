@@ -123,12 +123,22 @@ const QuizPage: React.FC = () => {
     const now = new Date().toISOString();
 
     for (const config of typeConfigs) {
+      let learnedIds: string[] = [];
+      if (!isReview) {
+        const { data: progressData } = await supabase.from(config.table).select(config.idField).eq('user_id', user.id).gt('correct_count', 0);
+        if (progressData) {
+          learnedIds = progressData.map(p => String(p[config.idField as keyof typeof p]));
+        }
+      }
+
       if (config.type === 'grammar') {
         let query = supabase.from('grammar_points').select('*, grammar_examples(*)').eq('level', level);
         if (isReview) {
           const { data: progress } = await supabase.from(config.table).select(config.idField).eq('user_id', user.id).lte('next_review_at', now);
           if (progress && progress.length > 0) query = query.in('id', progress.map(p => p[config.idField as keyof typeof p]));
           else continue;
+        } else if (learnedIds.length > 0) {
+          query = query.not('id', 'in', `(${learnedIds.join(',')})`);
         }
 
         const { data } = await query.limit(goal);
@@ -153,6 +163,9 @@ const QuizPage: React.FC = () => {
           else continue;
         } else {
           query = query.eq('level', level);
+          if (learnedIds.length > 0) {
+            query = query.not('id', 'in', `(${learnedIds.join(',')})`);
+          }
         }
 
         const { data } = await query.limit(goal);
