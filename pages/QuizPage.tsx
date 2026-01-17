@@ -185,10 +185,55 @@ const QuizPage: React.FC = () => {
   const currentQuestion = questions[currentQuestionIdx];
 
 
-  const handleSelect = (idx: number) => {
+  const handleSelect = async (idx: number) => {
     if (answered) return;
+    const isCorrect = (currentQuestion?.options || [])[idx] === currentQuestion?.word;
     setSelectedIdx(idx);
     setAnswered(true);
+
+    if (isCorrect) {
+      await updateSRS(true);
+      setCorrectlyReviewedIds(prev => {
+        const next = new Set(prev);
+        next.add(currentQuestion.id);
+        return next;
+      });
+    } else {
+      await updateSRS(false);
+      // Re-queue incorrect answer
+      setQuestions(prev => [...prev, { ...currentQuestion }]);
+      setFailedIdsInSession(prev => {
+        const next = new Set(prev);
+        next.add(currentQuestion.id);
+        return next;
+      });
+    }
+
+    // Log quiz history
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase.from('quiz_history').insert({
+        user_id: user.id,
+        level: currentLevel,
+        score: isCorrect ? 1 : 0
+      });
+
+      if (isCorrect) {
+        // Update stats and profile
+        const isGrammar = currentQuestion.type === 'grammar';
+        const statsField = isGrammar ? 'grammar_score' : 'vocab_count';
+        const { data: statsData } = await supabase.from('stats').select(statsField).eq('user_id', user.id).single();
+        if (statsData) {
+          await supabase.from('stats').update({ [statsField]: (statsData[statsField] || 0) + 1 }).eq('user_id', user.id);
+        }
+
+        const { data: profileData } = await supabase.from('profiles').select('completion_percentage').eq('id', user.id).single();
+        if (profileData) {
+          const nextPercentage = Math.min(100, (profileData.completion_percentage || 0) + 1);
+          await supabase.from('profiles').update({ completion_percentage: nextPercentage }).eq('id', user.id);
+        }
+      }
+    }
   };
 
   // Handwriting Canvas Logic
@@ -234,6 +279,17 @@ const QuizPage: React.FC = () => {
     const ctx = canvas?.getContext('2d');
     if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
     setShowKanjiAnswer(false);
+  };
+
+  const handleKanjiCheck = async () => {
+    setShowKanjiAnswer(true);
+    setAnswered(true);
+    await updateSRS(true);
+    setCorrectlyReviewedIds(prev => {
+      const next = new Set(prev);
+      next.add(currentQuestion.id);
+      return next;
+    });
   };
 
   const handleLevelComplete = () => {
@@ -317,65 +373,6 @@ const QuizPage: React.FC = () => {
 
   const handleNext = async (isCorrect: boolean) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Update SRS
-      await updateSRS(isCorrect);
-      // Log quiz history
-      await supabase.from('quiz_history').insert({
-        user_id: user.id,
-        level: currentLevel,
-        score: isCorrect ? 1 : 0
-      });
-
-      // Update stats and progress
-      if (isCorrect) {
-        const isGrammar = currentQuestion.type === 'grammar';
-        const statsField = isGrammar ? 'grammar_score' : 'vocab_count';
-
-        const { data: statsData } = await supabase
-          .from('stats')
-          .select(statsField)
-          .eq('user_id', user.id)
-          .single();
-
-        if (statsData) {
-          await supabase.from('stats').update({
-            [statsField]: (statsData[statsField] || 0) + 1
-          }).eq('user_id', user.id);
-        }
-
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('completion_percentage')
-          .eq('id', user.id)
-          .single();
-
-        if (profileData) {
-          const nextPercentage = Math.min(100, (profileData.completion_percentage || 0) + 1);
-          await supabase.from('profiles').update({
-            completion_percentage: nextPercentage
-          }).eq('id', user.id);
-        }
-      }
-
-      if (isCorrect) {
-        setCorrectlyReviewedIds(prev => {
-          const next = new Set(prev);
-          next.add(currentQuestion.id);
-          return next;
-        });
-      } else {
-        // Re-queue incorrect answer for all modes
-        setQuestions(prev => [...prev, { ...currentQuestion }]);
-        setFailedIdsInSession(prev => {
-          const next = new Set(prev);
-          next.add(currentQuestion.id);
-          return next;
-        });
-      }
-
       if (currentQuestionIdx < questions.length - 1) {
         setCurrentQuestionIdx(prev => prev + 1);
         setAnswered(false);
@@ -386,7 +383,7 @@ const QuizPage: React.FC = () => {
         handleLevelComplete();
       }
     } catch (error) {
-      console.error('Error saving progress:', error);
+      console.error('Error in next:', error);
     }
   };
 
@@ -418,9 +415,9 @@ const QuizPage: React.FC = () => {
     <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-slate-100 min-h-screen flex flex-col font-display transition-colors duration-300">
       <header className="fixed top-0 left-0 w-full z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-black/5 dark:border-white/5">
         <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800">
-          <div className="h-full bg-primary transition-all duration-500" style={{ width: `${(correctlyReviewedIds.size / totalInitialDue) * 100}%` }}></div>
+          <div className="h-full bg-primary transition-all duration-500" style={{ width: `${(overallProgress.learned / overallProgress.total) * 100}%` }}></div>
         </div>
-        <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-primary material-symbols-outlined text-3xl">{isReviewMode ? 'auto_awesome' : 'auto_stories'}</span>
             <div className="flex flex-col">
@@ -428,16 +425,16 @@ const QuizPage: React.FC = () => {
                 {isReviewMode ? 'SRS Priority Review' : `${currentLevel} ${quizType === 'grammar' ? 'Grammar' : 'Vocabulary'}`}
               </span>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Session Mastery</span>
+                <span className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Mastery</span>
                 <span className="text-xs font-black text-charcoal dark:text-white">
-                  {correctlyReviewedIds.size} / {totalInitialDue}
+                  {overallProgress.learned} / {overallProgress.total}
                 </span>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2 bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl border border-black/5 dark:border-white/5">
-              <span className="text-[10px] font-black uppercase text-ghost-grey tracking-widest leading-none">Session</span>
+              <span className="text-[10px] font-black uppercase text-ghost-grey tracking-widest leading-none">Session Progress</span>
               <span className="text-sm font-black text-primary leading-none">
                 {currentQuestionIdx + 1} / {questions.length}
               </span>
@@ -495,7 +492,7 @@ const QuizPage: React.FC = () => {
             {!answered ? (
               <div className="flex gap-4">
                 <button onClick={clearCanvas} className="px-6 py-3 rounded-xl border border-slate-200 text-ghost-grey font-bold">Clear</button>
-                <button onClick={() => { setShowKanjiAnswer(true); setAnswered(true); }} className="px-8 py-3 bg-primary text-white rounded-xl font-bold">Check</button>
+                <button onClick={handleKanjiCheck} className="px-8 py-3 bg-primary text-white rounded-xl font-bold">Check</button>
               </div>
             ) : null}
           </div>
