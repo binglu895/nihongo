@@ -138,7 +138,16 @@ const QuizPage: React.FC = () => {
         const { data } = await query.limit(goal);
         if (data) combinedQuestions.push(...data.map(gp => {
           const ex = (gp.grammar_examples || [])[0] || gp;
-          return { id: gp.id, word: gp.title, reading: gp.reading, sentence: ex.sentence, translation: ex.translation, options: [], type: 'grammar' };
+          return {
+            id: gp.id,
+            word: gp.title,
+            reading: gp.reading,
+            sentence: ex.sentence,
+            sentence_translation: ex.translation,
+            sentence_translation_zh: ex.translation_zh,
+            options: [],
+            type: 'grammar'
+          };
         }));
       } else {
         let query = supabase.from('vocabulary').select('*');
@@ -276,7 +285,7 @@ const QuizPage: React.FC = () => {
       ease_factor = Math.min(2.5, ease_factor + 0.1);
     } else {
       srs_stage = 1;
-      interval = 1;
+      interval = 0; // Immediate re-review
       ease_factor = Math.max(1.3, ease_factor - 0.2);
     }
 
