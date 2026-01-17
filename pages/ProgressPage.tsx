@@ -10,8 +10,12 @@ const ProgressPage: React.FC = () => {
   const [stats, setStats] = useState({ kanji: 0, vocab: 0, grammar: 0 });
   const [profile, setProfile] = useState({ streak: 0, completion: 0, level: 'N3' });
   const [dueCount, setDueCount] = useState(0);
-  const [learnedCount, setLearnedCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [globalStats, setGlobalStats] = useState({
+    kanji: { learned: 0, total: 0 },
+    vocabulary: { learned: 0, total: 0 },
+    grammar: { learned: 0, total: 0 }
+  });
 
   useEffect(() => {
     fetchData();
@@ -62,20 +66,49 @@ const ProgressPage: React.FC = () => {
         .eq('user_id', user.id)
         .lte('next_review_at', new Date().toISOString());
 
-      // Fetch total learned items count
-      const { count: learned } = await supabase
-        .from('user_vocabulary_progress')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
-
       setDueCount(due || 0);
-      setLearnedCount(learned || 0);
+
+      // Fetch Global Stats for ratios
+      await fetchGlobalStats(profileData.current_level, user.id);
 
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchGlobalStats = async (level: string, userId: string) => {
+    // Vocab
+    const { count: vLearned } = await supabase
+      .from('user_vocabulary_progress')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .in('vocabulary_id', (await supabase.from('vocabulary').select('id').eq('level', level)).data?.map(v => v.id) || []);
+
+    const { count: vTotal } = await supabase
+      .from('vocabulary')
+      .select('*', { count: 'exact', head: true })
+      .eq('level', level);
+
+    // Grammar
+    const levelGrammarIds = (await supabase.from('grammar_points').select('id').eq('level', level)).data?.map(g => g.id) || [];
+    const { count: gLearned } = await supabase
+      .from('user_grammar_progress')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .in('grammar_point_id', levelGrammarIds);
+
+    const { count: gTotal } = await supabase
+      .from('grammar_examples')
+      .select('*', { count: 'exact', head: true })
+      .in('grammar_point_id', levelGrammarIds);
+
+    setGlobalStats({
+      kanji: { learned: 0, total: 0 },
+      vocabulary: { learned: vLearned || 0, total: vTotal || 0 },
+      grammar: { learned: gLearned || 0, total: gTotal || 0 }
+    });
   };
 
   return (
@@ -140,22 +173,31 @@ const ProgressPage: React.FC = () => {
                 className="w-full max-w-md bg-primary hover:bg-primary-hover text-white shadow-2xl shadow-primary/30 font-black py-4 md:py-6 px-8 md:px-10 rounded-2xl transition-all flex items-center justify-center gap-4 active:scale-95 group"
               >
                 <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">quiz</span>
-                <span className="text-lg md:text-xl">{learnedCount > 0 ? `Review ${learnedCount} items` : 'Start Learning'}</span>
+                <span className="text-lg md:text-xl">{globalStats.vocabulary.learned > 0 ? `Review ${globalStats.vocabulary.learned} items` : 'Start Learning'}</span>
               </button>
               <p className="mt-6 text-[10px] font-black text-ghost-grey dark:text-slate-500 uppercase tracking-[0.2em]">
-                {learnedCount > 0 ? `Approx. ${Math.ceil(learnedCount * 0.5)} minutes` : 'No words learned yet'}
+                {globalStats.vocabulary.learned > 0 ? `Approx. ${Math.ceil(globalStats.vocabulary.learned * 0.5)} minutes` : 'No words learned yet'}
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
               {[
-                { label: 'Kanji', value: stats.kanji, color: 'text-emerald-500', icon: 'brush' },
-                { label: 'Vocabulary', value: stats.vocab, color: 'text-emerald-500', icon: 'menu_book' },
-                { label: 'Grammar', value: stats.grammar, color: 'text-amber-500', icon: 'architecture' },
+                { label: 'Kanji', stats: globalStats.kanji, color: 'text-emerald-500', icon: 'brush' },
+                { label: 'Vocabulary', stats: globalStats.vocabulary, color: 'text-emerald-500', icon: 'menu_book' },
+                { label: 'Grammar', stats: globalStats.grammar, color: 'text-amber-500', icon: 'architecture' },
               ].map((s, i) => (
                 <div key={i} className="flex flex-col gap-2 rounded-2xl md:rounded-3xl p-6 md:p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-hover hover:shadow-md">
-                  <p className="text-ghost-grey dark:text-slate-500 text-[10px] font-black uppercase tracking-widest">{s.label}</p>
-                  <p className="text-2xl md:text-3xl font-black text-charcoal dark:text-white">{s.value}</p>
+                  <p className="text-ghost-grey dark:text-slate-500 text-[10px] font-black uppercase tracking-widest">{s.label} Mastered</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-2xl md:text-3xl font-black text-charcoal dark:text-white">{s.stats.learned}</p>
+                    <p className="text-sm font-bold text-ghost-grey dark:text-slate-500">/ {s.stats.total}</p>
+                  </div>
+                  <div className="mt-4 h-1.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-primary rounded-full transition-all duration-1000"
+                      style={{ width: `${(s.stats.learned / (s.stats.total || 1)) * 100}%` }}
+                    ></div>
+                  </div>
                 </div>
               ))}
             </div>

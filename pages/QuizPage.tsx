@@ -31,9 +31,7 @@ const QuizPage: React.FC = () => {
 
       const { level, goal } = await fetchUserLevel(type === 'grammar');
       await fetchQuestions(level, goal, mode === 'review', type);
-      if (type === 'grammar') {
-        await fetchGrammarProgress(level);
-      }
+      await fetchGlobalProgress(level, type);
       setLoading(false);
     };
     initQuiz();
@@ -57,29 +55,51 @@ const QuizPage: React.FC = () => {
     return { level: 'N3', goal: 20 };
   };
 
-  const fetchGrammarProgress = async (level: string) => {
+  const fetchGlobalProgress = async (level: string, type: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // Total unique grammar points learned in SRS for this level
-    const { count: learnedCount } = await supabase
-      .from('user_grammar_progress')
-      .select('grammar_point_id', { count: 'exact', head: false })
-      .eq('user_id', user.id)
-      .filter('grammar_point_id', 'in', `(${(await supabase.from('grammar_points').select('id').eq('level', level)).data?.map(p => p.id).join(',')
-        })`);
+    let learnedCount = 0;
+    let totalCount = 0;
 
-    // Total examples available for this level
-    const { count: totalExamples } = await supabase
-      .from('grammar_examples')
-      .select('id', { count: 'exact', head: true })
-      .filter('grammar_point_id', 'in', `(${(await supabase.from('grammar_points').select('id').eq('level', level)).data?.map(p => p.id).join(',')
-        })`);
+    if (type === 'grammar') {
+      // Total unique grammar points learned in SRS for this level
+      const { data: levelPoints } = await supabase.from('grammar_points').select('id').eq('level', level);
+      const levelIds = levelPoints?.map(p => p.id) || [];
 
-    setOverallProgress({
-      learned: learnedCount || 0,
-      total: totalExamples || 0
-    });
+      if (levelIds.length > 0) {
+        const { count } = await supabase
+          .from('user_grammar_progress')
+          .select('grammar_point_id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .in('grammar_point_id', levelIds);
+        learnedCount = count || 0;
+
+        const { count: total } = await supabase
+          .from('grammar_examples')
+          .select('id', { count: 'exact', head: true })
+          .in('grammar_point_id', levelIds);
+        totalCount = total || 0;
+      }
+    } else {
+      // Total unique vocabulary learned in SRS for this level
+      const { count } = await supabase
+        .from('user_vocabulary_progress')
+        .select('vocabulary_id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .in('vocabulary_id',
+          (await supabase.from('vocabulary').select('id').eq('level', level)).data?.map(v => v.id) || []
+        );
+      learnedCount = count || 0;
+
+      const { count: total } = await supabase
+        .from('vocabulary')
+        .select('id', { count: 'exact', head: true })
+        .eq('level', level);
+      totalCount = total || 0;
+    }
+
+    setOverallProgress({ learned: learnedCount, total: totalCount });
   };
 
   const fetchQuestions = async (level: string, goal: number, isReview: boolean, type: string = 'vocabulary') => {
@@ -284,6 +304,8 @@ const QuizPage: React.FC = () => {
       await supabase.from(progressTable).update(updateData).eq('id', existing.id);
     } else {
       await supabase.from(progressTable).insert(updateData);
+      // Increment global learned count if it's a new item
+      setOverallProgress(prev => ({ ...prev, learned: prev.learned + 1 }));
     }
   };
 
@@ -379,34 +401,19 @@ const QuizPage: React.FC = () => {
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-primary material-symbols-outlined text-3xl">{isReviewMode ? 'auto_awesome' : 'auto_stories'}</span>
-            <span className="font-black tracking-[0.2em] text-[10px] md:text-xs uppercase flex items-center gap-1.5">
-              {isReviewMode ? (
-                <span className="relative inline-block">
-                  <span className="relative z-10">SRS Priority Review</span>
-                  <span className="absolute inset-x-0 bottom-0 top-1/2 bg-yellow-400 dark:bg-yellow-500/40 -rotate-1 -z-0 rounded-sm"></span>
-                </span>
-              ) : (
-                <>
-                  <span className="text-ghost-grey">{currentLevel}</span>
-                  <span className="relative inline-block ml-1">
-                    <span className="relative z-10 text-charcoal dark:text-white px-1">
-                      {quizType === 'grammar' ? 'Grammar' : 'Vocabulary'}
-                    </span>
-                    <span className="absolute inset-x-0 bottom-0.5 top-0 bg-yellow-300 dark:bg-yellow-500/60 -rotate-2 -z-0 rounded-sm opacity-80"></span>
-                  </span>
-                </>
-              )}
-            </span>
+            <div className="flex flex-col">
+              <span className="font-black tracking-[0.2em] text-[10px] uppercase text-ghost-grey dark:text-slate-500">
+                {isReviewMode ? 'SRS Priority Review' : `${currentLevel} ${quizType === 'grammar' ? 'Grammar' : 'Vocabulary'}`}
+              </span>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Mastery</span>
+                <span className="text-xs font-black text-charcoal dark:text-white">{overallProgress.learned} / {overallProgress.total}</span>
+              </div>
+            </div>
           </div>
           <div className="flex items-center gap-5">
-            {quizType === 'grammar' && (
-              <div className="hidden md:flex items-center gap-2 px-4 py-1.5 bg-primary/5 rounded-full">
-                <span className="text-[10px] font-black uppercase text-primary tracking-widest">Global Mastered</span>
-                <span className="text-sm font-black text-primary">{overallProgress.learned} / {overallProgress.total}</span>
-              </div>
-            )}
-            <span className="text-xs font-black text-ghost-grey dark:text-slate-500 uppercase tracking-widest bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-lg">
-              Item {currentQuestionIdx + 1} / <span className="text-primary">{questions.length}</span>
+            <span className="text-xs font-black text-ghost-grey dark:text-slate-500 uppercase tracking-widest bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-black/5 dark:border-white/5 shadow-sm">
+              Session Progress: <span className="text-primary">{currentQuestionIdx + 1}</span> / {questions.length}
             </span>
             <button
               onClick={() => navigate('/dashboard')}

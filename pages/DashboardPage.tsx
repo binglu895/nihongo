@@ -12,6 +12,11 @@ const DashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [dueCount, setDueCount] = useState(0);
   const [dailyGoal, setDailyGoal] = useState(20);
+  const [stats, setStats] = useState({
+    kanji: { learned: 0, total: 0 },
+    vocabulary: { learned: 0, total: 0 },
+    grammar: { learned: 0, total: 0 }
+  });
 
   useEffect(() => {
     fetchProfile();
@@ -42,11 +47,48 @@ const DashboardPage: React.FC = () => {
         .lte('next_review_at', new Date().toISOString());
 
       setDueCount(count || 0);
+
+      // Fetch Global Progress
+      await fetchGlobalStats(data?.current_level || 'N3', user.id);
+
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchGlobalStats = async (currentLevel: string, userId: string) => {
+    // Vocational Stats
+    const { count: vocabLearned } = await supabase
+      .from('user_vocabulary_progress')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .in('vocabulary_id', (await supabase.from('vocabulary').select('id').eq('level', currentLevel)).data?.map(v => v.id) || []);
+
+    const { count: vocabTotal } = await supabase
+      .from('vocabulary')
+      .select('*', { count: 'exact', head: true })
+      .eq('level', currentLevel);
+
+    // Grammar Stats
+    const levelGrammarIds = (await supabase.from('grammar_points').select('id').eq('level', currentLevel)).data?.map(g => g.id) || [];
+    const { count: grammarLearned } = await supabase
+      .from('user_grammar_progress')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .in('grammar_point_id', levelGrammarIds);
+
+    const { count: grammarTotal } = await supabase
+      .from('grammar_examples')
+      .select('*', { count: 'exact', head: true })
+      .in('grammar_point_id', levelGrammarIds);
+
+    setStats({
+      kanji: { learned: 0, total: 0 }, // Future expansion
+      vocabulary: { learned: vocabLearned || 0, total: vocabTotal || 0 },
+      grammar: { learned: grammarLearned || 0, total: grammarTotal || 0 }
+    });
   };
 
   const updateLevel = async (newLevel: JLPTLevel) => {
@@ -70,10 +112,10 @@ const DashboardPage: React.FC = () => {
   };
 
   const categories = [
-    { title: "Kanji", icon: "draw", desc: "Master the brush strokes and meanings of essential characters.", btn: "Start Kanji", path: "/kanji" },
-    { title: "Vocabulary", icon: "menu_book", desc: "Build your lexicon with core words for your level.", btn: "Start Practice", path: "/quiz" },
-    { title: "Grammar", icon: "architecture", desc: "Build complex structures and understand particle usage.", btn: "Start Learning", path: "/quiz?type=grammar" },
-    { title: "Listening", icon: "hearing", desc: "Improve comprehension with native audio exercises.", btn: "Start Session", path: "/quiz" }
+    { title: "Kanji", icon: "draw", desc: "Master characters.", btn: "Start Kanji", path: "/kanji", stats: stats.kanji },
+    { title: "Vocabulary", icon: "menu_book", desc: "Build your lexicon.", btn: "Start Practice", path: "/quiz", stats: stats.vocabulary },
+    { title: "Grammar", icon: "architecture", desc: "Understand particles.", btn: "Start Learning", path: "/quiz?type=grammar", stats: stats.grammar },
+    { title: "Listening", icon: "hearing", desc: "Native audio.", btn: "Start Session", path: "/quiz" }
   ];
 
   return (
@@ -142,6 +184,12 @@ const DashboardPage: React.FC = () => {
                 <span className="material-symbols-outlined !text-5xl md:text-6xl">{card.icon}</span>
               </div>
               <h3 className="text-charcoal dark:text-white text-xl md:text-2xl font-black mb-2 md:mb-3">{card.title}</h3>
+              {card.stats && (
+                <div className="flex items-center gap-2 mb-4 bg-gray-50 dark:bg-white/5 px-4 py-1.5 rounded-full border border-gray-100 dark:border-white/5">
+                  <span className="text-[10px] font-black uppercase text-ghost-grey tracking-widest">Mastery</span>
+                  <span className="text-xs font-black text-primary">{card.stats.learned} / {card.stats.total}</span>
+                </div>
+              )}
               <p className="text-ghost-grey dark:text-gray-400 text-center text-xs md:text-sm mb-8 md:mb-10 leading-relaxed font-medium">
                 {card.desc}
               </p>
