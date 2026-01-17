@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getExplanation } from '../services/geminiService';
 import { supabase } from '../services/supabaseClient';
+import { addXP, XP_VALUES } from '../services/gamificationService';
 
 const QuizPage: React.FC = () => {
   const navigate = useNavigate();
@@ -21,6 +22,9 @@ const QuizPage: React.FC = () => {
   const [totalInitialDue, setTotalInitialDue] = useState(0);
   const [correctlyReviewedIds, setCorrectlyReviewedIds] = useState<Set<string>>(new Set());
   const [failedIdsInSession, setFailedIdsInSession] = useState<Set<string>>(new Set());
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [lastGainedXP, setLastGainedXP] = useState<number | null>(null);
+  const [showLevelUp, setShowLevelUp] = useState(false);
   const location = useLocation();
 
   // Handwriting canvas state (from KanjiPage)
@@ -51,7 +55,7 @@ const QuizPage: React.FC = () => {
     if (user) {
       const { data } = await supabase
         .from('profiles')
-        .select('current_level, preferred_language, daily_goal, daily_grammar_goal')
+        .select('current_level, preferred_language, daily_goal, daily_grammar_goal, streak')
         .eq('id', user.id)
         .single();
       const level = data?.current_level || 'N3';
@@ -59,6 +63,7 @@ const QuizPage: React.FC = () => {
       const goal = isGrammar ? (data?.daily_grammar_goal || 10) : (data?.daily_goal || 20);
       setCurrentLevel(level);
       setPreferredLang(lang);
+      setCurrentStreak(data?.streak || 0);
       return { level, goal };
     }
     return { level: 'N3', goal: 20 };
@@ -206,6 +211,19 @@ const QuizPage: React.FC = () => {
         next.add(currentQuestion.id);
         return next;
       });
+      // Award XP
+      const xpCategoryMap: Record<string, keyof typeof XP_VALUES> = {
+        'vocabulary': 'VOCABULARY',
+        'grammar': 'GRAMMAR',
+        'kanji': 'KANJI',
+        'listening': 'LISTENING'
+      };
+      const category = xpCategoryMap[quizType] || 'VOCABULARY';
+      const result = await addXP(category, currentStreak);
+      if (result) {
+        setLastGainedXP(result.xpGained);
+        if (result.newLevel) setShowLevelUp(true);
+      }
     } else {
       await updateSRS(false);
       // Re-queue incorrect answer
@@ -298,6 +316,15 @@ const QuizPage: React.FC = () => {
       next.add(currentQuestion.id);
       return next;
     });
+    // Award XP
+    const xpCategoryMap: Record<string, keyof typeof XP_VALUES> = {
+      'vocabulary': 'VOCABULARY',
+      'grammar': 'GRAMMAR',
+      'kanji': 'KANJI',
+      'listening': 'LISTENING'
+    };
+    const category = xpCategoryMap[quizType] || 'VOCABULARY';
+    addXP(category, currentStreak);
   };
 
   const handleLevelComplete = () => {
@@ -393,6 +420,8 @@ const QuizPage: React.FC = () => {
         setSelectedIdx(null);
         setExplanation(null);
         setShowKanjiAnswer(false);
+        setLastGainedXP(null);
+        setShowLevelUp(false);
       } else {
         handleLevelComplete();
       }
@@ -582,6 +611,7 @@ const QuizPage: React.FC = () => {
                   <div>
                     <h3 className={`text-2xl font-black mb-1 ${((currentQuestion.type === 'kanji' && showKanjiAnswer) || (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word) ? 'text-emerald-600' : 'text-red-600'}`}>
                       {((currentQuestion.type === 'kanji' && showKanjiAnswer) || (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word) ? 'Splendid!' : 'Not quite...'}
+                      {lastGainedXP && <span className="ml-3 px-2 py-0.5 bg-amber-100 text-amber-600 text-sm rounded-lg animate-bounce inline-block">+{lastGainedXP} XP</span>}
                     </h3>
                     <p className="text-base text-ghost-grey dark:text-slate-400 font-medium">
                       {preferredLang === 'Chinese' ? '正确答案是' : 'The correct answer is'}{' '}
@@ -629,6 +659,16 @@ const QuizPage: React.FC = () => {
           </div>
         )
       }
+
+      {showLevelUp && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] bg-gradient-to-r from-amber-400 to-orange-500 text-white px-8 py-4 rounded-[32px] shadow-2xl animate-in slide-in-from-top-full duration-500 font-black flex items-center gap-4 border-4 border-white">
+          <span className="material-symbols-outlined !text-4xl text-white fill-white">military_tech</span>
+          <div className="flex flex-col">
+            <span className="text-xs uppercase tracking-widest opacity-80">Achievement Unlocked</span>
+            <span className="text-xl">Level Up! You're getting stronger.</span>
+          </div>
+        </div>
+      )}
     </div >
   );
 };

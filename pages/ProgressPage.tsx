@@ -3,7 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import ShareCard from '../components/ShareCard';
+import Leaderboard from '../components/Leaderboard';
 import { supabase } from '../services/supabaseClient';
+import { getReferralInfo, generateShareLink, getDailyStatsSnapshot } from '../services/sharingService';
 
 const ProgressPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,6 +18,11 @@ const ProgressPage: React.FC = () => {
     kanji: { learned: 0, total: 0 },
     vocabulary: { learned: 0, total: 0 },
     grammar: { learned: 0, total: 0 }
+  });
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareData, setShareData] = useState({
+    referralLink: '',
+    todayStats: { reviews: 0, streak: 0, level: 1, completion: 0 }
   });
 
   useEffect(() => {
@@ -58,6 +66,22 @@ const ProgressPage: React.FC = () => {
         vocab: statsData.vocab_count,
         grammar: statsData.grammar_score
       });
+
+      // Fetch sharing/referral info
+      const refInfo = await getReferralInfo();
+      const dailySnapshot = await getDailyStatsSnapshot(user.id);
+
+      if (refInfo) {
+        setShareData({
+          referralLink: generateShareLink(refInfo.code),
+          todayStats: {
+            reviews: dailySnapshot.reviews,
+            streak: profileData.streak,
+            level: (profileData as any).level || 1,
+            completion: profileData.completion_percentage
+          }
+        });
+      }
 
       // Fetch due items count from all categories
       const now = new Date().toISOString();
@@ -206,6 +230,52 @@ const ProgressPage: React.FC = () => {
           </div>
         </div>
 
+        <div className="mt-16 grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-7">
+            <Leaderboard />
+          </div>
+          <div className="lg:col-span-5 flex flex-col gap-8">
+            <div className="p-10 bg-gradient-to-br from-primary to-indigo-600 rounded-[40px] text-white shadow-2xl shadow-primary/30 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-8 opacity-10 transform group-hover:scale-125 transition-transform duration-500">
+                <span className="material-symbols-outlined !text-9xl">share</span>
+              </div>
+              <h3 className="text-3xl font-black mb-4">Share the Mastery</h3>
+              <p className="text-white/80 font-medium mb-8 leading-relaxed">
+                Invite fellow Senseis to the journey. Unlock exclusive themes and badges for every milestone.
+              </p>
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="w-full py-4 bg-white text-primary rounded-2xl font-black shadow-lg hover:bg-slate-50 transition-all active:scale-95"
+              >
+                Generate Share Card
+              </button>
+            </div>
+
+            <div className="p-10 bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="material-symbols-outlined text-amber-500">verified</span>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-ghost-grey">Recently Unlocked</p>
+              </div>
+              <div className="flex flex-wrap gap-4">
+                {[
+                  { icon: 'fire_extinguisher', label: '7 Day Streak' },
+                  { icon: 'auto_stories', label: 'Vocab Master' },
+                  { icon: 'new_releases', label: 'Early Adopter' }
+                ].map((badge, i) => (
+                  <div key={i} className="group relative">
+                    <div className="size-16 rounded-2xl bg-slate-50 dark:bg-white/5 flex items-center justify-center border border-slate-100 dark:border-white/5 group-hover:border-primary transition-colors">
+                      <span className="material-symbols-outlined text-ghost-grey group-hover:text-primary">{badge.icon}</span>
+                    </div>
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-charcoal text-white text-[8px] px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      {badge.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="mt-16 md:mt-20 pt-10 md:pt-12 border-t border-slate-200 dark:border-slate-800">
           <h4 className="text-[10px] md:text-sm font-black uppercase tracking-[0.3em] text-ghost-grey dark:text-slate-500 mb-8 md:mb-10">JLPT Milestones</h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-8">
@@ -240,9 +310,15 @@ const ProgressPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {showShareModal && (
+        <ShareCard
+          stats={shareData.todayStats}
+          referralLink={shareData.referralLink}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
       <Footer />
     </div>
   );
 };
-
-export default ProgressPage;
