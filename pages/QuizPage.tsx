@@ -16,6 +16,8 @@ const QuizPage: React.FC = () => {
   const [currentLevel, setCurrentLevel] = useState('N3');
   const [preferredLang, setPreferredLang] = useState('English');
   const [isReviewMode, setIsReviewMode] = useState(false);
+  const [overallProgress, setOverallProgress] = useState({ learned: 0, total: 0 });
+  const [quizType, setQuizType] = useState('vocabulary');
   const location = useLocation();
 
   React.useEffect(() => {
@@ -24,31 +26,60 @@ const QuizPage: React.FC = () => {
       const params = new URLSearchParams(location.search);
       const mode = params.get('mode');
       const type = params.get('type') || 'vocabulary';
+      setQuizType(type);
       setIsReviewMode(mode === 'review');
 
-      const { level, goal } = await fetchUserLevel();
+      const { level, goal } = await fetchUserLevel(type === 'grammar');
       await fetchQuestions(level, goal, mode === 'review', type);
+      if (type === 'grammar') {
+        await fetchGrammarProgress(level);
+      }
       setLoading(false);
     };
     initQuiz();
   }, [location.search]);
 
-  const fetchUserLevel = async () => {
+  const fetchUserLevel = async (isGrammar: boolean = false) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const { data } = await supabase
         .from('profiles')
-        .select('current_level, preferred_language, daily_goal')
+        .select('current_level, preferred_language, daily_goal, daily_grammar_goal')
         .eq('id', user.id)
         .single();
       const level = data?.current_level || 'N3';
       const lang = data?.preferred_language || 'English';
-      const goal = data?.daily_goal || 20;
+      const goal = isGrammar ? (data?.daily_grammar_goal || 10) : (data?.daily_goal || 20);
       setCurrentLevel(level);
       setPreferredLang(lang);
       return { level, goal };
     }
     return { level: 'N3', goal: 20 };
+  };
+
+  const fetchGrammarProgress = async (level: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Total unique grammar points learned in SRS for this level
+    const { count: learnedCount } = await supabase
+      .from('user_grammar_progress')
+      .select('grammar_point_id', { count: 'exact', head: false })
+      .eq('user_id', user.id)
+      .filter('grammar_point_id', 'in', `(${(await supabase.from('grammar_points').select('id').eq('level', level)).data?.map(p => p.id).join(',')
+        })`);
+
+    // Total examples available for this level
+    const { count: totalExamples } = await supabase
+      .from('grammar_examples')
+      .select('id', { count: 'exact', head: true })
+      .filter('grammar_point_id', 'in', `(${(await supabase.from('grammar_points').select('id').eq('level', level)).data?.map(p => p.id).join(',')
+        })`);
+
+    setOverallProgress({
+      learned: learnedCount || 0,
+      total: totalExamples || 0
+    });
   };
 
   const fetchQuestions = async (level: string, goal: number, isReview: boolean, type: string = 'vocabulary') => {
@@ -348,10 +379,35 @@ const QuizPage: React.FC = () => {
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-primary material-symbols-outlined text-3xl">{isReviewMode ? 'auto_awesome' : 'auto_stories'}</span>
-            <span className="font-black tracking-[0.2em] text-xs uppercase">{isReviewMode ? 'SRS Priority Review' : `${currentLevel} Vocabulary`}</span>
+            <span className="font-black tracking-[0.2em] text-[10px] md:text-xs uppercase flex items-center gap-1.5">
+              {isReviewMode ? (
+                <span className="relative inline-block">
+                  <span className="relative z-10">SRS Priority Review</span>
+                  <span className="absolute inset-x-0 bottom-0 top-1/2 bg-yellow-400 dark:bg-yellow-500/40 -rotate-1 -z-0 rounded-sm"></span>
+                </span>
+              ) : (
+                <>
+                  <span className="text-ghost-grey">{currentLevel}</span>
+                  <span className="relative inline-block ml-1">
+                    <span className="relative z-10 text-charcoal dark:text-white px-1">
+                      {quizType === 'grammar' ? 'Grammar' : 'Vocabulary'}
+                    </span>
+                    <span className="absolute inset-x-0 bottom-0.5 top-0 bg-yellow-300 dark:bg-yellow-500/60 -rotate-2 -z-0 rounded-sm opacity-80"></span>
+                  </span>
+                </>
+              )}
+            </span>
           </div>
           <div className="flex items-center gap-5">
-            <span className="text-xs font-black text-ghost-grey dark:text-slate-500 uppercase tracking-widest bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-lg">Item {currentQuestionIdx + 1} / {questions.length}</span>
+            {quizType === 'grammar' && (
+              <div className="hidden md:flex items-center gap-2 px-4 py-1.5 bg-primary/5 rounded-full">
+                <span className="text-[10px] font-black uppercase text-primary tracking-widest">Global Mastered</span>
+                <span className="text-sm font-black text-primary">{overallProgress.learned} / {overallProgress.total}</span>
+              </div>
+            )}
+            <span className="text-xs font-black text-ghost-grey dark:text-slate-500 uppercase tracking-widest bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-lg">
+              Item {currentQuestionIdx + 1} / <span className="text-primary">{questions.length}</span>
+            </span>
             <button
               onClick={() => navigate('/dashboard')}
               className="flex items-center justify-center size-10 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-ghost-grey hover:text-red-500 transition-all"

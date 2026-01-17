@@ -25,6 +25,7 @@ const SettingsPage: React.FC = () => {
   const [selectedColor, setSelectedColor] = useState('#6366f1');
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [dailyGoal, setDailyGoal] = useState(20);
+  const [dailyGrammarGoal, setDailyGrammarGoal] = useState(10);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -40,7 +41,7 @@ const SettingsPage: React.FC = () => {
   const fetchProfile = async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('preferred_font, preferred_color, preferred_language, daily_goal')
+      .select('preferred_font, preferred_color, preferred_language, daily_goal, daily_grammar_goal')
       .eq('id', userId)
       .single();
 
@@ -49,6 +50,7 @@ const SettingsPage: React.FC = () => {
       if (data.preferred_color) setSelectedColor(data.preferred_color);
       if (data.preferred_language) setSelectedLanguage(data.preferred_language);
       if (data.daily_goal) setDailyGoal(data.daily_goal);
+      if (data.daily_grammar_goal) setDailyGrammarGoal(data.daily_grammar_goal);
     }
   };
 
@@ -65,6 +67,7 @@ const SettingsPage: React.FC = () => {
         preferred_color: selectedColor,
         preferred_language: selectedLanguage,
         daily_goal: dailyGoal,
+        daily_grammar_goal: dailyGrammarGoal,
         updated_at: new Date().toISOString(),
       })
       .eq('id', session.user.id);
@@ -95,15 +98,15 @@ const SettingsPage: React.FC = () => {
             <p className="text-ghost-grey dark:text-slate-400 text-lg font-medium">Personalize your JLPT learning experience.</p>
           </div>
 
-          {/* Study Goal Section */}
+          {/* Vocabulary Daily Goal */}
           <section className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl transition-all">
-            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Daily Study Goal</h2>
+            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Vocabulary Study Goal</h2>
             <div className="p-8">
               <div className="flex flex-col gap-6">
                 <div className="flex justify-between items-end">
                   <div className="flex flex-col gap-1">
                     <span className="text-sm font-black text-charcoal dark:text-white">Items per Session</span>
-                    <span className="text-xs text-ghost-grey dark:text-slate-500 font-medium">How many words/kanji to practice in one sitting.</span>
+                    <span className="text-xs text-ghost-grey dark:text-slate-500 font-medium">How many words to practice in one sitting.</span>
                   </div>
                   <span className="text-4xl font-black text-primary">{dailyGoal}</span>
                 </div>
@@ -114,6 +117,36 @@ const SettingsPage: React.FC = () => {
                       onClick={() => setDailyGoal(goal)}
                       className={`py-4 rounded-2xl border-2 font-black transition-all
                         ${dailyGoal === goal
+                          ? 'border-primary bg-primary/5 text-primary'
+                          : 'border-slate-50 dark:border-slate-800 text-ghost-grey dark:text-slate-500 hover:border-slate-200 dark:hover:border-slate-700'}`}
+                    >
+                      {goal}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Grammar Daily Goal */}
+          <section className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl transition-all">
+            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Grammar Study Goal</h2>
+            <div className="p-8">
+              <div className="flex flex-col gap-6">
+                <div className="flex justify-between items-end">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm font-black text-charcoal dark:text-white">Items per Session</span>
+                    <span className="text-xs text-ghost-grey dark:text-slate-500 font-medium">How many grammar points to practice in one sitting.</span>
+                  </div>
+                  <span className="text-4xl font-black text-primary">{dailyGrammarGoal}</span>
+                </div>
+                <div className="grid grid-cols-4 gap-4">
+                  {[5, 10, 20, 30].map((goal) => (
+                    <button
+                      key={goal}
+                      onClick={() => setDailyGrammarGoal(goal)}
+                      className={`py-4 rounded-2xl border-2 font-black transition-all
+                        ${dailyGrammarGoal === goal
                           ? 'border-primary bg-primary/5 text-primary'
                           : 'border-slate-50 dark:border-slate-800 text-ghost-grey dark:text-slate-500 hover:border-slate-200 dark:hover:border-slate-700'}`}
                     >
