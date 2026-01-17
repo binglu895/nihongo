@@ -66,22 +66,33 @@ const PublicProfilePage: React.FC = () => {
                     <h2 className="text-ghost-grey text-xs font-black uppercase tracking-[0.2em] mb-2 text-center">Mastery Profile</h2>
                     <h3 className="text-3xl font-black text-charcoal dark:text-white mb-8">Legendary Sensei</h3>
 
-                    <div className="grid grid-cols-2 gap-4 mb-10">
-                        <div className="p-6 bg-slate-50 dark:bg-white/5 rounded-3xl border border-slate-100 dark:border-white/5">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-ghost-grey mb-1">Level</p>
-                            <p className="text-3xl font-black text-primary">{profile.level}</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                        <div className="p-4 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-ghost-grey mb-1">Vocabulary</p>
+                            <p className="text-2xl font-black text-primary">{profile.vocab || 0}</p>
                         </div>
-                        <div className="p-6 bg-slate-50 dark:bg-white/5 rounded-3xl border border-slate-100 dark:border-white/5">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-ghost-grey mb-1">XP Earned</p>
-                            <p className="text-3xl font-black text-charcoal dark:text-white">{profile.xp}</p>
+                        <div className="p-4 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-ghost-grey mb-1">Grammar</p>
+                            <p className="text-2xl font-black text-charcoal dark:text-white">{profile.grammar || 0}</p>
                         </div>
-                        <div className="p-6 bg-slate-50 dark:bg-white/5 rounded-3xl border border-slate-100 dark:border-white/5">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-ghost-grey mb-1">Streak</p>
-                            <p className="text-3xl font-black text-charcoal dark:text-white">{profile.streak}🔥</p>
+                        <div className="p-4 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-ghost-grey mb-1">Kanji</p>
+                            <p className="text-2xl font-black text-charcoal dark:text-white">{profile.kanji || 0}</p>
                         </div>
-                        <div className="p-6 bg-slate-50 dark:bg-white/5 rounded-3xl border border-slate-100 dark:border-white/5">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-ghost-grey mb-1">Mastery</p>
-                            <p className="text-3xl font-black text-charcoal dark:text-white">{profile.totalMastery}</p>
+                        <div className="p-4 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-ghost-grey mb-1">Listening</p>
+                            <p className="text-2xl font-black text-charcoal dark:text-white">{profile.listening || 0}</p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-wrap justify-center gap-4 mb-10">
+                        <div className="px-6 py-2 bg-amber-400/10 text-amber-600 rounded-full flex items-center gap-2 border border-amber-400/20">
+                            <span className="material-symbols-outlined !text-sm">local_fire_department</span>
+                            <span className="text-xs font-black uppercase tracking-widest">{profile.streak} Day Streak</span>
+                        </div>
+                        <div className="px-6 py-2 bg-primary/10 text-primary rounded-full flex items-center gap-2 border border-primary/20">
+                            <span className="material-symbols-outlined !text-sm">military_tech</span>
+                            <span className="text-xs font-black uppercase tracking-widest">Level {profile.level}</span>
                         </div>
                     </div>
 

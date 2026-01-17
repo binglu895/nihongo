@@ -77,6 +77,10 @@ const ProgressPage: React.FC = () => {
           todayStats: {
             reviews: dailySnapshot.reviews,
             mastered: dailySnapshot.mastered,
+            vocab: dailySnapshot.vocab,
+            grammar: dailySnapshot.grammar,
+            kanji: dailySnapshot.kanji,
+            listening: dailySnapshot.listening,
             streak: profileData.streak,
             level: profileData.current_level || 1,
             completion: profileData.completion_percentage

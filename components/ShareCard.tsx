@@ -104,31 +104,48 @@ const ShareCard: React.FC<ShareCardProps> = ({ stats, referralLink, onClose }) =
                         </div>
                     </div>
 
-                    <div className="flex-grow flex flex-col justify-center gap-10 relative z-10">
-                        <div className="grid grid-cols-2 gap-x-8 gap-y-10">
-                            <div>
-                                <p className={classes.statLabel}>Growth Today</p>
+                    <div className="flex-grow flex flex-col justify-center gap-6 relative z-10">
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+                            <div className="bg-white/40 dark:bg-white/5 p-3 rounded-2xl border border-black/5">
+                                <p className={classes.statLabel}>Growth</p>
                                 <p className={classes.statValue}>+{stats.reviews}</p>
                             </div>
-                            <div>
-                                <p className={classes.statLabel}>Day Streak</p>
+                            <div className="bg-white/40 dark:bg-white/5 p-3 rounded-2xl border border-black/5">
+                                <p className={classes.statLabel}>Streak</p>
                                 <p className={classes.statValue}>{stats.streak}🔥</p>
-                            </div>
-                            <div>
-                                <p className={classes.statLabel}>Total Mastery</p>
-                                <p className={classes.statValue}>{stats.mastered || 0}</p>
-                            </div>
-                            <div>
-                                <p className={classes.statLabel}>N5 Progress</p>
-                                <p className={classes.statValue}>{stats.completion}%</p>
                             </div>
                         </div>
 
-                        <div className="w-full h-4 bg-black/5 dark:bg-white/10 rounded-full overflow-hidden border border-black/5 p-0.5">
-                            <div
-                                className="h-full bg-primary rounded-full transition-all duration-1000 shadow-sm"
-                                style={{ width: `${stats.completion}%` }}
-                            />
+                        <div className="grid grid-cols-4 gap-2">
+                            <div className="text-center">
+                                <p className="text-[8px] font-black uppercase text-ghost-grey mb-1">Vocab</p>
+                                <p className="text-xl font-black text-charcoal dark:text-white leading-none">{(stats as any).vocab || 0}</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-[8px] font-black uppercase text-ghost-grey mb-1">Grammar</p>
+                                <p className="text-xl font-black text-charcoal dark:text-white leading-none">{(stats as any).grammar || 0}</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-[8px] font-black uppercase text-ghost-grey mb-1">Kanji</p>
+                                <p className="text-xl font-black text-charcoal dark:text-white leading-none">{(stats as any).kanji || 0}</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-[8px] font-black uppercase text-ghost-grey mb-1">Listen</p>
+                                <p className="text-xl font-black text-charcoal dark:text-white leading-none">{(stats as any).listening || 0}</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-end">
+                                <p className={classes.statLabel}>N5 Progress</p>
+                                <p className="text-sm font-black text-primary">{stats.completion}%</p>
+                            </div>
+                            <div className="w-full h-3 bg-black/5 dark:bg-white/10 rounded-full overflow-hidden border border-black/5 p-0.5">
+                                <div
+                                    className="h-full bg-primary rounded-full transition-all duration-1000 shadow-sm"
+                                    style={{ width: `${stats.completion}%` }}
+                                />
+                            </div>
                         </div>
                     </div>
 

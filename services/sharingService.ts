@@ -31,36 +31,39 @@ export const getDailyStatsSnapshot = async (userId: string) => {
     today.setHours(0, 0, 0, 0);
     const todayStr = today.toISOString();
 
-    const tables = [
-        { name: 'user_vocabulary_progress', field: 'vocabulary_id' },
-        { name: 'user_grammar_progress', field: 'grammar_point_id' },
-        { name: 'user_kanji_progress', field: 'vocabulary_id' },
-        { name: 'user_listening_progress', field: 'vocabulary_id' }
+    const categories = [
+        { key: 'vocab', table: 'user_vocabulary_progress', field: 'vocabulary_id' },
+        { key: 'grammar', table: 'user_grammar_progress', field: 'grammar_point_id' },
+        { key: 'kanji', table: 'user_kanji_progress', field: 'vocabulary_id' },
+        { key: 'listening', table: 'user_listening_progress', field: 'vocabulary_id' }
     ];
 
-    const results = await Promise.all(tables.map(t =>
-        supabase.from(t.name)
-            .select(t.field, { count: 'exact', head: true })
+    // Reviews today
+    const reviewResults = await Promise.all(categories.map(c =>
+        supabase.from(c.table)
+            .select(c.field, { count: 'exact', head: true })
             .eq('user_id', userId)
             .gte('last_reviewed_at', todayStr)
     ));
 
-    // Get total mastered (SRS stage >= 4)
-    const masteredResults = await Promise.all(tables.map(t =>
-        supabase.from(t.name)
-            .select(t.field, { count: 'exact', head: true })
+    // Total mastered per category
+    const masteryResults = await Promise.all(categories.map(c =>
+        supabase.from(c.table)
+            .select(c.field, { count: 'exact', head: true })
             .eq('user_id', userId)
             .gte('srs_stage', 4)
     ));
 
-    const totalReviews = results.reduce((acc, r) => acc + (r.count || 0), 0);
-    const totalMastered = masteredResults.reduce((acc, r) => acc + (r.count || 0), 0);
-
-    return {
-        reviews: totalReviews,
-        mastered: totalMastered,
+    const stats: any = {
+        reviews: reviewResults.reduce((acc, r) => acc + (r.count || 0), 0),
         date: today.toLocaleDateString()
     };
+
+    categories.forEach((c, i) => {
+        stats[c.key] = masteryResults[i].count || 0;
+    });
+
+    return stats;
 };
 
 export const getProfileByReferralCode = async (code: string) => {
@@ -72,12 +75,23 @@ export const getProfileByReferralCode = async (code: string) => {
 
     if (error || !profile) return null;
 
-    // Get total mastery across categories
-    const tables = ['user_vocabulary_progress', 'user_grammar_progress', 'user_kanji_progress', 'user_listening_progress'];
-    const counts = await Promise.all(tables.map(table =>
-        supabase.from(table).select('*', { count: 'exact', head: true }).eq('user_id', profile.id).gte('srs_stage', 4)
+    const categories = [
+        { key: 'vocab', table: 'user_vocabulary_progress' },
+        { key: 'grammar', table: 'user_grammar_progress' },
+        { key: 'kanji', table: 'user_kanji_progress' },
+        { key: 'listening', table: 'user_listening_progress' }
+    ];
+
+    const counts = await Promise.all(categories.map(c =>
+        supabase.from(c.table).select('*', { count: 'exact', head: true }).eq('user_id', profile.id).gte('srs_stage', 4)
     ));
+
+    const categoryStats: any = {};
+    counts.forEach((c, i) => {
+        categoryStats[categories[i].key] = c.count || 0;
+    });
+
     const totalMastery = counts.reduce((acc, c) => acc + (c.count || 0), 0);
 
-    return { ...profile, totalMastery };
+    return { ...profile, ...categoryStats, totalMastery };
 };
