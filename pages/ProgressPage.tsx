@@ -59,14 +59,16 @@ const ProgressPage: React.FC = () => {
         grammar: statsData.grammar_score
       });
 
-      // Fetch due items count
-      const { count: due } = await supabase
-        .from('user_vocabulary_progress')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .lte('next_review_at', new Date().toISOString());
+      // Fetch due items count from all categories
+      const now = new Date().toISOString();
+      const [vDue, gDue, kDue, lDue] = await Promise.all([
+        supabase.from('user_vocabulary_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
+        supabase.from('user_grammar_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
+        supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
+        supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now)
+      ]);
 
-      setDueCount(due || 0);
+      setDueCount((vDue.count || 0) + (gDue.count || 0) + (kDue.count || 0) + (lDue.count || 0));
 
       // Fetch Global Stats for ratios
       await fetchGlobalStats(profileData.current_level, user.id);
@@ -169,14 +171,14 @@ const ProgressPage: React.FC = () => {
             <div className="p-8 md:p-12 bg-white dark:bg-slate-900 rounded-[32px] md:rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl dark:shadow-2xl flex flex-col items-center text-center">
               <h3 className="text-xl md:text-2xl font-black mb-2 md:mb-3">Ready for today?</h3>
               <button
-                onClick={() => navigate('/quiz?mode=review')}
+                onClick={() => navigate('/quiz?mode=review&type=all')}
                 className="w-full max-w-md bg-primary hover:bg-primary-hover text-white shadow-2xl shadow-primary/30 font-black py-4 md:py-6 px-8 md:px-10 rounded-2xl transition-all flex items-center justify-center gap-4 active:scale-95 group"
               >
                 <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">quiz</span>
-                <span className="text-lg md:text-xl">{globalStats.vocabulary.learned > 0 ? `Review ${globalStats.vocabulary.learned} items` : 'Start Learning'}</span>
+                <span className="text-lg md:text-xl">{dueCount > 0 ? `Review ${dueCount} items` : 'Start Learning'}</span>
               </button>
               <p className="mt-6 text-[10px] font-black text-ghost-grey dark:text-slate-500 uppercase tracking-[0.2em]">
-                {globalStats.vocabulary.learned > 0 ? `Approx. ${Math.ceil(globalStats.vocabulary.learned * 0.5)} minutes` : 'No words learned yet'}
+                {dueCount > 0 ? `Approx. ${Math.ceil(dueCount * 0.5)} minutes` : 'No reviews due'}
               </p>
             </div>
 

@@ -40,14 +40,17 @@ const DashboardPage: React.FC = () => {
         setDailyGoal(data.daily_goal || 20);
       }
 
-      // Fetch due items count
-      const { count } = await supabase
-        .from('user_vocabulary_progress')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .lte('next_review_at', new Date().toISOString());
+      // Fetch due items count from all categories
+      const now = new Date().toISOString();
+      const [vocabDue, grammarDue, kanjiDue, listeningDue] = await Promise.all([
+        supabase.from('user_vocabulary_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
+        supabase.from('user_grammar_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
+        supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
+        supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now)
+      ]);
 
-      setDueCount(count || 0);
+      const totalDue = (vocabDue.count || 0) + (grammarDue.count || 0) + (kanjiDue.count || 0) + (listeningDue.count || 0);
+      setDueCount(totalDue);
 
       // Fetch Global Progress
       await fetchGlobalStats(data?.current_level || 'N3', user.id);
@@ -159,7 +162,7 @@ const DashboardPage: React.FC = () => {
               </p>
 
               <button
-                onClick={() => navigate('/quiz?mode=review')}
+                onClick={() => navigate('/quiz?mode=review&type=all')}
                 className="group relative flex items-center justify-center gap-4 bg-primary text-white font-black py-6 px-12 rounded-[28px] text-xl shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all duration-300"
               >
                 <div className="size-10 rounded-xl bg-white/20 flex items-center justify-center">
