@@ -149,34 +149,32 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* SRS Review Card */}
-        {dueCount > 0 && (
-          <div className="w-full max-w-[960px] mb-20 animate-in fade-in zoom-in-95 duration-1000">
-            <div className="bg-white dark:bg-slate-900 border-2 border-primary/20 rounded-[48px] p-12 md:p-16 flex flex-col items-center text-center shadow-[0_32px_64px_-16px_rgba(99,102,241,0.2)] dark:shadow-none relative overflow-hidden group">
-              <div className="absolute top-0 left-0 w-full h-2 bg-primary"></div>
-              <div className="absolute -top-24 -right-24 size-64 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors duration-700"></div>
+        {/* SRS Review / Learning Card - Always Persistent */}
+        <div className="w-full max-w-[960px] mb-20 animate-in fade-in zoom-in-95 duration-1000">
+          <div className="bg-white dark:bg-slate-900 border-2 border-primary/20 rounded-[48px] p-12 md:p-16 flex flex-col items-center text-center shadow-[0_32px_64px_-16px_rgba(99,102,241,0.2)] dark:shadow-none relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-full h-2 bg-primary"></div>
+            <div className="absolute -top-24 -right-24 size-64 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors duration-700"></div>
 
-              <h2 className="text-4xl md:text-5xl font-black text-charcoal dark:text-white mb-4 tracking-tight">Ready for today?</h2>
-              <p className="text-ghost-grey dark:text-gray-400 text-lg font-medium mb-12 max-w-lg leading-relaxed">
-                Consistent daily practice is the key to Japanese language retention.
-              </p>
+            <h2 className="text-4xl md:text-5xl font-black text-charcoal dark:text-white mb-4 tracking-tight">Ready for today?</h2>
+            <p className="text-ghost-grey dark:text-gray-400 text-lg font-medium mb-12 max-w-lg leading-relaxed">
+              Consistent daily practice is the key to Japanese language retention.
+            </p>
 
-              <button
-                onClick={() => navigate('/quiz?mode=review&type=all')}
-                className="group relative flex items-center justify-center gap-4 bg-primary text-white font-black py-6 px-12 rounded-[28px] text-xl shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all duration-300"
-              >
-                <div className="size-10 rounded-xl bg-white/20 flex items-center justify-center">
-                  <span className="material-symbols-outlined !text-2xl">fact_check</span>
-                </div>
-                <span>Review {dueCount} items</span>
-              </button>
+            <button
+              onClick={() => navigate(dueCount > 0 ? '/quiz?mode=review&type=all' : '/quiz')}
+              className="group relative flex items-center justify-center gap-4 bg-primary text-white font-black py-6 px-12 rounded-[28px] text-xl shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all duration-300"
+            >
+              <div className="size-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <span className="material-symbols-outlined !text-2xl">{dueCount > 0 ? 'fact_check' : 'auto_stories'}</span>
+              </div>
+              <span>{dueCount > 0 ? `Review ${dueCount} items` : 'Start Learning'}</span>
+            </button>
 
-              <p className="mt-8 text-[10px] font-black text-ghost-grey/60 dark:text-gray-500 uppercase tracking-[0.3em]">
-                APPROX. {Math.ceil(dueCount * 0.5)} MINUTES
-              </p>
-            </div>
+            <p className="mt-8 text-[10px] font-black text-ghost-grey/60 dark:text-gray-500 uppercase tracking-[0.3em]">
+              {dueCount > 0 ? `APPROX. ${Math.ceil(dueCount * 0.5)} MINUTES` : 'NO REVIEWS DUE'}
+            </p>
           </div>
-        )}
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 w-full max-w-[1200px] px-4">
           {categories.map((card, i) => (

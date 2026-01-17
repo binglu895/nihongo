@@ -20,6 +20,7 @@ const QuizPage: React.FC = () => {
   const [quizType, setQuizType] = useState('vocabulary');
   const [totalInitialDue, setTotalInitialDue] = useState(0);
   const [correctlyReviewedIds, setCorrectlyReviewedIds] = useState<Set<string>>(new Set());
+  const [failedIdsInSession, setFailedIdsInSession] = useState<Set<string>>(new Set());
   const location = useLocation();
 
   // Handwriting canvas state (from KanjiPage)
@@ -274,15 +275,19 @@ const QuizPage: React.FC = () => {
     let interval = existing?.interval || 0;
 
     if (isCorrect) {
-      if (srs_stage === 0) {
-        interval = 1;
-      } else if (srs_stage === 1) {
-        interval = 6;
+      if (failedIdsInSession.has(currentQuestion.id)) {
+        interval = 0; // Keep it due for review if it was failed earlier in this session
       } else {
-        interval = Math.round(interval * ease_factor);
+        if (srs_stage === 0) {
+          interval = 1;
+        } else if (srs_stage === 1) {
+          interval = 6;
+        } else {
+          interval = Math.round(interval * ease_factor);
+        }
+        srs_stage++;
+        ease_factor = Math.min(2.5, ease_factor + 0.1);
       }
-      srs_stage++;
-      ease_factor = Math.min(2.5, ease_factor + 0.1);
     } else {
       srs_stage = 1;
       interval = 0; // Immediate re-review
@@ -357,17 +362,22 @@ const QuizPage: React.FC = () => {
         }
       }
 
-      if (isReviewMode) {
-        if (isCorrect) {
+      if (isCorrect) {
+        if (isReviewMode) {
           setCorrectlyReviewedIds(prev => {
             const next = new Set(prev);
             next.add(currentQuestion.id);
             return next;
           });
-        } else {
-          // Re-queue incorrect answer
-          setQuestions(prev => [...prev, { ...currentQuestion }]);
         }
+      } else {
+        // Re-queue incorrect answer for all modes
+        setQuestions(prev => [...prev, { ...currentQuestion }]);
+        setFailedIdsInSession(prev => {
+          const next = new Set(prev);
+          next.add(currentQuestion.id);
+          return next;
+        });
       }
 
       if (currentQuestionIdx < questions.length - 1) {
