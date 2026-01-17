@@ -76,8 +76,9 @@ const ProgressPage: React.FC = () => {
           referralLink: generateShareLink(refInfo.code),
           todayStats: {
             reviews: dailySnapshot.reviews,
+            mastered: dailySnapshot.mastered,
             streak: profileData.streak,
-            level: (profileData as any).level || 1,
+            level: profileData.current_level || 1,
             completion: profileData.completion_percentage
           }
         });

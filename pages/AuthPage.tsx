@@ -23,11 +23,22 @@ const AuthPage: React.FC = () => {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        // Get referral code from URL search params
+        const params = new URLSearchParams(window.location.search);
+        const ref = params.get('ref');
+
+        const { error, data } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              referred_by: ref
+            }
+          }
         });
         if (error) throw error;
+
+        // Profiles are usually created via DB trigger, but we can ensure metadata is caught
         alert('Check your email for the confirmation link!');
       } else {
         const { error } = await supabase.auth.signInWithPassword({
