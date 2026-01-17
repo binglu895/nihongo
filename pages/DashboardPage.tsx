@@ -15,7 +15,8 @@ const DashboardPage: React.FC = () => {
   const [stats, setStats] = useState({
     kanji: { learned: 0, total: 0 },
     vocabulary: { learned: 0, total: 0 },
-    grammar: { learned: 0, total: 0 }
+    grammar: { learned: 0, total: 0 },
+    listening: { learned: 0, total: 0 }
   });
 
   useEffect(() => {
@@ -85,9 +86,10 @@ const DashboardPage: React.FC = () => {
       .in('grammar_point_id', levelGrammarIds);
 
     setStats({
-      kanji: { learned: 0, total: 0 }, // Future expansion
+      kanji: { learned: 0, total: 0 },
       vocabulary: { learned: vocabLearned || 0, total: vocabTotal || 0 },
-      grammar: { learned: grammarLearned || 0, total: grammarTotal || 0 }
+      grammar: { learned: grammarLearned || 0, total: grammarTotal || 0 },
+      listening: { learned: 0, total: 0 }
     });
   };
 
@@ -112,10 +114,10 @@ const DashboardPage: React.FC = () => {
   };
 
   const categories = [
-    { title: "Kanji", icon: "draw", desc: "Master characters.", btn: "Start Kanji", path: "/kanji", stats: stats.kanji },
-    { title: "Vocabulary", icon: "menu_book", desc: "Build your lexicon.", btn: "Start Practice", path: "/quiz", stats: stats.vocabulary },
-    { title: "Grammar", icon: "architecture", desc: "Understand particles.", btn: "Start Learning", path: "/quiz?type=grammar", stats: stats.grammar },
-    { title: "Listening", icon: "hearing", desc: "Native audio.", btn: "Start Session", path: "/quiz" }
+    { title: "Kanji", icon: "draw", desc: "Master characters.", btn: "开始练习", path: "/kanji", stats: stats.kanji },
+    { title: "Vocabulary", icon: "menu_book", desc: "Build your lexicon.", btn: "开始练习", path: "/quiz", stats: stats.vocabulary },
+    { title: "Grammar", icon: "architecture", desc: "Understand particles.", btn: "开始练习", path: "/quiz?type=grammar", stats: stats.grammar },
+    { title: "Listening", icon: "hearing", desc: "Native audio.", btn: "开始练习", path: "/quiz?type=listening", stats: stats.listening }
   ];
 
   return (
