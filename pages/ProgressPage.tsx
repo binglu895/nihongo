@@ -322,3 +322,5 @@ const ProgressPage: React.FC = () => {
     </div>
   );
 };
+
+export default ProgressPage;
