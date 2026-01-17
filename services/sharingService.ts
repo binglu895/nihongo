@@ -54,14 +54,17 @@ export const getDailyStatsSnapshot = async (userId: string) => {
             .gte('srs_stage', 4)
     ));
 
+    const { data: profileData } = await supabase
+        .from('profiles')
+        .select('daily_study_time')
+        .eq('id', userId)
+        .single();
+
     const stats: any = {
         reviews: reviewResults.reduce((acc, r) => acc + (r.count || 0), 0),
-        date: today.toLocaleDateString()
+        date: today.toLocaleDateString(),
+        studyTimeToday: (profileData?.daily_study_time || {})[today.toISOString().split('T')[0]] || 0
     };
-
-    categories.forEach((c, i) => {
-        stats[c.key] = masteryResults[i].count || 0;
-    });
 
     return stats;
 };

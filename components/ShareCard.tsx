@@ -81,6 +81,10 @@ const ShareCard: React.FC<ShareCardProps> = ({ stats, referralLink, onClose }) =
 
     const classes = getStyleClasses();
 
+    const getAvatarUrl = (seed: string) => `https://api.dicebear.com/7.x/pixel-art/svg?seed=${seed}&backgroundColor=transparent`;
+
+    const mins = Math.max(1, Math.floor(((stats as any).studyTimeToday || 0) / 60));
+
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300 overflow-y-auto">
             <div className="max-w-5xl w-full flex flex-col lg:flex-row gap-8 items-center lg:items-start py-8">
@@ -90,82 +94,78 @@ const ShareCard: React.FC<ShareCardProps> = ({ stats, referralLink, onClose }) =
                     ref={cardRef}
                     className={`w-[400px] shrink-0 aspect-[4/5] p-10 flex flex-col justify-between relative overflow-hidden ${classes.card}`}
                 >
-                    {activeStyle === 'japanese' && (
-                        <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 0)', backgroundSize: '20px 20px' }} />
-                    )}
-
                     <div className="flex justify-between items-start relative z-10">
                         <div className="flex flex-col gap-1">
                             <h2 className={classes.title}>Sensei's Disciple</h2>
-                            <p className="text-sm font-black opacity-60">Level {stats.level} • {selectedAvatar.label}</p>
+                            <p className="text-[10px] font-black tracking-widest uppercase opacity-60">Level {stats.level} • {selectedAvatar.label}</p>
                         </div>
-                        <div className={`text-6xl ${classes.mascot} flex items-center justify-center bg-white/40 dark:bg-black/20 w-16 h-16 rounded-2xl shadow-inner border border-black/5`}>
-                            {selectedAvatar.icon}
+                        <div className="size-24 bg-white/40 dark:bg-black/20 rounded-[32px] p-4 shadow-inner border border-black/5 backdrop-blur-sm flex items-center justify-center">
+                            <img src={getAvatarUrl(selectedAvatar.id)} alt="" className="size-full object-contain drop-shadow-xl" />
                         </div>
                     </div>
 
-                    <div className="flex-grow flex flex-col justify-center gap-6 relative z-10">
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-4">
-                            <div className="bg-white/40 dark:bg-white/5 p-3 rounded-2xl border border-black/5">
-                                <p className={classes.statLabel}>Growth</p>
-                                <p className={classes.statValue}>+{stats.reviews}</p>
+                    <div className="flex-grow flex flex-col justify-center gap-6 relative z-10 py-6">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-white/50 dark:bg-white/5 p-4 rounded-3xl border border-black/5 flex flex-col items-center justify-center text-center">
+                                <p className="text-[9px] font-black uppercase text-ghost-grey mb-0.5 tracking-widest">Today's Focus</p>
+                                <p className="text-3xl font-black text-primary leading-none">
+                                    {mins}<span className="text-xs ml-1 text-primary/60 italic">min</span>
+                                </p>
                             </div>
-                            <div className="bg-white/40 dark:bg-white/5 p-3 rounded-2xl border border-black/5">
-                                <p className={classes.statLabel}>Streak</p>
-                                <p className={classes.statValue}>{stats.streak}🔥</p>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-4 gap-2">
-                            <div className="text-center">
-                                <p className="text-[8px] font-black uppercase text-ghost-grey mb-1">Vocab</p>
-                                <p className="text-xl font-black text-charcoal dark:text-white leading-none">{(stats as any).vocab || 0}</p>
-                            </div>
-                            <div className="text-center">
-                                <p className="text-[8px] font-black uppercase text-ghost-grey mb-1">Grammar</p>
-                                <p className="text-xl font-black text-charcoal dark:text-white leading-none">{(stats as any).grammar || 0}</p>
-                            </div>
-                            <div className="text-center">
-                                <p className="text-[8px] font-black uppercase text-ghost-grey mb-1">Kanji</p>
-                                <p className="text-xl font-black text-charcoal dark:text-white leading-none">{(stats as any).kanji || 0}</p>
-                            </div>
-                            <div className="text-center">
-                                <p className="text-[8px] font-black uppercase text-ghost-grey mb-1">Listen</p>
-                                <p className="text-xl font-black text-charcoal dark:text-white leading-none">{(stats as any).listening || 0}</p>
+                            <div className="bg-white/50 dark:bg-white/5 p-4 rounded-3xl border border-black/5 flex flex-col items-center justify-center text-center">
+                                <p className="text-[9px] font-black uppercase text-ghost-grey mb-0.5 tracking-widest">Day Streak</p>
+                                <p className="text-3xl font-black text-amber-500 leading-none">
+                                    {stats.streak}<span className="ml-1">🔥</span>
+                                </p>
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <div className="flex justify-between items-end">
-                                <p className={classes.statLabel}>N5 Progress</p>
-                                <p className="text-sm font-black text-primary">{stats.completion}%</p>
-                            </div>
-                            <div className="w-full h-3 bg-black/5 dark:bg-white/10 rounded-full overflow-hidden border border-black/5 p-0.5">
-                                <div
-                                    className="h-full bg-primary rounded-full transition-all duration-1000 shadow-sm"
-                                    style={{ width: `${stats.completion}%` }}
-                                />
-                            </div>
+                        <div className="space-y-4 px-2">
+                            {[
+                                { label: 'Vocabulary', key: 'vocab', color: 'bg-primary' },
+                                { label: 'Grammar', key: 'grammar', color: 'bg-emerald-400' },
+                                { label: 'Character', key: 'kanji', color: 'bg-indigo-400' },
+                                { label: 'Listening', key: 'listening', color: 'bg-pink-400' }
+                            ].map(item => {
+                                const val = (stats as any)[item.key] || 0;
+                                const progress = Math.min(100, (val / 100) * 100);
+                                return (
+                                    <div key={item.key} className="space-y-1.5">
+                                        <div className="flex justify-between items-end">
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-charcoal/60 dark:text-white/40">{item.label}</p>
+                                            <p className="text-[10px] font-black italic text-charcoal dark:text-white">{val} mastered</p>
+                                        </div>
+                                        <div className="w-full h-2.5 bg-black/5 dark:bg-white/10 rounded-full overflow-hidden p-0.5 border border-black/5">
+                                            <div
+                                                className={`h-full ${item.color} rounded-full transition-all duration-1000 shadow-sm relative`}
+                                                style={{ width: `${progress}%` }}
+                                            >
+                                                <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
 
                     <div className="flex items-end justify-between border-t pt-8 border-black/5 dark:border-white/10 relative z-10">
-                        <div className="flex flex-col gap-1">
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-ghost-grey">Scan to Study Together</p>
-                            <p className="text-[11px] font-black text-charcoal dark:text-white">Join me on Nihongo Mastery</p>
+                        <div className="flex flex-col gap-2">
+                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-ghost-grey italic">Scan to Study Together</p>
+                            <p className="text-lg font-black text-charcoal dark:text-white tracking-tight leading-none italic">
+                                Join me on <span className="text-primary italic">Nihongo Mastery</span>
+                            </p>
                         </div>
-                        <div className="bg-white p-2 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-black/5 relative">
+                        <div className="bg-white p-2 rounded-[20px] shadow-2xl border border-black/5">
                             <QRCodeSVG
                                 value={referralLink}
-                                size={72}
+                                size={68}
                                 level="H"
                                 includeMargin={false}
                                 imageSettings={{
-                                    src: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="0.9em" font-size="90">${selectedAvatar.icon}</text></svg>`,
-                                    x: undefined,
-                                    y: undefined,
-                                    height: 20,
-                                    width: 20,
+                                    src: getAvatarUrl(selectedAvatar.id),
+                                    height: 22,
+                                    width: 22,
                                     excavate: true,
                                 }}
                             />

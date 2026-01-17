@@ -7,6 +7,7 @@ import { addXP, XP_VALUES } from '../services/gamificationService';
 
 const QuizPage: React.FC = () => {
   const navigate = useNavigate();
+  const [sessionStartTime] = useState(Date.now());
   const [answered, setAnswered] = useState(false);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [isExplaining, setIsExplaining] = useState(false);

@@ -83,7 +83,8 @@ const ProgressPage: React.FC = () => {
             listening: dailySnapshot.listening,
             streak: profileData.streak,
             level: profileData.current_level || 1,
-            completion: profileData.completion_percentage
+            completion: profileData.completion_percentage,
+            studyTimeToday: dailySnapshot.studyTimeToday
           }
         });
       }

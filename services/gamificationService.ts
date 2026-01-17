@@ -110,3 +110,53 @@ export const checkBadges = async () => {
 
     return { newBadges: [], newSkins: [] };
 };
+export const updateActivityStats = async (durationSeconds: number) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('streak, last_activity_at, total_study_time, daily_study_time')
+        .eq('id', user.id)
+        .single();
+
+    if (!profile) return;
+
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    const lastActivity = profile.last_activity_at ? new Date(profile.last_activity_at) : null;
+
+    let newStreak = profile.streak || 0;
+
+    if (lastActivity) {
+        const lastDate = lastActivity.toISOString().split('T')[0];
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+        if (lastDate === today) {
+            // Already active today, don't increment streak
+        } else if (lastDate === yesterdayStr) {
+            newStreak += 1;
+        } else {
+            newStreak = 1; // Streak broken
+        }
+    } else {
+        newStreak = 1;
+    }
+
+    const currentDaily = profile.daily_study_time || {};
+    const updatedDaily = {
+        ...currentDaily,
+        [today]: (currentDaily[today] || 0) + durationSeconds
+    };
+
+    await supabase.from('profiles').update({
+        streak: newStreak,
+        last_activity_at: now.toISOString(),
+        total_study_time: (profile.total_study_time || 0) + durationSeconds,
+        daily_study_time: updatedDaily
+    }).eq('id', user.id);
+
+    return { streak: newStreak, studyTime: updatedDaily[today] };
+};
