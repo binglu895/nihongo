@@ -51,7 +51,7 @@ export const getDailyStatsSnapshot = async (userId: string) => {
         supabase.from(c.table)
             .select(c.field, { count: 'exact', head: true })
             .eq('user_id', userId)
-            .gte('srs_stage', 4)
+            .gt('correct_count', 0)
     ));
 
     const { data: profileData } = await supabase
@@ -65,6 +65,10 @@ export const getDailyStatsSnapshot = async (userId: string) => {
         date: today.toLocaleDateString(),
         studyTimeToday: (profileData?.daily_study_time || {})[today.toISOString().split('T')[0]] || 0
     };
+
+    categories.forEach((c, i) => {
+        stats[c.key] = masteryResults[i].count || 0;
+    });
 
     return stats;
 };
@@ -86,7 +90,7 @@ export const getProfileByReferralCode = async (code: string) => {
     ];
 
     const counts = await Promise.all(categories.map(c =>
-        supabase.from(c.table).select('*', { count: 'exact', head: true }).eq('user_id', profile.id).gte('srs_stage', 4)
+        supabase.from(c.table).select('*', { count: 'exact', head: true }).eq('user_id', profile.id).gt('correct_count', 0)
     ));
 
     const categoryStats: any = {};

@@ -17,10 +17,14 @@ interface ShareCardProps {
 type CardStyle = 'minimalist' | 'pixel' | 'japanese';
 
 const PIXEL_AVATARS = [
-    { id: 'kitsune', icon: '🦊', label: 'Swift Fox' },
-    { id: 'tanuki', icon: '🍃', label: 'Trickster Tanuki' },
-    { id: 'daruma', icon: '🏮', label: 'Zen Daruma' },
-    { id: 'cat', icon: '🐱', label: 'Lucky Neko' }
+    { id: 'samurai', icon: '⚔️', label: 'Bushido Samurai', seed: 'samurai' },
+    { id: 'ninja', icon: '👥', label: 'Kage Ninja', seed: 'ninja' },
+    { id: 'miko', icon: '⛩️', label: 'Shrine Maiden', seed: 'miko' },
+    { id: 'kitsune', icon: '🦊', label: 'Inari Fox', seed: 'kitsune' },
+    { id: 'tanuki', icon: '🍃', label: 'Forest Tanuki', seed: 'tanuki' },
+    { id: 'daruma', icon: '🏮', label: 'Zen Daruma', seed: 'daruma' },
+    { id: 'neko', icon: '🐱', label: 'Lucky Neko', seed: 'neko' },
+    { id: 'ronin', icon: '🌊', label: 'Wandering Ronin', seed: 'ronin' }
 ];
 
 const ShareCard: React.FC<ShareCardProps> = ({ stats, referralLink, onClose }) => {
@@ -190,10 +194,10 @@ const ShareCard: React.FC<ShareCardProps> = ({ stats, referralLink, onClose }) =
                                     <button
                                         key={avatar.id}
                                         onClick={() => setSelectedAvatar(avatar)}
-                                        className={`size-16 flex items-center justify-center text-3xl rounded-2xl border-2 transition-all ${selectedAvatar.id === avatar.id ? 'border-primary bg-primary/10 scale-110 shadow-lg' : 'border-slate-50 dark:border-white/5 bg-slate-50 dark:bg-white/5 hover:border-slate-200 opacity-60'}`}
+                                        className={`size-14 md:size-16 flex items-center justify-center text-3xl rounded-2xl border-2 transition-all ${selectedAvatar.id === avatar.id ? 'border-primary bg-primary/10 scale-105 shadow-lg' : 'border-slate-50 dark:border-white/5 bg-slate-50 dark:bg-white/5 hover:border-slate-200 opacity-60'}`}
                                         title={avatar.label}
                                     >
-                                        {avatar.icon}
+                                        <img src={`https://api.dicebear.com/7.x/pixel-art/svg?seed=${avatar.seed}&backgroundColor=transparent`} alt="" className="size-10 object-contain" />
                                     </button>
                                 ))}
                             </div>
