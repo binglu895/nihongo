@@ -72,12 +72,11 @@ const QuizPage: React.FC = () => {
     let totalCount = 0;
 
     if (type === 'all') {
-      // Aggregated progress
       const [vProg, gProg, kProg, lProg] = await Promise.all([
-        supabase.from('user_vocabulary_progress').select('vocabulary_id', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('user_grammar_progress').select('grammar_point_id', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('user_kanji_progress').select('vocabulary_id', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('user_listening_progress').select('vocabulary_id', { count: 'exact', head: true }).eq('user_id', user.id)
+        supabase.from('user_vocabulary_progress').select('vocabulary_id', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0),
+        supabase.from('user_grammar_progress').select('grammar_point_id', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0),
+        supabase.from('user_kanji_progress').select('vocabulary_id', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0),
+        supabase.from('user_listening_progress').select('vocabulary_id', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0)
       ]);
 
       learnedCount = (vProg.count || 0) + (gProg.count || 0) + (kProg.count || 0) + (lProg.count || 0);
@@ -88,21 +87,19 @@ const QuizPage: React.FC = () => {
           (await supabase.from('grammar_points').select('id').eq('level', level)).data?.map(p => p.id) || []
         )
       ]);
-      totalCount = (vTotal.count || 0) + (gTotal.count || 0); // Kanji uses vocab data
+      totalCount = (vTotal.count || 0) + (gTotal.count || 0);
     } else if (type === 'grammar') {
-      // ... existing grammar logic ...
       const { data: levelPoints } = await supabase.from('grammar_points').select('id').eq('level', level);
       const levelIds = levelPoints?.map(p => p.id) || [];
       if (levelIds.length > 0) {
-        const { count } = await supabase.from('user_grammar_progress').select('grammar_point_id', { count: 'exact', head: true }).eq('user_id', user.id).in('grammar_point_id', levelIds);
+        const { count } = await supabase.from('user_grammar_progress').select('grammar_point_id', { count: 'exact', head: true }).eq('user_id', user.id).in('grammar_point_id', levelIds).gt('correct_count', 0);
         learnedCount = count || 0;
         const { count: total } = await supabase.from('grammar_examples').select('id', { count: 'exact', head: true }).in('grammar_point_id', levelIds);
         totalCount = total || 0;
       }
     } else {
-      // Vocab / Kanji / Listening placeholders
       const table = type === 'kanji' ? 'user_kanji_progress' : type === 'listening' ? 'user_listening_progress' : 'user_vocabulary_progress';
-      const { count } = await supabase.from(table).select('*', { count: 'exact', head: true }).eq('user_id', user.id).in('vocabulary_id',
+      const { count } = await supabase.from(table).select('*', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0).in('vocabulary_id',
         (await supabase.from('vocabulary').select('id').eq('level', level)).data?.map(v => v.id) || []
       );
       learnedCount = count || 0;
@@ -364,10 +361,16 @@ const QuizPage: React.FC = () => {
 
     if (existing) {
       await supabase.from(progressTable).update(updateData).eq('id', existing.id);
+      // Increment global learned count if it's the FIRST correct answer
+      if (isCorrect && (existing.correct_count || 0) === 0) {
+        setOverallProgress(prev => ({ ...prev, learned: prev.learned + 1 }));
+      }
     } else {
       await supabase.from(progressTable).insert(updateData);
-      // Increment global learned count if it's a new item
-      setOverallProgress(prev => ({ ...prev, learned: prev.learned + 1 }));
+      // Increment global learned count if it's correct on the first try
+      if (isCorrect) {
+        setOverallProgress(prev => ({ ...prev, learned: prev.learned + 1 }));
+      }
     }
   };
 
@@ -433,15 +436,15 @@ const QuizPage: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl border border-black/5 dark:border-white/5">
-              <span className="text-[10px] font-black uppercase text-ghost-grey tracking-widest leading-none">Session Progress</span>
-              <span className="text-sm font-black text-primary leading-none">
+            <div className="flex items-center gap-3 bg-primary/10 dark:bg-primary/20 px-5 py-2.5 rounded-2xl border border-primary/20 shadow-sm">
+              <span className="text-[10px] font-black uppercase text-primary tracking-widest leading-none">Session Progress</span>
+              <span className="text-base font-black text-primary leading-none">
                 {currentQuestionIdx + 1} / {questions.length}
               </span>
             </div>
             <button
               onClick={() => navigate('/dashboard')}
-              className="flex items-center justify-center size-10 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-ghost-grey hover:text-red-500 transition-all"
+              className="flex items-center justify-center size-12 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/20 text-ghost-grey hover:text-red-500 transition-all border border-black/5 dark:border-white/5"
             >
               <span className="material-symbols-outlined text-2xl">close</span>
             </button>
