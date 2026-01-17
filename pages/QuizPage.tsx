@@ -72,29 +72,27 @@ const QuizPage: React.FC = () => {
     let totalCount = 0;
 
     if (type === 'all') {
+      const { data: vLevelData } = await supabase.from('vocabulary').select('id').eq('level', level);
+      const { data: gLevelData } = await supabase.from('grammar_points').select('id').eq('level', level);
+      const vLevelIds = vLevelData?.map(v => v.id) || [];
+      const gLevelIds = gLevelData?.map(g => g.id) || [];
+
       const [vProg, gProg, kProg, lProg] = await Promise.all([
-        supabase.from('user_vocabulary_progress').select('vocabulary_id', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0),
-        supabase.from('user_grammar_progress').select('grammar_point_id', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0),
-        supabase.from('user_kanji_progress').select('vocabulary_id', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0),
-        supabase.from('user_listening_progress').select('vocabulary_id', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0)
+        supabase.from('user_vocabulary_progress').select('vocabulary_id', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0).in('vocabulary_id', vLevelIds),
+        supabase.from('user_grammar_progress').select('grammar_point_id', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0).in('grammar_point_id', gLevelIds),
+        supabase.from('user_kanji_progress').select('vocabulary_id', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0).in('vocabulary_id', vLevelIds),
+        supabase.from('user_listening_progress').select('vocabulary_id', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0).in('vocabulary_id', vLevelIds)
       ]);
 
       learnedCount = (vProg.count || 0) + (gProg.count || 0) + (kProg.count || 0) + (lProg.count || 0);
-
-      const [vTotal, gTotal] = await Promise.all([
-        supabase.from('vocabulary').select('id', { count: 'exact', head: true }).eq('level', level),
-        supabase.from('grammar_examples').select('id', { count: 'exact', head: true }).in('grammar_point_id',
-          (await supabase.from('grammar_points').select('id').eq('level', level)).data?.map(p => p.id) || []
-        )
-      ]);
-      totalCount = (vTotal.count || 0) + (gTotal.count || 0);
+      totalCount = (vLevelIds.length * 3) + gLevelIds.length;
     } else if (type === 'grammar') {
       const { data: levelPoints } = await supabase.from('grammar_points').select('id').eq('level', level);
       const levelIds = levelPoints?.map(p => p.id) || [];
       if (levelIds.length > 0) {
         const { count } = await supabase.from('user_grammar_progress').select('grammar_point_id', { count: 'exact', head: true }).eq('user_id', user.id).in('grammar_point_id', levelIds).gt('correct_count', 0);
         learnedCount = count || 0;
-        const { count: total } = await supabase.from('grammar_examples').select('id', { count: 'exact', head: true }).in('grammar_point_id', levelIds);
+        const { count: total } = await supabase.from('grammar_points').select('id', { count: 'exact', head: true }).eq('level', level);
         totalCount = total || 0;
       }
     } else {
