@@ -10,14 +10,15 @@ import { getReferralInfo, generateShareLink, getDailyStatsSnapshot } from '../se
 
 const ProgressPage: React.FC = () => {
   const navigate = useNavigate();
-  const [stats, setStats] = useState({ kanji: 0, vocab: 0, grammar: 0 });
+  const [stats, setStats] = useState({ kanji: 0, vocab: 0, grammar: 0, listening: 0 });
   const [profile, setProfile] = useState<any>({ streak: 0, completion: 0, level: 'N5', display_name: '', avatar_id: 'samurai' });
   const [dueCount, setDueCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [globalStats, setGlobalStats] = useState({
     kanji: { learned: 0, total: 0 },
     vocabulary: { learned: 0, total: 0 },
-    grammar: { learned: 0, total: 0 }
+    grammar: { learned: 0, total: 0 },
+    listening: { learned: 0, total: 0 }
   });
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareData, setShareData] = useState({
