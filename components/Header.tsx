@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ProfileSettingsModal from './ProfileSettingsModal';
 
 interface HeaderProps {
   title?: string;
@@ -9,6 +10,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ title = "JLPT Study", showNav = true }) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const navLinks = [
     { name: 'Dashboard', path: '/dashboard' },
@@ -48,12 +50,25 @@ const Header: React.FC<HeaderProps> = ({ title = "JLPT Study", showNav = true })
             </>
           )}
           <div className="flex items-center">
-            <Link to="/settings" className="flex items-center justify-center rounded-xl h-10 w-10 bg-gray-50 dark:bg-white/5 text-charcoal dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors border border-gray-100 dark:border-white/5 shadow-sm">
+            <button
+              onClick={() => setIsProfileOpen(true)}
+              className="flex items-center justify-center rounded-xl h-10 w-10 bg-gray-50 dark:bg-white/5 text-charcoal dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors border border-gray-100 dark:border-white/5 shadow-sm"
+            >
               <span className="material-symbols-outlined !text-2xl">account_circle</span>
-            </Link>
+            </button>
           </div>
         </div>
       </header>
+
+      {isProfileOpen && (
+        <ProfileSettingsModal
+          onClose={() => setIsProfileOpen(false)}
+          onUpdate={() => {
+            // Potential global state update if needed
+            window.location.reload(); // Quick way to refresh all stats
+          }}
+        />
+      )}
 
       {/* Mobile Navigation Overlay */}
       {isMenuOpen && (

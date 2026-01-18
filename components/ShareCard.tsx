@@ -33,6 +33,34 @@ const ShareCard: React.FC<ShareCardProps> = ({ stats, referralLink, onClose }) =
     const [isExporting, setIsExporting] = useState(false);
     const [selectedAvatar, setSelectedAvatar] = useState(PIXEL_AVATARS[0]);
 
+    const copyToClipboard = async (text: string) => {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                alert('Link copied to clipboard!');
+            } else {
+                // Fallback for non-secure contexts or unsupported browsers
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                textArea.style.top = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    alert('Link copied to clipboard!');
+                } catch (err) {
+                    console.error('Fallback copy failed', err);
+                }
+                document.body.removeChild(textArea);
+            }
+        } catch (err) {
+            console.error('Copy failed', err);
+        }
+    };
+
     const downloadCard = async () => {
         if (cardRef.current === null) return;
         setIsExporting(true);
@@ -224,7 +252,7 @@ const ShareCard: React.FC<ShareCardProps> = ({ stats, referralLink, onClose }) =
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-ghost-grey">Personal Study Link</span>
                                 <button
-                                    onClick={() => navigator.clipboard.writeText(referralLink)}
+                                    onClick={() => copyToClipboard(referralLink)}
                                     className="text-primary text-[10px] font-black flex items-center gap-1 hover:underline uppercase tracking-widest"
                                 >
                                     <span className="material-symbols-outlined !text-base">content_copy</span>

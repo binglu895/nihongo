@@ -9,6 +9,29 @@ const PublicProfilePage: React.FC = () => {
     const [profile, setProfile] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
+    const copyToClipboard = async (text: string) => {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                alert('Profile link copied!');
+            } else {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                textArea.style.top = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Profile link copied!');
+            }
+        } catch (err) {
+            console.error('Copy failed', err);
+        }
+    };
+
     useEffect(() => {
         if (referralCode) {
             getProfileByReferralCode(referralCode).then(data => {
@@ -109,10 +132,13 @@ const PublicProfilePage: React.FC = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left px-2">
-                        <div className="p-4 bg-white/50 dark:bg-white/5 rounded-2xl border border-black/5">
-                            <span className="material-symbols-outlined text-primary mb-2">speed</span>
-                            <h5 className="text-xs font-black uppercase tracking-widest mb-1">5x Faster Learning</h5>
-                            <p className="text-[10px] text-ghost-grey">Optimized SRS algorithm ensures you never forget a word.</p>
+                        <div
+                            className="p-4 bg-white/50 dark:bg-white/5 rounded-2xl border border-black/5 cursor-pointer hover:bg-slate-50 transition-colors"
+                            onClick={() => copyToClipboard(window.location.href)}
+                        >
+                            <span className="material-symbols-outlined text-primary mb-2">content_copy</span>
+                            <h5 className="text-xs font-black uppercase tracking-widest mb-1">Share This Profile</h5>
+                            <p className="text-[10px] text-ghost-grey">Click to copy the link and show off your progress.</p>
                         </div>
                         <div className="p-4 bg-white/50 dark:bg-white/5 rounded-2xl border border-black/5">
                             <span className="material-symbols-outlined text-primary mb-2">psychology</span>
