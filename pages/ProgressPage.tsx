@@ -111,7 +111,33 @@ const ProgressPage: React.FC = () => {
       setDueCount((vDue.count || 0) + (gDue.count || 0) + (kDue.count || 0) + (lDue.count || 0));
 
       // Fetch Global Stats for ratios
-      await fetchGlobalStats(profileData.current_level, user.id);
+      const allGlobalStats = await fetchGlobalStats(profileData.current_level, user.id);
+
+      if (refInfo) {
+        setShareData({
+          referralLink: generateShareLink(refInfo.code),
+          todayStats: {
+            reviews: dailySnapshot.reviews || 0,
+            mastered: dailySnapshot.mastered || 0,
+            vocab: dailySnapshot.vocab || 0,
+            grammar: dailySnapshot.grammar || 0,
+            kanji: dailySnapshot.kanji || 0,
+            listening: dailySnapshot.listening || 0,
+            today_vocab: dailySnapshot.today_vocab || 0,
+            today_grammar: dailySnapshot.today_grammar || 0,
+            today_kanji: dailySnapshot.today_kanji || 0,
+            today_listening: dailySnapshot.today_listening || 0,
+            target_vocab: allGlobalStats.vocabulary.total,
+            target_grammar: allGlobalStats.grammar.total,
+            target_kanji: allGlobalStats.kanji.total,
+            target_listening: allGlobalStats.listening.total,
+            streak: profileData.streak,
+            level: profileData.current_level || 1,
+            completion: profileData.completion_percentage,
+            studyTimeToday: dailySnapshot.studyTimeToday
+          }
+        });
+      }
 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -154,12 +180,15 @@ const ProgressPage: React.FC = () => {
     const { count: lTotal } = await supabase.from('vocabulary').select('id', { count: 'exact', head: true }).eq('level', level);
     const { count: lLearned } = await supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', userId).gt('correct_count', 0).in('vocabulary_id', (await supabase.from('vocabulary').select('id').eq('level', level)).data?.map(v => v.id) || []);
 
-    setGlobalStats({
+    const newGlobalStats = {
       kanji: { learned: kLearned || 0, total: kTotal || 0 },
       vocabulary: { learned: vLearned || 0, total: vTotal || 0 },
       grammar: { learned: gLearned || 0, total: gTotal || 0 },
       listening: { learned: lLearned || 0, total: lTotal || 0 }
-    });
+    };
+
+    setGlobalStats(newGlobalStats);
+    return newGlobalStats;
   };
 
   return (
