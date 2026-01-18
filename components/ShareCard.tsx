@@ -9,6 +9,7 @@ interface ShareCardProps {
         level: number;
         completion: number;
         studyTimeToday?: number;
+        likes?: number;
         // Today's mastery counts
         today_vocab?: number;
         today_grammar?: number;
@@ -128,7 +129,7 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
                                 <div className="bg-slate-50 p-2 rounded-xl border border-black/[0.02] flex flex-col items-center justify-center text-center">
                                     <p className="text-[7px] font-black uppercase text-ghost-grey mb-0.5 tracking-tight">Time</p>
                                     <p className="text-lg font-black text-primary leading-none">
-                                        {mins}<span className="text-[8px] ml-0.5 text-primary/60 italic">m</span>
+                                        {mins}<span className="ml-0.5 text-[8px] text-primary/60 italic">m</span>
                                     </p>
                                 </div>
                                 <div className="bg-slate-50 p-2 rounded-xl border border-black/[0.02] flex flex-col items-center justify-center text-center">
@@ -138,9 +139,9 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
                                     </p>
                                 </div>
                                 <div className="bg-slate-50 p-2 rounded-xl border border-black/[0.02] flex flex-col items-center justify-center text-center">
-                                    <p className="text-[7px] font-black uppercase text-ghost-grey mb-0.5 tracking-tight">Review</p>
-                                    <p className="text-lg font-black text-emerald-500 leading-none">
-                                        {todayStats.reviews || 0}
+                                    <p className="text-[7px] font-black uppercase text-ghost-grey mb-0.5 tracking-tight flex items-center gap-0.5">Likes <span className="material-symbols-outlined !text-[8px] text-red-500 fill-red-500">favorite</span></p>
+                                    <p className="text-lg font-black text-red-500 leading-none">
+                                        {todayStats.likes || 0}
                                     </p>
                                 </div>
                             </div>
@@ -151,7 +152,7 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
                                     { label: 'Grammar', key: 'grammar', color: 'bg-emerald-400' },
                                     { label: 'Character', key: 'kanji', color: 'bg-indigo-400' },
                                     { label: 'Listening', key: 'listening', color: 'bg-pink-400' },
-                                    { label: 'Retention', key: 'reviews', color: 'bg-amber-400', isReview: true }
+                                    { label: 'Review', key: 'reviews', color: 'bg-amber-400', isReview: true }
                                 ].map(item => {
                                     const total = item.isReview ? (todayStats.reviews || 0) : ((todayStats as any)[item.key] || 0);
                                     const todayCount = item.isReview ? (todayStats.reviews || 0) : ((todayStats as any)[`today_${item.key}`] || 0);
@@ -224,7 +225,7 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
                         <div className="p-2 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/10 flex items-center justify-between">
                             <div className="flex flex-col min-w-0">
                                 <span className="text-[7px] font-black uppercase tracking-tight text-ghost-grey">Your Study Link</span>
-                                <p className="text-[9px] font-bold truncate opacity-40 leading-none text-charcoal dark:text-white">{referralLink}</p>
+                                <p className="text-[9px] font-bold truncate max-w-[150px] opacity-40 leading-none text-charcoal dark:text-white">{referralLink}</p>
                             </div>
                             <button
                                 onClick={() => copyToClipboard(referralLink)}

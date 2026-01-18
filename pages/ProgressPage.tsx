@@ -131,6 +131,7 @@ const ProgressPage: React.FC = () => {
             target_grammar: allGlobalStats.grammar.total,
             target_kanji: allGlobalStats.kanji.total,
             target_listening: allGlobalStats.listening.total,
+            likes: dailySnapshot.likes || 0,
             streak: profileData.streak,
             level: profileData.current_level || 1,
             completion: profileData.completion_percentage,

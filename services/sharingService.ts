@@ -41,43 +41,40 @@ export const getDailyStatsSnapshot = async (userId: string) => {
     // Reviews today
     const reviewResults = await Promise.all(categories.map(c =>
         supabase.from(c.table)
-            .select(c.field, { count: 'exact', head: true })
+            .select('*', { count: 'exact', head: true })
             .eq('user_id', userId)
             .gte('last_reviewed_at', todayStr)
     ));
 
-    // Total mastered per category
+    // Total mastered per category (Historical + Today)
     const masteryResults = await Promise.all(categories.map(c =>
         supabase.from(c.table)
-            .select(c.field, { count: 'exact', head: true })
+            .select('*', { count: 'exact', head: true })
             .eq('user_id', userId)
             .gt('correct_count', 0)
     ));
 
-    // Items FIRST mastered today (correct_count > 0 AND first_mastered_at today)
-    // Actually, we can check correct_count=1 AND last_reviewed_at >= today as a proxy
-    // but better to have a specific first_mastered_at. 
-    // Since we don't have that column, we'll check items with correct_count >= 1 reviewed today.
-    // This isn't perfect but is the best proxy we have.
+    // Items mastered TODAY
     const todayMasteryResults = await Promise.all(categories.map(c =>
         supabase.from(c.table)
-            .select(c.field, { count: 'exact', head: true })
+            .select('*', { count: 'exact', head: true })
             .eq('user_id', userId)
             .gt('correct_count', 0)
             .gte('last_reviewed_at', todayStr)
     ));
 
-    const { data: profileData } = await supabase
+    const { data: profile } = await supabase
         .from('profiles')
-        .select('daily_study_time')
+        .select('daily_study_time, referral_views')
         .eq('id', userId)
         .single();
 
     const stats: any = {
         reviews: reviewResults.reduce((acc, r) => acc + (r.count || 0), 0),
         mastered: masteryResults.reduce((acc, r) => acc + (r.count || 0), 0),
+        likes: profile?.referral_views || 0,
         date: today.toLocaleDateString(),
-        studyTimeToday: (profileData?.daily_study_time || {})[today.toISOString().split('T')[0]] || 0
+        studyTimeToday: (profile?.daily_study_time || {})[today.toISOString().split('T')[0]] || 0
     };
 
     categories.forEach((c, i) => {
@@ -88,10 +85,31 @@ export const getDailyStatsSnapshot = async (userId: string) => {
     return stats;
 };
 
+export const incrementProfileViews = async (referralCode: string) => {
+    try {
+        // We use a simple update increment. 
+        // In a real production app, you might use a Supabase RPC or a more atomic operation.
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('referral_views, id')
+            .eq('referral_code', referralCode.toUpperCase())
+            .single();
+
+        if (profile) {
+            await supabase
+                .from('profiles')
+                .update({ referral_views: (profile.referral_views || 0) + 1 })
+                .eq('id', profile.id);
+        }
+    } catch (err) {
+        console.error('Error incrementing views:', err);
+    }
+};
+
 export const getProfileByReferralCode = async (code: string) => {
     const { data: profile, error } = await supabase
         .from('profiles')
-        .select('xp, level, streak, referral_code, badges, id')
+        .select('xp, level, streak, referral_code, badges, id, referral_views')
         .eq('referral_code', code.toUpperCase())
         .single();
 

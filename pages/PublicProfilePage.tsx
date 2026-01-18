@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProfileByReferralCode } from '../services/sharingService';
+import { getProfileByReferralCode, incrementProfileViews } from '../services/sharingService';
 import Footer from '../components/Footer';
 
 const PublicProfilePage: React.FC = () => {
@@ -34,6 +34,9 @@ const PublicProfilePage: React.FC = () => {
 
     useEffect(() => {
         if (referralCode) {
+            // Increment views
+            incrementProfileViews(referralCode);
+
             getProfileByReferralCode(referralCode).then(data => {
                 setProfile(data);
                 setLoading(false);
