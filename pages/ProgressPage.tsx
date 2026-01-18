@@ -83,6 +83,14 @@ const ProgressPage: React.FC = () => {
             grammar: dailySnapshot.grammar,
             kanji: dailySnapshot.kanji,
             listening: dailySnapshot.listening,
+            today_vocab: dailySnapshot.today_vocab,
+            today_grammar: dailySnapshot.today_grammar,
+            today_kanji: dailySnapshot.today_kanji,
+            today_listening: dailySnapshot.today_listening,
+            target_vocab: globalStats.vocabulary.total,
+            target_grammar: globalStats.grammar.total,
+            target_kanji: globalStats.kanji.total,
+            target_listening: globalStats.listening.total,
             streak: profileData.streak,
             level: profileData.current_level || 1,
             completion: profileData.completion_percentage,
@@ -138,10 +146,19 @@ const ProgressPage: React.FC = () => {
       .select('*', { count: 'exact', head: true })
       .in('grammar_point_id', levelGrammarIds);
 
+    // Kanji Total (proxy from vocab table for now or specific kanji table if exists)
+    const { count: kTotal } = await supabase.from('vocabulary').select('id', { count: 'exact', head: true }).eq('level', level);
+    const { count: kLearned } = await supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', userId).gt('correct_count', 0).in('vocabulary_id', (await supabase.from('vocabulary').select('id').eq('level', level)).data?.map(v => v.id) || []);
+
+    // Listening Total
+    const { count: lTotal } = await supabase.from('vocabulary').select('id', { count: 'exact', head: true }).eq('level', level);
+    const { count: lLearned } = await supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', userId).gt('correct_count', 0).in('vocabulary_id', (await supabase.from('vocabulary').select('id').eq('level', level)).data?.map(v => v.id) || []);
+
     setGlobalStats({
-      kanji: { learned: 0, total: 0 },
+      kanji: { learned: kLearned || 0, total: kTotal || 0 },
       vocabulary: { learned: vLearned || 0, total: vTotal || 0 },
-      grammar: { learned: gLearned || 0, total: gTotal || 0 }
+      grammar: { learned: gLearned || 0, total: gTotal || 0 },
+      listening: { learned: lLearned || 0, total: lTotal || 0 }
     });
   };
 

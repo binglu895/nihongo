@@ -438,6 +438,13 @@ const QuizPage: React.FC = () => {
     }
   };
 
+  React.useEffect(() => {
+    if (showLevelUp) {
+      const timer = setTimeout(() => setShowLevelUp(false), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [showLevelUp]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background-light dark:bg-background-dark flex items-center justify-center">
@@ -669,8 +676,8 @@ const QuizPage: React.FC = () => {
       }
 
       {showLevelUp && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] bg-gradient-to-r from-amber-400 to-orange-500 text-white px-8 py-4 rounded-[32px] shadow-2xl animate-in slide-in-from-top-full duration-500 font-black flex items-center gap-4 border-4 border-white">
-          <span className="material-symbols-outlined !text-4xl text-white fill-white">military_tech</span>
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] bg-gradient-to-r from-amber-400 to-orange-500 text-white px-8 py-4 rounded-[32px] shadow-2xl animate-in fade-in slide-in-from-top-full duration-700 font-black flex items-center gap-4 border-4 border-white">
+          <span className="material-symbols-outlined !text-4xl text-white fill-white animate-bounce-subtle">military_tech</span>
           <div className="flex flex-col">
             <span className="text-xs uppercase tracking-widest opacity-80">Achievement Unlocked</span>
             <span className="text-xl">Level Up! You're getting stronger.</span>

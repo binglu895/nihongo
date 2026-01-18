@@ -93,71 +93,86 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300 overflow-y-auto">
-            <div className="max-w-xl w-full bg-white dark:bg-slate-900 rounded-[40px] p-6 md:p-10 shadow-2xl border border-slate-100 dark:border-slate-800 relative animate-in zoom-in-95 duration-300">
-                <button onClick={onClose} className="absolute top-6 right-6 p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors z-20">
-                    <span className="material-symbols-outlined !text-2xl">close</span>
+            <div className="max-w-xl w-full bg-white dark:bg-slate-900 rounded-[32px] p-6 md:p-8 shadow-2xl border border-slate-100 dark:border-slate-800 relative animate-in zoom-in-95 duration-300">
+                <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors z-20">
+                    <span className="material-symbols-outlined !text-xl">close</span>
                 </button>
 
-                <div className="flex flex-col gap-6 md:gap-8">
-                    <div className="text-center">
-                        <h3 className="text-2xl font-black">Ready to Share</h3>
-                        <p className="text-ghost-grey dark:text-slate-500 text-xs font-bold mt-1">Your daily progress report is ready</p>
+                <div className="flex flex-col gap-4">
+                    <div className="text-center mb-2">
+                        <h3 className="text-xl font-black">Daily Mastery Report</h3>
+                        <p className="text-ghost-grey dark:text-slate-500 text-[10px] font-bold mt-0.5">JLPT Preparation Journey</p>
                     </div>
 
                     {/* Unified Preview Card - The Export Target */}
                     <div
                         ref={cardRef}
-                        className={`w-full aspect-[4/5] p-6 md:p-10 flex flex-col justify-between relative overflow-hidden bg-white rounded-[40px] border border-slate-100 shadow-xl mx-auto ${isPrinting ? '' : 'max-h-[500px]'}`}
+                        className={`w-full aspect-[4/5] p-6 md:p-8 flex flex-col justify-between relative overflow-hidden bg-white rounded-[32px] border border-slate-100 shadow-xl mx-auto ${isPrinting ? '' : 'max-h-[440px]'}`}
                     >
                         <div className="flex justify-between items-start relative z-10">
-                            <div className="flex flex-col gap-1">
-                                <h2 className="text-3xl font-black tracking-tight text-charcoal">{displayName}</h2>
-                                <p className="text-[10px] font-black tracking-widest uppercase opacity-60">Level {userLevel} • Apprentice</p>
+                            <div className="flex flex-col gap-0.5">
+                                <h2 className="text-2xl font-black tracking-tight text-charcoal">{displayName}</h2>
+                                <p className="text-[9px] font-black tracking-widest uppercase opacity-60">Level {userLevel} • Apprentice</p>
                             </div>
-                            <div className={`size-20 md:size-24 bg-white/40 dark:bg-black/20 rounded-[32px] p-4 shadow-inner border-2 backdrop-blur-sm flex items-center justify-center ${getFrameStyle(userLevel)}`}>
-                                <img src={getAvatarUrl(avatarId)} alt="" className="size-full object-contain drop-shadow-xl" />
+                            <div className={`size-16 md:size-20 bg-white/40 rounded-2xl p-3 shadow-inner border-2 backdrop-blur-sm flex items-center justify-center ${getFrameStyle(userLevel)}`}>
+                                <img src={getAvatarUrl(avatarId)} alt="" className="size-full object-contain drop-shadow-lg" />
                             </div>
                         </div>
 
-                        <div className="flex-grow flex flex-col justify-center gap-4 md:gap-6 relative z-10 py-4 md:py-6">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-white/50 dark:bg-white/5 p-4 rounded-3xl border border-black/5 flex flex-col items-center justify-center text-center">
-                                    <p className="text-[9px] font-black uppercase text-ghost-grey mb-0.5 tracking-widest">Today's Focus</p>
-                                    <p className="text-3xl font-black text-primary leading-none">
-                                        {mins}<span className="text-xs ml-1 text-primary/60 italic">min</span>
+                        <div className="flex-grow flex flex-col justify-center gap-3 md:gap-4 relative z-10 py-2">
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="bg-slate-50 p-3 rounded-2xl border border-black/[0.03] flex flex-col items-center justify-center text-center">
+                                    <p className="text-[8px] font-black uppercase text-ghost-grey mb-0.5 tracking-widest">Today's Focus</p>
+                                    <p className="text-2xl font-black text-primary leading-none">
+                                        {mins}<span className="text-[10px] ml-1 text-primary/60 italic">min</span>
                                     </p>
                                 </div>
-                                <div className="bg-white/50 dark:bg-white/5 p-4 rounded-3xl border border-black/5 flex flex-col items-center justify-center text-center">
-                                    <p className="text-[9px] font-black uppercase text-ghost-grey mb-0.5 tracking-widest">Day Streak</p>
-                                    <p className="text-3xl font-black text-amber-500 leading-none">
+                                <div className="bg-slate-50 p-3 rounded-2xl border border-black/[0.03] flex flex-col items-center justify-center text-center">
+                                    <p className="text-[8px] font-black uppercase text-ghost-grey mb-0.5 tracking-widest">Day Streak</p>
+                                    <p className="text-2xl font-black text-amber-500 leading-none">
                                         {todayStats.streak}<span className="ml-1">🔥</span>
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="space-y-3 md:space-y-4 px-2">
+                            <div className="space-y-2 md:space-y-3 px-1">
                                 {[
                                     { label: 'Vocabulary', key: 'vocab', color: 'bg-primary' },
                                     { label: 'Grammar', key: 'grammar', color: 'bg-emerald-400' },
                                     { label: 'Character', key: 'kanji', color: 'bg-indigo-400' },
                                     { label: 'Listening', key: 'listening', color: 'bg-pink-400' }
                                 ].map(item => {
-                                    const val = (todayStats as any)[item.key] || 0;
-                                    const progress = Math.min(100, (val / 100) * 100);
+                                    const total = (todayStats as any)[item.key] || 0;
+                                    const todayCount = (todayStats as any)[`today_${item.key}`] || 0;
+                                    const target = (todayStats as any)[`target_${item.key}`] || 100;
+
+                                    const prevCount = Math.max(0, total - todayCount);
+                                    const prevProgress = (prevCount / target) * 100;
+                                    const todayProgress = (todayCount / target) * 100;
+
                                     return (
-                                        <div key={item.key} className="space-y-1.5">
+                                        <div key={item.key} className="space-y-1">
                                             <div className="flex justify-between items-end">
-                                                <p className="text-[9px] font-black uppercase tracking-widest text-charcoal/60 dark:text-white/40">{item.label}</p>
-                                                <p className="text-[10px] font-black italic text-charcoal dark:text-white">
-                                                    {val} <span className="text-[8px] opacity-40">/ 100</span>
+                                                <div className="flex items-center gap-1.5">
+                                                    <p className="text-[8px] font-black uppercase tracking-widest text-charcoal/60">{item.label}</p>
+                                                    {todayCount > 0 && <span className="text-[7px] font-black text-emerald-500 bg-emerald-50 px-1 py-0.5 rounded">+{todayCount}</span>}
+                                                </div>
+                                                <p className="text-[9px] font-black italic text-charcoal">
+                                                    {total} <span className="text-[8px] opacity-40">/ {target}</span>
                                                 </p>
                                             </div>
-                                            <div className="w-full h-2.5 bg-black/5 dark:bg-white/10 rounded-full overflow-hidden p-0.5 border border-black/5">
+                                            <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-black/5 flex">
+                                                {/* Previous Progress */}
                                                 <div
-                                                    className={`h-full ${item.color} rounded-full transition-all duration-1000 shadow-sm relative`}
-                                                    style={{ width: `${progress}%` }}
+                                                    className={`h-full ${item.color} opacity-40 rounded-l-full transition-all duration-1000`}
+                                                    style={{ width: `${prevProgress}%` }}
+                                                />
+                                                {/* Today's Progress */}
+                                                <div
+                                                    className={`h-full ${item.color} rounded-r-full transition-all duration-1000 shadow-sm relative`}
+                                                    style={{ width: `${todayProgress}%` }}
                                                 >
-                                                    <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                                                    <div className="absolute inset-0 bg-white/30 animate-pulse" />
                                                 </div>
                                             </div>
                                         </div>

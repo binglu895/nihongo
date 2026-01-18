@@ -54,6 +54,19 @@ export const getDailyStatsSnapshot = async (userId: string) => {
             .gt('correct_count', 0)
     ));
 
+    // Items FIRST mastered today (correct_count > 0 AND first_mastered_at today)
+    // Actually, we can check correct_count=1 AND last_reviewed_at >= today as a proxy
+    // but better to have a specific first_mastered_at. 
+    // Since we don't have that column, we'll check items with correct_count >= 1 reviewed today.
+    // This isn't perfect but is the best proxy we have.
+    const todayMasteryResults = await Promise.all(categories.map(c =>
+        supabase.from(c.table)
+            .select(c.field, { count: 'exact', head: true })
+            .eq('user_id', userId)
+            .gt('correct_count', 0)
+            .gte('last_reviewed_at', todayStr)
+    ));
+
     const { data: profileData } = await supabase
         .from('profiles')
         .select('daily_study_time')
@@ -62,12 +75,14 @@ export const getDailyStatsSnapshot = async (userId: string) => {
 
     const stats: any = {
         reviews: reviewResults.reduce((acc, r) => acc + (r.count || 0), 0),
+        mastered: masteryResults.reduce((acc, r) => acc + (r.count || 0), 0),
         date: today.toLocaleDateString(),
         studyTimeToday: (profileData?.daily_study_time || {})[today.toISOString().split('T')[0]] || 0
     };
 
     categories.forEach((c, i) => {
         stats[c.key] = masteryResults[i].count || 0;
+        stats[`today_${c.key}`] = todayMasteryResults[i].count || 0;
     });
 
     return stats;
