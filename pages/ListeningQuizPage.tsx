@@ -40,13 +40,20 @@ const ListeningQuizPage: React.FC = () => {
         ]);
 
         if (qRes.data) {
-            // Generate distractors for each question from other questions
+            // Generate distractors for each question
             const allSentences = qRes.data.map(q => q.sentence);
             const formatted = qRes.data.map(q => {
-                const distractors = allSentences
-                    .filter(s => s !== q.sentence)
-                    .sort(() => Math.random() - 0.5)
-                    .slice(0, 3);
+                let distractors = [];
+                if (q.distractors && q.distractors.length > 0) {
+                    // Use specific distractors if provided
+                    distractors = q.distractors.sort(() => Math.random() - 0.5).slice(0, 3);
+                } else {
+                    // Fallback to random distractors from other questions
+                    distractors = allSentences
+                        .filter(s => s !== q.sentence)
+                        .sort(() => Math.random() - 0.5)
+                        .slice(0, 3);
+                }
                 const options = [...distractors, q.sentence].sort(() => Math.random() - 0.5);
                 return { ...q, options };
             });

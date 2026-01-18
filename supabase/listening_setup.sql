@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS listening_questions (
   translation TEXT,
   translation_zh TEXT,
   audio_url TEXT, -- Path to the audio file in Supabase Storage or local public path
+  distractors TEXT[], -- Array of similar sentences
   difficulty INTEGER DEFAULT 1, -- 1: Simple, 2: Medium, 3: Complex
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
 );
