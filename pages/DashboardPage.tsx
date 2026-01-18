@@ -188,10 +188,13 @@ const DashboardPage: React.FC = () => {
               </div>
               <h3 className="text-charcoal dark:text-white text-xl md:text-2xl font-black mb-2 md:mb-3">{card.title}</h3>
               {card.stats && (
-                <div className="flex items-center gap-2 mb-4 bg-gray-50 dark:bg-white/5 px-4 py-1.5 rounded-full border border-gray-100 dark:border-white/5">
-                  <div className="flex flex-col">
-                    <span className="font-black text-2xl mb-1">{card.stats.learned}</span>
-                    <span className="text-[10px] uppercase font-black tracking-widest opacity-40 italic">
+                <div className="flex flex-col items-center justify-center mb-6">
+                  <div className="size-24 rounded-full bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 flex flex-col items-center justify-center shadow-inner group-hover:bg-primary/5 transition-colors duration-500">
+                    <span className="text-2xl font-black text-primary">{card.stats.learned}</span>
+                    <span className="text-[10px] font-black opacity-30 uppercase tracking-widest mt-1">Mastered</span>
+                  </div>
+                  <div className="mt-3 px-3 py-1 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-full">
+                    <span className="text-[10px] font-black text-ghost-grey uppercase tracking-widest leading-none">
                       {card.stats.learned === 0 ? 'Master N5' : `of ${card.stats.total} ${card.title.toLowerCase()}`}
                     </span>
                   </div>

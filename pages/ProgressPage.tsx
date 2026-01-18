@@ -11,7 +11,7 @@ import { getReferralInfo, generateShareLink, getDailyStatsSnapshot } from '../se
 const ProgressPage: React.FC = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({ kanji: 0, vocab: 0, grammar: 0 });
-  const [profile, setProfile] = useState({ streak: 0, completion: 0, level: 'N3' });
+  const [profile, setProfile] = useState<any>({ streak: 0, completion: 0, level: 'N5', display_name: '', avatar_id: 'samurai' });
   const [dueCount, setDueCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [globalStats, setGlobalStats] = useState({
@@ -40,7 +40,7 @@ const ProgressPage: React.FC = () => {
       // Fetch profile
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('streak, completion_percentage, current_level')
+        .select('streak, completion_percentage, current_level, display_name, avatar_id')
         .eq('id', user.id)
         .single();
 
@@ -58,7 +58,9 @@ const ProgressPage: React.FC = () => {
       setProfile({
         streak: profileData.streak,
         completion: profileData.completion_percentage,
-        level: profileData.current_level
+        level: profileData.current_level,
+        display_name: profileData.display_name,
+        avatar_id: profileData.avatar_id
       });
 
       setStats({
@@ -319,7 +321,8 @@ const ProgressPage: React.FC = () => {
 
       {showShareModal && (
         <ShareCard
-          stats={shareData.todayStats}
+          todayStats={shareData.todayStats}
+          profile={profile}
           referralLink={shareData.referralLink}
           onClose={() => setShowShareModal(false)}
         />
