@@ -188,16 +188,11 @@ const DashboardPage: React.FC = () => {
               </div>
               <h3 className="text-charcoal dark:text-white text-xl md:text-2xl font-black mb-2 md:mb-3">{card.title}</h3>
               {card.stats && (
-                <div className="flex flex-col items-center justify-center mb-6">
-                  <div className="size-24 rounded-full bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 flex flex-col items-center justify-center shadow-inner group-hover:bg-primary/5 transition-colors duration-500">
-                    <span className="text-2xl font-black text-primary">{card.stats.learned}</span>
-                    <span className="text-[10px] font-black opacity-30 uppercase tracking-widest mt-1">Mastered</span>
-                  </div>
-                  <div className="mt-3 px-3 py-1 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-full">
-                    <span className="text-[10px] font-black text-ghost-grey uppercase tracking-widest leading-none">
-                      {card.stats.learned === 0 ? 'Master N5' : `of ${card.stats.total} ${card.title.toLowerCase()}`}
-                    </span>
-                  </div>
+                <div className="flex flex-col items-center justify-center mb-10">
+                  <span className="text-4xl font-black text-primary leading-none">{card.stats.learned}</span>
+                  <span className="text-[10px] font-black text-ghost-grey/40 uppercase tracking-[0.2em] mt-3">
+                    / {card.stats.total} {card.title}
+                  </span>
                 </div>
               )}
               <p className="text-ghost-grey dark:text-gray-400 text-center text-xs md:text-sm mb-8 md:mb-10 leading-relaxed font-medium">

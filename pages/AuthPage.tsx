@@ -144,13 +144,26 @@ const AuthPage: React.FC = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <button className="flex-1 flex items-center justify-center gap-3 border border-black/10 dark:border-white/10 rounded-xl py-3.5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
-              <span className="material-symbols-outlined text-charcoal dark:text-white text-xl">brand_awareness</span>
-              <span className="text-sm font-bold text-charcoal dark:text-white">Google</span>
+            <button
+              onClick={() => alert('Coming Soon: Google Login integration is in progress!')}
+              className="flex-1 flex items-center justify-center gap-3 border border-black/10 dark:border-white/10 rounded-xl py-3.5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
+            >
+              <span className="material-symbols-outlined text-[#4285F4] text-xl font-black">g_mobiledata</span>
+              <span className="text-xs font-black text-charcoal dark:text-white uppercase tracking-widest">Google</span>
             </button>
-            <button className="flex-1 flex items-center justify-center gap-3 border border-black/10 dark:border-white/10 rounded-xl py-3.5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
-              <span className="material-symbols-outlined text-charcoal dark:text-white text-xl">phone_iphone</span>
-              <span className="text-sm font-bold text-charcoal dark:text-white">Apple</span>
+            <button
+              onClick={() => alert('Coming Soon: Apple Login integration is in progress!')}
+              className="flex-1 flex items-center justify-center gap-3 border border-black/10 dark:border-white/10 rounded-xl py-3.5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
+            >
+              <span className="material-symbols-outlined text-charcoal dark:text-white text-xl">apple</span>
+              <span className="text-xs font-black text-charcoal dark:text-white uppercase tracking-widest">Apple</span>
+            </button>
+            <button
+              onClick={() => alert('即将推出：微信登录集成正在开发中！')}
+              className="flex-1 flex items-center justify-center gap-3 border border-black/10 dark:border-white/10 rounded-xl py-3.5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
+            >
+              <span className="material-symbols-outlined text-[#07C160] text-xl">chat</span>
+              <span className="text-xs font-black text-charcoal dark:text-white uppercase tracking-widest">WeChat</span>
             </button>
           </div>
 
