@@ -90,8 +90,8 @@ const ShareCard: React.FC<ShareCardProps> = ({ stats, referralLink, onClose }) =
     const mins = Math.max(1, Math.floor(((stats as any).studyTimeToday || 0) / 60));
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300 overflow-y-auto">
-            <div className="max-w-5xl w-full flex flex-col lg:flex-row gap-8 items-center lg:items-start py-8">
+        <div className="fixed inset-0 z-[100] flex items-start justify-center bg-black/80 backdrop-blur-md p-2 md:p-4 animate-in fade-in duration-300 overflow-y-auto pt-10 md:pt-20">
+            <div className="max-w-5xl w-full flex flex-col lg:flex-row gap-6 md:gap-8 items-center lg:items-start pb-20">
 
                 {/* Preview Card */}
                 <div
@@ -137,7 +137,9 @@ const ShareCard: React.FC<ShareCardProps> = ({ stats, referralLink, onClose }) =
                                     <div key={item.key} className="space-y-1.5">
                                         <div className="flex justify-between items-end">
                                             <p className="text-[9px] font-black uppercase tracking-widest text-charcoal/60 dark:text-white/40">{item.label}</p>
-                                            <p className="text-[10px] font-black italic text-charcoal dark:text-white">{val} mastered</p>
+                                            <p className="text-[10px] font-black italic text-charcoal dark:text-white">
+                                                {val} <span className="text-[8px] opacity-40">/ 100</span>
+                                            </p>
                                         </div>
                                         <div className="w-full h-2.5 bg-black/5 dark:bg-white/10 rounded-full overflow-hidden p-0.5 border border-black/5">
                                             <div

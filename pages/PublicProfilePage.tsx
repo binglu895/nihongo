@@ -35,7 +35,7 @@ const PublicProfilePage: React.FC = () => {
                     onClick={() => navigate('/')}
                     className="px-8 py-3 bg-primary text-white rounded-xl font-bold"
                 >
-                    Go Back Home
+                    Back to Home
                 </button>
             </div>
         );
@@ -100,7 +100,7 @@ const PublicProfilePage: React.FC = () => {
                         <h4 className="text-xl font-black mb-2">Ready to Master Japanese?</h4>
                         <p className="text-sm opacity-90 mb-6 leading-relaxed px-4">Join this Sensei and start your own JLPT N5 mastery journey today. Gamified, minimalist, and 5x more effective.</p>
                         <button
-                            onClick={() => navigate(`/?ref=${referralCode}`)}
+                            onClick={() => navigate(`/?mode=signup&ref=${referralCode}`)}
                             className="w-full py-4 bg-white text-primary rounded-2xl font-black hover:bg-slate-50 transition-colors shadow-lg flex items-center justify-center gap-2"
                         >
                             <span className="material-symbols-outlined">rocket_launch</span>

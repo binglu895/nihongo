@@ -10,6 +10,13 @@ const AuthPage: React.FC = () => {
   const [email, setEmail] = useState('alex@example.com');
   const [password, setPassword] = useState('password123');
   const [isSignUp, setIsSignUp] = useState(false);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('mode') === 'signup') {
+      setIsSignUp(true);
+    }
+  }, []);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
