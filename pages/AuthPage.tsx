@@ -9,7 +9,10 @@ const AuthPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('alex@example.com');
   const [password, setPassword] = useState('password123');
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('mode') === 'signup';
+  });
 
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);

@@ -42,6 +42,7 @@ const PIXEL_AVATARS = [
 const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink, onClose }) => {
     const cardRef = useRef<HTMLDivElement>(null);
     const [isExporting, setIsExporting] = useState(false);
+    const [isPrinting, setIsPrinting] = useState(false);
     const [copied, setCopied] = useState(false);
 
     const triggerCopyFeedback = () => {
@@ -106,7 +107,7 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
                     {/* Unified Preview Card - The Export Target */}
                     <div
                         ref={cardRef}
-                        className="w-full aspect-[4/5] p-6 md:p-10 flex flex-col justify-between relative overflow-hidden bg-white rounded-[40px] border border-slate-100 shadow-xl mx-auto"
+                        className={`w-full aspect-[4/5] p-6 md:p-10 flex flex-col justify-between relative overflow-hidden bg-white rounded-[40px] border border-slate-100 shadow-xl mx-auto ${isPrinting ? '' : 'max-h-[500px]'}`}
                     >
                         <div className="flex justify-between items-start relative z-10">
                             <div className="flex flex-col gap-1">
@@ -165,28 +166,31 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
                             </div>
                         </div>
 
-                        <div className="flex items-end justify-between border-t pt-6 md:pt-8 border-black/5 dark:border-white/10 relative z-10">
-                            <div className="flex flex-col gap-2">
-                                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-ghost-grey italic">Scan to Study Together</p>
-                                <p className="text-lg font-black text-charcoal dark:text-white tracking-tight leading-none italic">
-                                    Join me on <span className="text-primary italic">Nihongo Mastery</span>
-                                </p>
+                        {/* QR Code Section - Only visible in export */}
+                        {isPrinting && (
+                            <div className="flex items-end justify-between border-t pt-6 md:pt-8 border-black/5 dark:border-white/10 relative z-10">
+                                <div className="flex flex-col gap-2">
+                                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-ghost-grey italic">Scan to Study Together</p>
+                                    <p className="text-lg font-black text-charcoal dark:text-white tracking-tight leading-none italic">
+                                        Join me on <span className="text-primary italic">Nihongo Mastery</span>
+                                    </p>
+                                </div>
+                                <div className="bg-white p-2 rounded-[20px] shadow-2xl border border-black/5">
+                                    <QRCodeSVG
+                                        value={referralLink}
+                                        size={60}
+                                        level="H"
+                                        includeMargin={false}
+                                        imageSettings={{
+                                            src: getAvatarUrl(avatarId),
+                                            height: 18,
+                                            width: 18,
+                                            excavate: true,
+                                        }}
+                                    />
+                                </div>
                             </div>
-                            <div className="bg-white p-2 rounded-[20px] shadow-2xl border border-black/5">
-                                <QRCodeSVG
-                                    value={referralLink}
-                                    size={60}
-                                    level="H"
-                                    includeMargin={false}
-                                    imageSettings={{
-                                        src: getAvatarUrl(avatarId),
-                                        height: 18,
-                                        width: 18,
-                                        excavate: true,
-                                    }}
-                                />
-                            </div>
-                        </div>
+                        )}
                     </div>
 
                     {/* Actions */}
@@ -214,17 +218,22 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
                             onClick={async () => {
                                 if (cardRef.current === null) return;
                                 setIsExporting(true);
-                                try {
-                                    const dataUrl = await toPng(cardRef.current, { cacheBust: true });
-                                    const link = document.createElement('a');
-                                    link.download = `nihongo-mastery-${new Date().getTime()}.png`;
-                                    link.href = dataUrl;
-                                    link.click();
-                                } catch (err) {
-                                    console.error('Export failed', err);
-                                } finally {
-                                    setIsExporting(false);
-                                }
+                                setIsPrinting(true);
+                                // Give React time to render the QR code before capturing
+                                setTimeout(async () => {
+                                    try {
+                                        const dataUrl = await toPng(cardRef.current!, { cacheBust: true });
+                                        const link = document.createElement('a');
+                                        link.download = `nihongo-mastery-${new Date().getTime()}.png`;
+                                        link.href = dataUrl;
+                                        link.click();
+                                    } catch (err) {
+                                        console.error('Export failed', err);
+                                    } finally {
+                                        setIsPrinting(false);
+                                        setIsExporting(false);
+                                    }
+                                }, 100);
                             }}
                             disabled={isExporting}
                             className="w-full py-6 bg-primary hover:bg-primary-hover text-white rounded-[24px] font-black transition-all flex items-center justify-center gap-3 shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
