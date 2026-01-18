@@ -7,6 +7,7 @@ import SettingsPage from './pages/SettingsPage';
 import QuizPage from './pages/QuizPage';
 import KanjiPage from './pages/KanjiPage';
 import PublicProfilePage from './pages/PublicProfilePage';
+import ListeningQuizPage from './pages/ListeningQuizPage';
 import { supabase } from './services/supabaseClient';
 
 const App: React.FC = () => {
@@ -80,6 +81,7 @@ const App: React.FC = () => {
           <Route path="/progress" element={<ProgressPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/quiz" element={<QuizPage />} />
+          <Route path="/listening-quiz" element={<ListeningQuizPage />} />
           <Route path="/kanji" element={<KanjiPage />} />
           <Route path="/profile/:referralCode" element={<PublicProfilePage />} />
         </Routes>
