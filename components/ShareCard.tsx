@@ -94,9 +94,6 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
     const avatarId = profile.avatar_id || 'samurai';
     const userLevel = profile.level || todayStats.level || 1;
 
-    // Review Target (e.g., 50 per day as a fixed target for the progress bar)
-    const reviewTarget = 50;
-
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-in fade-in duration-300">
             <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-[32px] p-4 md:p-6 shadow-2xl border border-slate-100 dark:border-slate-800 relative animate-in zoom-in-95 duration-300">
@@ -135,13 +132,13 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
                                 <div className="bg-slate-50 p-2 rounded-xl border border-black/[0.02] flex flex-col items-center justify-center text-center">
                                     <p className="text-[7px] font-black uppercase text-ghost-grey mb-0.5 tracking-tight">Streak</p>
                                     <p className="text-lg font-black text-amber-500 leading-none flex items-center gap-0.5">
-                                        {todayStats.streak}<span className="material-symbols-rounded !text-[12px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>local_fire_department</span>
+                                        {todayStats.streak}<span className="material-symbols-outlined !text-[12px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>local_fire_department</span>
                                     </p>
                                 </div>
                                 <div className="bg-slate-50 p-2 rounded-xl border border-black/[0.02] flex flex-col items-center justify-center text-center">
                                     <p className="text-[7px] font-black uppercase text-ghost-grey mb-0.5 tracking-tight flex items-center gap-0.5 font-bold">Likes</p>
                                     <p className="text-lg font-black text-red-500 leading-none flex items-center gap-0.5">
-                                        {todayStats.likes || 0}<span className="material-symbols-rounded !text-[12px] text-red-500" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
+                                        {todayStats.likes || 0}<span className="material-symbols-outlined !text-[12px] text-red-500" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
                                     </p>
                                 </div>
                             </div>
@@ -156,7 +153,7 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
                                 ].map(item => {
                                     const total = item.isReview ? (todayStats.reviews || 0) : ((todayStats as any)[item.key] || 0);
                                     const todayCount = item.isReview ? (todayStats.reviews || 0) : ((todayStats as any)[`today_${item.key}`] || 0);
-                                    const target = item.isReview ? reviewTarget : ((todayStats as any)[`target_${item.key}`] || 100);
+                                    const target = item.isReview ? ((todayStats as any).totalDueToday || 50) : ((todayStats as any)[`target_${item.key}`] || 100);
 
                                     const prevCount = Math.max(0, total - todayCount);
                                     const prevProgress = (prevCount / target) * 100;
@@ -173,18 +170,18 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
                                                     {total} <span className="text-[7px] opacity-40">/ {target}</span>
                                                 </p>
                                             </div>
-                                            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden p-[1.5px] border border-black/5 flex">
+                                            <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
                                                 {/* Previous Progress */}
                                                 <div
-                                                    className={`h-full ${item.color} opacity-30 rounded-l-full transition-all duration-1000`}
+                                                    className={`h-full ${item.color} rounded-l-full transition-all duration-1000`}
                                                     style={{ width: `${prevProgress}%` }}
                                                 />
                                                 {/* Today's Progress */}
                                                 <div
-                                                    className={`h-full ${item.color} rounded-r-full transition-all duration-1000 shadow-sm relative`}
+                                                    className={`h-full bg-emerald-400 rounded-r-full transition-all duration-1000 relative shadow-[0_0_8px_rgba(52,211,153,0.4)]`}
                                                     style={{ width: `${todayProgress}%` }}
                                                 >
-                                                    <div className="absolute inset-0 bg-white/30 animate-pulse" />
+                                                    <div className="absolute inset-0 bg-white/40 animate-pulse" />
                                                 </div>
                                             </div>
                                         </div>

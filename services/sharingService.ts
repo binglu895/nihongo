@@ -54,6 +54,16 @@ export const getDailyStatsSnapshot = async (userId: string) => {
             .gt('correct_count', 0)
     ));
 
+    // Items currently due
+    const now = new Date().toISOString();
+    const currentlyDueHits = await Promise.all(categories.map(c =>
+        supabase.from(c.table)
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', userId)
+            .lte('next_review_at', now)
+    ));
+    const totalCurrentlyDue = currentlyDueHits.reduce((acc, r) => acc + (r.count || 0), 0);
+
     // Items mastered TODAY
     const todayMasteryResults = await Promise.all(categories.map(c =>
         supabase.from(c.table)
@@ -69,8 +79,11 @@ export const getDailyStatsSnapshot = async (userId: string) => {
         .eq('id', userId)
         .single();
 
+    const totalReviewedToday = reviewResults.reduce((acc, r) => acc + (r.count || 0), 0);
+
     const stats: any = {
-        reviews: reviewResults.reduce((acc, r) => acc + (r.count || 0), 0),
+        reviews: totalReviewedToday,
+        totalDueToday: totalReviewedToday + totalCurrentlyDue,
         mastered: masteryResults.reduce((acc, r) => acc + (r.count || 0), 0),
         likes: profile?.referral_views || 0,
         streak: profile?.streak || 0,

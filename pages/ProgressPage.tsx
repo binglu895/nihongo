@@ -98,6 +98,7 @@ const ProgressPage: React.FC = () => {
           referralLink: generateShareLink(refInfo.code),
           todayStats: {
             reviews: dailySnapshot.reviews || 0,
+            totalDueToday: dailySnapshot.totalDueToday || 50,
             mastered: dailySnapshot.mastered || 0,
             vocab: allGlobalStats.vocabulary.learned,
             grammar: allGlobalStats.grammar.learned,
@@ -182,7 +183,7 @@ const ProgressPage: React.FC = () => {
             <p className="text-ghost-grey dark:text-slate-400 text-lg md:text-xl font-medium">Daily mastery and JLPT {profile.level} preparation</p>
           </div>
           <div className="flex items-center gap-3 bg-primary/5 dark:bg-primary/10 px-6 py-3 rounded-2xl border border-primary/20 shadow-sm animate-bounce-subtle">
-            <span className="material-symbols-rounded text-orange-500 fill-orange-500 text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>local_fire_department</span>
+            <span className="material-symbols-outlined text-orange-500 fill-orange-500 text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>local_fire_department</span>
             <span className="text-2xl font-black text-primary">{profile.streak} Day Streak</span>
           </div>
         </div>
@@ -245,14 +246,18 @@ const ProgressPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
               {[
                 { label: 'Kanji', stats: globalStats.kanji, color: 'text-emerald-500', icon: 'brush' },
                 { label: 'Vocabulary', stats: globalStats.vocabulary, color: 'text-emerald-500', icon: 'menu_book' },
                 { label: 'Grammar', stats: globalStats.grammar, color: 'text-amber-500', icon: 'architecture' },
+                { label: 'Listening', stats: globalStats.listening, color: 'text-indigo-500', icon: 'hearing' },
               ].map((s, i) => (
                 <div key={i} className="flex flex-col gap-2 rounded-2xl md:rounded-3xl p-6 md:p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-hover hover:shadow-md">
-                  <p className="text-ghost-grey dark:text-slate-500 text-[10px] font-black uppercase tracking-widest">{s.label} Mastered</p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="material-symbols-outlined !text-lg opacity-40">{s.icon}</span>
+                    <p className="text-ghost-grey dark:text-slate-500 text-[10px] font-black uppercase tracking-widest">{s.label} Mastered</p>
+                  </div>
                   <div className="flex items-baseline gap-2">
                     <p className="text-2xl md:text-3xl font-black text-charcoal dark:text-white">{s.stats.learned}</p>
                     <p className="text-sm font-bold text-ghost-grey dark:text-slate-500">/ {s.stats.total}</p>
