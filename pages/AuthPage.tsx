@@ -138,36 +138,7 @@ const AuthPage: React.FC = () => {
             </button>
           </form>
 
-          <div className="relative my-10">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-black/5 dark:border-white/5"></div></div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-slate-900 px-4 text-charcoal/40 dark:text-white/40 font-bold tracking-widest">Or</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            <button
-              onClick={() => alert('Coming Soon: Google Login integration is in progress!')}
-              className="flex flex-col items-center justify-center gap-2 border border-black/5 dark:border-white/5 rounded-xl py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-all group"
-            >
-              <span className="material-symbols-outlined text-[#4285F4] !text-xl group-hover:scale-110 transition-transform">g_mobiledata</span>
-              <span className="text-[10px] font-black text-charcoal/40 dark:text-white/40 uppercase tracking-widest">Google</span>
-            </button>
-            <button
-              onClick={() => alert('Coming Soon: Apple Login integration is in progress!')}
-              className="flex flex-col items-center justify-center gap-2 border border-black/5 dark:border-white/5 rounded-xl py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-all group"
-            >
-              <span className="material-symbols-outlined text-charcoal dark:text-white !text-xl group-hover:scale-110 transition-transform">apple</span>
-              <span className="text-[10px] font-black text-charcoal/40 dark:text-white/40 uppercase tracking-widest">Apple</span>
-            </button>
-            <button
-              onClick={() => alert('即将推出：微信登录集成正在开发中！')}
-              className="flex flex-col items-center justify-center gap-2 border border-black/5 dark:border-white/5 rounded-xl py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-all group"
-            >
-              <span className="material-symbols-outlined text-[#07C160] !text-xl group-hover:scale-110 transition-transform">chat</span>
-              <span className="text-[10px] font-black text-charcoal/40 dark:text-white/40 uppercase tracking-widest">WeChat</span>
-            </button>
-          </div>
+          {/* Social login hidden until fully integrated */}
 
           <div className="mt-10 text-center">
             <p className="text-charcoal/60 dark:text-white/60 text-sm">

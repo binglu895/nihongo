@@ -188,10 +188,10 @@ const DashboardPage: React.FC = () => {
               </div>
               <h3 className="text-charcoal dark:text-white text-xl md:text-2xl font-black mb-2 md:mb-3">{card.title}</h3>
               {card.stats && (
-                <div className="flex items-center justify-center mb-10 text-xs font-black uppercase tracking-widest text-emerald-500 dark:text-emerald-400">
+                <div className="flex items-center justify-center mb-6 text-sm font-medium tracking-wide text-ghost-grey dark:text-gray-400 opacity-60">
                   <span>{card.stats.learned}</span>
-                  <span className="mx-1.5 opacity-40">/</span>
-                  <span className="opacity-40">{card.stats.total} {card.title}</span>
+                  <span className="mx-1.5 ">/</span>
+                  <span>{card.stats.total} {card.title}</span>
                 </div>
               )}
               <p className="text-ghost-grey dark:text-gray-400 text-center text-xs md:text-sm mb-8 md:mb-10 leading-relaxed font-medium">
