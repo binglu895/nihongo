@@ -159,7 +159,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ onClose, on
                                     >
                                         <option value="">Month</option>
                                         {Array.from({ length: 12 }, (_, i) => (
-                                            <option key={i + 1} value={i + 1}>{i + 1}月</option>
+                                            <option key={i + 1} value={i + 1}>{i + 1}</option>
                                         ))}
                                     </select>
                                     <select
@@ -169,7 +169,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ onClose, on
                                     >
                                         <option value="">Day</option>
                                         {Array.from({ length: 31 }, (_, i) => (
-                                            <option key={i + 1} value={i + 1}>{i + 1}日</option>
+                                            <option key={i + 1} value={i + 1}>{i + 1}</option>
                                         ))}
                                     </select>
                                 </div>
