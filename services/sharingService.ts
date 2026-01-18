@@ -65,7 +65,7 @@ export const getDailyStatsSnapshot = async (userId: string) => {
 
     const { data: profile } = await supabase
         .from('profiles')
-        .select('daily_study_time, referral_views')
+        .select('daily_study_time, referral_views, streak')
         .eq('id', userId)
         .single();
 
@@ -73,6 +73,7 @@ export const getDailyStatsSnapshot = async (userId: string) => {
         reviews: reviewResults.reduce((acc, r) => acc + (r.count || 0), 0),
         mastered: masteryResults.reduce((acc, r) => acc + (r.count || 0), 0),
         likes: profile?.referral_views || 0,
+        streak: profile?.streak || 0,
         date: today.toLocaleDateString(),
         studyTimeToday: (profile?.daily_study_time || {})[today.toISOString().split('T')[0]] || 0
     };
