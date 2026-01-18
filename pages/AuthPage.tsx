@@ -1,25 +1,27 @@
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('alex@example.com');
   const [password, setPassword] = useState('password123');
+
+  // Use useLocation for HashRouter compatibility
   const [isSignUp, setIsSignUp] = useState(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     return params.get('mode') === 'signup';
   });
 
-  React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
     if (params.get('mode') === 'signup') {
       setIsSignUp(true);
     }
-  }, []);
+  }, [location.search]);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -143,27 +145,27 @@ const AuthPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <button
               onClick={() => alert('Coming Soon: Google Login integration is in progress!')}
-              className="flex-1 flex items-center justify-center gap-3 border border-black/10 dark:border-white/10 rounded-xl py-3.5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
+              className="flex flex-col items-center justify-center gap-2 border border-black/5 dark:border-white/5 rounded-xl py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-all group"
             >
-              <span className="material-symbols-outlined text-[#4285F4] text-xl font-black">g_mobiledata</span>
-              <span className="text-xs font-black text-charcoal dark:text-white uppercase tracking-widest">Google</span>
+              <span className="material-symbols-outlined text-[#4285F4] !text-xl group-hover:scale-110 transition-transform">g_mobiledata</span>
+              <span className="text-[10px] font-black text-charcoal/40 dark:text-white/40 uppercase tracking-widest">Google</span>
             </button>
             <button
               onClick={() => alert('Coming Soon: Apple Login integration is in progress!')}
-              className="flex-1 flex items-center justify-center gap-3 border border-black/10 dark:border-white/10 rounded-xl py-3.5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
+              className="flex flex-col items-center justify-center gap-2 border border-black/5 dark:border-white/5 rounded-xl py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-all group"
             >
-              <span className="material-symbols-outlined text-charcoal dark:text-white text-xl">apple</span>
-              <span className="text-xs font-black text-charcoal dark:text-white uppercase tracking-widest">Apple</span>
+              <span className="material-symbols-outlined text-charcoal dark:text-white !text-xl group-hover:scale-110 transition-transform">apple</span>
+              <span className="text-[10px] font-black text-charcoal/40 dark:text-white/40 uppercase tracking-widest">Apple</span>
             </button>
             <button
               onClick={() => alert('即将推出：微信登录集成正在开发中！')}
-              className="flex-1 flex items-center justify-center gap-3 border border-black/10 dark:border-white/10 rounded-xl py-3.5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
+              className="flex flex-col items-center justify-center gap-2 border border-black/5 dark:border-white/5 rounded-xl py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-all group"
             >
-              <span className="material-symbols-outlined text-[#07C160] text-xl">chat</span>
-              <span className="text-xs font-black text-charcoal dark:text-white uppercase tracking-widest">WeChat</span>
+              <span className="material-symbols-outlined text-[#07C160] !text-xl group-hover:scale-110 transition-transform">chat</span>
+              <span className="text-[10px] font-black text-charcoal/40 dark:text-white/40 uppercase tracking-widest">WeChat</span>
             </button>
           </div>
 
