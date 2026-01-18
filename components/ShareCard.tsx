@@ -134,14 +134,14 @@ const ShareCard: React.FC<ShareCardProps> = ({ todayStats, profile, referralLink
                                 </div>
                                 <div className="bg-slate-50 p-2 rounded-xl border border-black/[0.02] flex flex-col items-center justify-center text-center">
                                     <p className="text-[7px] font-black uppercase text-ghost-grey mb-0.5 tracking-tight">Streak</p>
-                                    <p className="text-lg font-black text-amber-500 leading-none">
-                                        {todayStats.streak}<span className="ml-0.5 text-[10px]">🔥</span>
+                                    <p className="text-lg font-black text-amber-500 leading-none flex items-center gap-0.5">
+                                        {todayStats.streak}<span className="material-symbols-rounded !text-[12px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>local_fire_department</span>
                                     </p>
                                 </div>
                                 <div className="bg-slate-50 p-2 rounded-xl border border-black/[0.02] flex flex-col items-center justify-center text-center">
-                                    <p className="text-[7px] font-black uppercase text-ghost-grey mb-0.5 tracking-tight flex items-center gap-0.5">Likes <span className="material-symbols-outlined !text-[8px] text-red-500 fill-red-500">favorite</span></p>
-                                    <p className="text-lg font-black text-red-500 leading-none">
-                                        {todayStats.likes || 0}
+                                    <p className="text-[7px] font-black uppercase text-ghost-grey mb-0.5 tracking-tight flex items-center gap-0.5 font-bold">Likes</p>
+                                    <p className="text-lg font-black text-red-500 leading-none flex items-center gap-0.5">
+                                        {todayStats.likes || 0}<span className="material-symbols-rounded !text-[12px] text-red-500" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
                                     </p>
                                 </div>
                             </div>
