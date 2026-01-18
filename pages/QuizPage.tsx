@@ -328,7 +328,14 @@ const QuizPage: React.FC = () => {
     addXP(category, currentStreak);
   };
 
-  const handleLevelComplete = () => {
+  const handleLevelComplete = async () => {
+    try {
+      const duration = Math.floor((Date.now() - sessionStartTime) / 1000);
+      const { updateActivityStats } = await import('../services/gamificationService');
+      await updateActivityStats(duration);
+    } catch (err) {
+      console.error('Error updating activity stats:', err);
+    }
     navigate('/progress');
   };
 

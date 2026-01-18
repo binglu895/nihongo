@@ -96,14 +96,14 @@ const ShareCard: React.FC<ShareCardProps> = ({ stats, referralLink, onClose }) =
                 {/* Preview Card */}
                 <div
                     ref={cardRef}
-                    className={`w-[400px] shrink-0 aspect-[4/5] p-10 flex flex-col justify-between relative overflow-hidden ${classes.card}`}
+                    className={`w-full max-w-[400px] aspect-[4/5] p-6 md:p-10 flex flex-col justify-between relative overflow-hidden ${classes.card}`}
                 >
                     <div className="flex justify-between items-start relative z-10">
                         <div className="flex flex-col gap-1">
                             <h2 className={classes.title}>Sensei's Disciple</h2>
                             <p className="text-[10px] font-black tracking-widest uppercase opacity-60">Level {stats.level} • {selectedAvatar.label}</p>
                         </div>
-                        <div className="size-24 bg-white/40 dark:bg-black/20 rounded-[32px] p-4 shadow-inner border border-black/5 backdrop-blur-sm flex items-center justify-center">
+                        <div className="size-20 md:size-24 bg-white/40 dark:bg-black/20 rounded-[32px] p-4 shadow-inner border border-black/5 backdrop-blur-sm flex items-center justify-center">
                             <img src={getAvatarUrl(selectedAvatar.id)} alt="" className="size-full object-contain drop-shadow-xl" />
                         </div>
                     </div>

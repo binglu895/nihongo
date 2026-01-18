@@ -96,25 +96,38 @@ const PublicProfilePage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="p-8 bg-primary rounded-[32px] text-white shadow-xl shadow-primary/30 mb-8">
+                    <div className="p-8 bg-primary rounded-[32px] text-white shadow-xl shadow-primary/30 mb-8 transform hover:scale-[1.02] transition-all duration-500">
                         <h4 className="text-xl font-black mb-2">Ready to Master Japanese?</h4>
-                        <p className="text-sm opacity-90 mb-6 leading-relaxed">Join this Sensei and start your own JLPT N5 mastery journey today. Gamified, minimalist, and effective.</p>
+                        <p className="text-sm opacity-90 mb-6 leading-relaxed px-4">Join this Sensei and start your own JLPT N5 mastery journey today. Gamified, minimalist, and 5x more effective.</p>
                         <button
                             onClick={() => navigate(`/?ref=${referralCode}`)}
-                            className="w-full py-4 bg-white text-primary rounded-2xl font-black hover:scale-[1.02] transition-transform shadow-lg"
+                            className="w-full py-4 bg-white text-primary rounded-2xl font-black hover:bg-slate-50 transition-colors shadow-lg flex items-center justify-center gap-2"
                         >
-                            Start Learning Now
+                            <span className="material-symbols-outlined">rocket_launch</span>
+                            Start Your Journey
                         </button>
                     </div>
 
-                    <p className="text-[10px] text-ghost-grey font-bold uppercase tracking-widest">Minimalism • Spaced Repetition • Mastery</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left px-2">
+                        <div className="p-4 bg-white/50 dark:bg-white/5 rounded-2xl border border-black/5">
+                            <span className="material-symbols-outlined text-primary mb-2">speed</span>
+                            <h5 className="text-xs font-black uppercase tracking-widest mb-1">5x Faster Learning</h5>
+                            <p className="text-[10px] text-ghost-grey">Optimized SRS algorithm ensures you never forget a word.</p>
+                        </div>
+                        <div className="p-4 bg-white/50 dark:bg-white/5 rounded-2xl border border-black/5">
+                            <span className="material-symbols-outlined text-primary mb-2">psychology</span>
+                            <h5 className="text-xs font-black uppercase tracking-widest mb-1">Grammar Mastery</h5>
+                            <p className="text-[10px] text-ghost-grey">Learn N5 grammar with natural sentences and translations.</p>
+                        </div>
+                    </div>
+
+                    <p className="text-[10px] text-ghost-grey font-bold uppercase tracking-[0.3em] mt-10">Minimalism • Spaced Repetition • Mastery</p>
                 </div>
             </main>
 
-            <div className="mt-12 text-center text-ghost-grey max-w-sm">
-                <p className="text-xs font-medium leading-relaxed">
-                    Nihongo Mastery uses evidence-based SRS to help you learn 5x faster.
-                    Join 10,000+ Senseis worldwide.
+            <div className="mt-12 text-center text-ghost-grey max-w-sm px-6">
+                <p className="text-[10px] font-medium leading-relaxed opacity-60">
+                    Trusted by 10,000+ Senseis worldwide. Built for serious learners who value focus and results.
                 </p>
             </div>
 
