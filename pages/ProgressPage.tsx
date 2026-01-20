@@ -165,8 +165,8 @@ const ProgressPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark transition-colors duration-300">
       <Header />
-      <div className="max-w-[1200px] mx-auto px-6 lg:px-20 py-12 animate-in fade-in duration-700">
-        <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
+      <div className="max-w-[1200px] mx-auto px-6 lg:px-20 py-8 animate-in fade-in duration-700">
+        <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div className="space-y-4">
             <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-charcoal dark:text-white">Your Journey</h1>
             <p className="text-ghost-grey dark:text-slate-400 text-lg md:text-xl font-medium">Daily mastery and JLPT {profile.level} preparation</p>
@@ -177,8 +177,8 @@ const ProgressPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
-          <div className="lg:col-span-4 flex flex-col items-center justify-center p-8 md:p-12 bg-white dark:bg-slate-900 rounded-[32px] md:rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl dark:shadow-2xl">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-start">
+          <div className="lg:col-span-4 flex flex-col items-center justify-center p-8 md:p-10 bg-white dark:bg-slate-900 rounded-[32px] md:rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl dark:shadow-2xl">
             <div className="relative flex items-center justify-center">
               <svg className="w-64 h-64 md:w-72 md:h-72 transform -rotate-90" viewBox="0 0 288 288">
                 <circle
@@ -216,7 +216,7 @@ const ProgressPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-8 flex flex-col gap-6 md:gap-8">
+          <div className="lg:col-span-8 flex flex-col gap-6">
 
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
               {[
@@ -246,7 +246,7 @@ const ProgressPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
           <div className="lg:col-span-7">
             <Leaderboard />
           </div>
