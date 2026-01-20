@@ -172,7 +172,8 @@ const QuizPage: React.FC = () => {
             combinedQuestions.push(...questionData.map(q => {
               const progress = dueProgress.find(p => p[config.idField as keyof typeof p] === q.id);
               if (config.type === 'grammar') {
-                const ex = (q.grammar_examples || [])[0] || q;
+                const examples = q.grammar_examples || [];
+                const ex = examples.length > 0 ? examples[Math.floor(Math.random() * examples.length)] : q;
                 return {
                   id: q.id,
                   word: q.title,
@@ -210,7 +211,8 @@ const QuizPage: React.FC = () => {
         if (data) {
           if (config.type === 'grammar') {
             combinedQuestions.push(...data.map(gp => {
-              const ex = (gp.grammar_examples || [])[0] || gp;
+              const examples = gp.grammar_examples || [];
+              const ex = examples.length > 0 ? examples[Math.floor(Math.random() * examples.length)] : gp;
               return {
                 id: gp.id, word: gp.title, reading: gp.reading, sentence: ex.sentence,
                 sentence_translation: ex.translation, sentence_translation_zh: ex.translation_zh,
