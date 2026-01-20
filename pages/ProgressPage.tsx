@@ -12,7 +12,6 @@ const ProgressPage: React.FC = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({ kanji: 0, vocab: 0, grammar: 0, listening: 0 });
   const [profile, setProfile] = useState<any>({ streak: 0, completion: 0, level: 'N5', display_name: '', avatar_id: 'samurai' });
-  const [dueCount, setDueCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [globalStats, setGlobalStats] = useState({
     kanji: { learned: 0, total: 0 },
@@ -56,17 +55,6 @@ const ProgressPage: React.FC = () => {
 
       if (statsError) throw statsError;
 
-      // Fetch due items count from all categories
-      const now = new Date().toISOString();
-      const [vDue, gDue, kDue, lDue] = await Promise.all([
-        supabase.from('user_vocabulary_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_grammar_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now)
-      ]);
-
-      const totalDue = (vDue.count || 0) + (gDue.count || 0) + (kDue.count || 0) + (lDue.count || 0);
-      setDueCount(totalDue);
 
       // Fetch Global Stats for ratios
       const allGlobalStats = await fetchGlobalStats(profileData.current_level || 'N5', user.id);
@@ -229,23 +217,6 @@ const ProgressPage: React.FC = () => {
           </div>
 
           <div className="lg:col-span-8 flex flex-col gap-6 md:gap-8">
-            <div className="bg-white dark:bg-slate-900 border-2 border-primary/20 rounded-[40px] p-8 md:p-12 flex flex-col items-center text-center shadow-xl dark:shadow-none relative overflow-hidden group">
-              <div className="absolute top-0 left-0 w-full h-2 bg-primary"></div>
-              <h3 className="text-3xl md:text-4xl font-black text-charcoal dark:text-white mb-2 tracking-tight">Ready for today?</h3>
-              <p className="text-ghost-grey dark:text-gray-400 text-sm font-medium mb-8 max-w-md leading-relaxed">
-                Consistency is key. You have items waiting for review.
-              </p>
-              <button
-                onClick={() => navigate('/quiz?mode=review&type=all')}
-                className="group relative flex items-center justify-center gap-3 bg-primary text-white font-black py-4 px-10 rounded-2xl text-lg shadow-xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-300"
-              >
-                <span className="material-symbols-outlined !text-xl font-black">fact_check</span>
-                <span>{dueCount > 0 ? `Review ${dueCount} items` : 'Start Learning'}</span>
-              </button>
-              <p className="mt-6 text-[10px] font-black text-ghost-grey/60 dark:text-gray-500 uppercase tracking-[0.3em]">
-                {dueCount > 0 ? `APPROX. ${Math.ceil(dueCount * 0.5)} MINUTES` : 'NO REVIEWS DUE'}
-              </p>
-            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
               {[
