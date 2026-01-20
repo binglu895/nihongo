@@ -230,8 +230,51 @@ const QuizPage: React.FC = () => {
         const distractors = combinedQuestions.filter(d => d.type === 'grammar' && d.id !== q.id).map(d => d.word).slice(0, 3);
         const options = [...distractors, q.word].sort(() => Math.random() - 0.5);
         let sentence = q.sentence;
-        const targets = q.word.split(/[/／]/).map((t: string) => t.replace('～', '').trim()).filter(Boolean);
-        for (const t of targets) if (sentence.includes(t)) { sentence = sentence.replace(t, '（　　）'); break; }
+
+        // Improved pattern matching for blanks
+        const titleItems = q.word.split(/[/／]/).map((t: string) => t.trim()).filter(Boolean);
+        let found = false;
+
+        for (const item of titleItems) {
+          // Robustly clean core pattern: handle both ~ and ～, strip parentheses and their content
+          const core = item.replace(/[～~]/g, '').replace(/[\(（].*?[\)）]/g, '').trim();
+          if (!core) continue;
+
+          // Create a list of regex-safe variations
+          const variations = [
+            core,
+            core.replace(/る$/, '(る|ます|ました|ましょう|なさい)'),
+            core.replace(/ない$/, '(ない|ませんでした|なかった)'),
+            core.replace(/がある$/, '(がある|あります|ありました)'),
+            core.replace(/ことがある$/, '(ことがある|ことがあります|ことがあり)'),
+            core.replace(/いい$/, '(いい|いくない|よかった)'),
+          ];
+
+          for (const vPattern of variations) {
+            try {
+              const regex = new RegExp(vPattern);
+              if (regex.test(sentence)) {
+                sentence = sentence.replace(regex, '（　　）');
+                found = true;
+                break;
+              }
+            } catch (e) {
+              // Fallback to literal search if regex fails
+              if (sentence.includes(vPattern)) {
+                sentence = sentence.replace(vPattern, '（　　）');
+                found = true;
+                break;
+              }
+            }
+          }
+          if (found) break;
+        }
+
+        // Fallback if still no blank (rarely should happen with good seed data)
+        if (!found) {
+          console.warn('Could not find blank for grammar point:', q.word, 'in sentence:', sentence);
+        }
+
         return { ...q, sentence, options };
       }
       return q;
