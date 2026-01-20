@@ -13,10 +13,10 @@ const DashboardPage: React.FC = () => {
   const [dueCount, setDueCount] = useState(0);
   const [dailyGoal, setDailyGoal] = useState(20);
   const [stats, setStats] = useState({
-    kanji: { learned: 0, total: 0 },
-    vocabulary: { learned: 0, total: 0 },
-    grammar: { learned: 0, total: 0 },
-    listening: { learned: 0, total: 0 }
+    kanji: { learned: 0, total: 0, due: 0 },
+    vocabulary: { learned: 0, total: 0, due: 0 },
+    grammar: { learned: 0, total: 0, due: 0 },
+    listening: { learned: 0, total: 0, due: 0 }
   });
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const DashboardPage: React.FC = () => {
       setDueCount(totalDue);
 
       // Fetch Global Progress
-      await fetchGlobalStats(data?.current_level || 'N3', user.id);
+      await fetchGlobalStats(data?.current_level || level, user.id);
 
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -63,36 +63,43 @@ const DashboardPage: React.FC = () => {
   };
 
   const fetchGlobalStats = async (currentLevel: string, userId: string) => {
-    // Vocational Stats
-    const { count: vocabLearned } = await supabase
-      .from('user_vocabulary_progress')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .in('vocabulary_id', (await supabase.from('vocabulary').select('id').eq('level', currentLevel)).data?.map(v => v.id) || []);
+    const now = new Date().toISOString();
 
-    const { count: vocabTotal } = await supabase
-      .from('vocabulary')
-      .select('*', { count: 'exact', head: true })
-      .eq('level', currentLevel);
+    // 1. Fetch Totals for the level
+    const levelNumber = parseInt(currentLevel.replace('N', '')) || 5;
+    const listeningDifficulty = 6 - levelNumber; // N5 -> 1, N4 -> 2, N3 -> 3
 
-    // Grammar Stats
-    const levelGrammarIds = (await supabase.from('grammar_points').select('id').eq('level', currentLevel)).data?.map(g => g.id) || [];
-    const { count: grammarLearned } = await supabase
-      .from('user_grammar_progress')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .in('grammar_point_id', levelGrammarIds);
+    const [vTotalRes, gTotalRes, kTotalRes, lTotalRes] = await Promise.all([
+      supabase.from('vocabulary').select('id', { count: 'exact', head: true }).eq('level', currentLevel),
+      supabase.from('grammar_points').select('id', { count: 'exact', head: true }).eq('level', currentLevel),
+      supabase.from('vocabulary').select('id', { count: 'exact', head: true }).eq('level', currentLevel), // Kanji shared with vocab
+      supabase.from('listening_questions').select('id', { count: 'exact', head: true }).eq('difficulty', listeningDifficulty)
+    ]);
 
-    const { count: grammarTotal } = await supabase
-      .from('grammar_examples')
-      .select('*', { count: 'exact', head: true })
-      .in('grammar_point_id', levelGrammarIds);
+    const vLevelIds = (await supabase.from('vocabulary').select('id').eq('level', currentLevel)).data?.map(v => v.id) || [];
+    const gLevelIds = (await supabase.from('grammar_points').select('id').eq('level', currentLevel)).data?.map(g => g.id) || [];
+    const lLevelIds = (await supabase.from('listening_questions').select('id').eq('difficulty', listeningDifficulty)).data?.map(l => l.id) || [];
+
+    // 2. Fetch Learned and Due counts
+    const [vProg, gProg, kProg, lProg] = await Promise.all([
+      supabase.from('user_vocabulary_progress').select('vocabulary_id, next_review_at').eq('user_id', userId).in('vocabulary_id', vLevelIds),
+      supabase.from('user_grammar_progress').select('grammar_point_id, next_review_at').eq('user_id', userId).in('grammar_point_id', gLevelIds),
+      supabase.from('user_kanji_progress').select('vocabulary_id, next_review_at').eq('user_id', userId).in('vocabulary_id', vLevelIds),
+      supabase.from('user_listening_progress').select('listening_question_id, next_review_at').eq('user_id', userId).in('listening_question_id', lLevelIds)
+    ]);
+
+    const getStats = (progData: any[] | null, total: number | null) => {
+      if (!progData) return { learned: 0, total: total || 0, due: 0 };
+      const learned = progData.filter(p => p.next_review_at !== null).length;
+      const due = progData.filter(p => p.next_review_at && p.next_review_at <= now).length;
+      return { learned, total: total || 0, due };
+    };
 
     setStats({
-      kanji: { learned: 0, total: 0 },
-      vocabulary: { learned: vocabLearned || 0, total: vocabTotal || 0 },
-      grammar: { learned: grammarLearned || 0, total: grammarTotal || 0 },
-      listening: { learned: 0, total: 0 }
+      kanji: getStats(kProg.data, kTotalRes.count),
+      vocabulary: getStats(vProg.data, vTotalRes.count),
+      grammar: getStats(gProg.data, gTotalRes.count),
+      listening: getStats(lProg.data, lTotalRes.count)
     });
   };
 
@@ -187,35 +194,59 @@ const DashboardPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full max-w-[1200px] px-2">
-          {categories.map((card, i) => (
-            <div
-              key={i}
-              className="bg-white dark:bg-slate-900 border border-black/[0.03] dark:border-white/5 rounded-[28px] p-6 flex flex-col items-center transition-all hover:shadow-xl hover:-translate-y-1 group animate-in fade-in slide-in-from-bottom-4 duration-500"
-              style={{ animationDelay: `${i * 50}ms` }}
-            >
-              <div className="mb-4 text-primary group-hover:scale-110 transition-transform duration-500">
-                <span className="material-symbols-outlined !text-4xl">{card.icon}</span>
-              </div>
-              <h3 className="text-charcoal dark:text-white text-lg font-black mb-1">{card.title}</h3>
-              {card.stats && (
-                <div className="flex items-center justify-center mb-4 text-[11px] font-medium tracking-wide text-ghost-grey dark:text-gray-400 opacity-60">
-                  <span>{card.stats.learned}</span>
-                  <span className="mx-1">/</span>
-                  <span>{card.stats.total} {card.title}</span>
-                </div>
-              )}
-              <p className="text-ghost-grey dark:text-gray-400 text-center text-[11px] mb-6 leading-relaxed font-medium">
-                {card.desc}
-              </p>
-              <button
-                onClick={() => navigate(card.path)}
-                className="w-full py-3 bg-primary text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
+          {categories.map((card, i) => {
+            const isCompleted = card.stats.learned >= card.stats.total && card.stats.total > 0;
+            const hasReviews = card.stats.due > 0;
+
+            return (
+              <div
+                key={i}
+                className="bg-white dark:bg-slate-900 border border-black/[0.03] dark:border-white/5 rounded-[28px] p-6 flex flex-col items-center transition-all hover:shadow-xl hover:-translate-y-1 group animate-in fade-in slide-in-from-bottom-4 duration-500"
+                style={{ animationDelay: `${i * 50}ms` }}
               >
-                <span>{card.btn}</span>
-                <span className="material-symbols-outlined !text-sm">arrow_forward</span>
-              </button>
-            </div>
-          ))}
+                <div className="mb-4 text-primary group-hover:scale-110 transition-transform duration-500">
+                  <span className="material-symbols-outlined !text-4xl">{card.icon}</span>
+                </div>
+                <h3 className="text-charcoal dark:text-white text-lg font-black mb-1">{card.title}</h3>
+                {card.stats && (
+                  <div className="flex items-center justify-center mb-4 text-[11px] font-medium tracking-wide text-ghost-grey dark:text-gray-400 opacity-60">
+                    <span>{card.stats.learned}</span>
+                    <span className="mx-1">/</span>
+                    <span>{card.stats.total} {card.title}</span>
+                  </div>
+                )}
+                <div className="flex-1">
+                  <p className="text-ghost-grey dark:text-gray-400 text-center text-[11px] mb-6 leading-relaxed font-medium">
+                    {card.desc}
+                  </p>
+                </div>
+
+                <div className="w-full space-y-2 mt-auto">
+                  <button
+                    onClick={() => !isCompleted && navigate(card.path)}
+                    disabled={isCompleted}
+                    className={`w-full py-3 text-[11px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${isCompleted
+                      ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
+                      : 'bg-primary text-white shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.02] active:scale-95'
+                      }`}
+                  >
+                    <span>{isCompleted ? 'Completed' : 'Start Practice'}</span>
+                    {!isCompleted && <span className="material-symbols-outlined !text-sm">arrow_forward</span>}
+                  </button>
+
+                  {hasReviews && (
+                    <button
+                      onClick={() => navigate(`${card.path}${card.path.includes('?') ? '&' : '?'}mode=review`)}
+                      className="w-full py-2.5 bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
+                    >
+                      <span className="material-symbols-outlined !text-sm">fact_check</span>
+                      <span>Review ({card.stats.due})</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         <div className="mt-12 text-ghost-grey dark:text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">

@@ -160,8 +160,12 @@ const ProgressPage: React.FC = () => {
     const { count: kLearned } = await supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', userId).gt('correct_count', 0).in('vocabulary_id', (await supabase.from('vocabulary').select('id').eq('level', level)).data?.map(v => v.id) || []);
 
     // Listening Total
-    const { count: lTotal } = await supabase.from('vocabulary').select('id', { count: 'exact', head: true }).eq('level', level);
-    const { count: lLearned } = await supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', userId).gt('correct_count', 0).in('vocabulary_id', (await supabase.from('vocabulary').select('id').eq('level', level)).data?.map(v => v.id) || []);
+    const levelNumber = parseInt(level.replace('N', '')) || 5;
+    const difficulty = 6 - levelNumber;
+    const lLevelIds = (await supabase.from('listening_questions').select('id').eq('difficulty', difficulty)).data?.map(q => q.id) || [];
+
+    const { count: lTotal } = await supabase.from('listening_questions').select('id', { count: 'exact', head: true }).eq('difficulty', difficulty);
+    const { count: lLearned } = await supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', userId).gt('correct_count', 0).in('listening_question_id', lLevelIds);
 
     const newGlobalStats = {
       kanji: { learned: kLearned || 0, total: kTotal || 0 },

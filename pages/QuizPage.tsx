@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { getExplanation } from '../services/geminiService';
 import { supabase } from '../services/supabaseClient';
 import { addXP, XP_VALUES } from '../services/gamificationService';
@@ -26,8 +26,9 @@ const QuizPage: React.FC = () => {
   const [failedIdsInSession, setFailedIdsInSession] = useState<Set<string>>(new Set());
   const [currentStreak, setCurrentStreak] = useState(0);
   const [lastGainedXP, setLastGainedXP] = useState<number | null>(null);
+  const [xpNotificationKey, setXpNotificationKey] = useState(0);
   const [showLevelUp, setShowLevelUp] = useState(false);
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   // Handwriting canvas state (from KanjiPage)
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -38,9 +39,8 @@ const QuizPage: React.FC = () => {
   React.useEffect(() => {
     const initQuiz = async () => {
       setLoading(true);
-      const params = new URLSearchParams(location.search);
-      const mode = params.get('mode');
-      const type = params.get('type') || 'vocabulary';
+      const mode = searchParams.get('mode');
+      const type = searchParams.get('type') || 'vocabulary';
       setQuizType(type);
       setIsReviewMode(mode === 'review');
 
@@ -50,7 +50,7 @@ const QuizPage: React.FC = () => {
       setLoading(false);
     };
     initQuiz();
-  }, [location.search]);
+  }, [searchParams]);
 
   const fetchUserLevel = async (isGrammar: boolean = false) => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -124,7 +124,7 @@ const QuizPage: React.FC = () => {
     if (type === 'all' || type === 'vocabulary') typeConfigs.push({ type: 'vocabulary', table: 'user_vocabulary_progress', idField: 'vocabulary_id' });
     if (type === 'all' || type === 'grammar') typeConfigs.push({ type: 'grammar', table: 'user_grammar_progress', idField: 'grammar_point_id' });
     if (type === 'all' || type === 'kanji') typeConfigs.push({ type: 'kanji', table: 'user_kanji_progress', idField: 'vocabulary_id' });
-    if (type === 'all' || type === 'listening') typeConfigs.push({ type: 'listening', table: 'user_listening_progress', idField: 'vocabulary_id' });
+    if (type === 'all' || type === 'listening') typeConfigs.push({ type: 'listening', table: 'user_listening_progress', idField: 'listening_question_id' });
 
     let combinedQuestions: any[] = [];
     const now = new Date().toISOString();
@@ -203,7 +203,7 @@ const QuizPage: React.FC = () => {
           : supabase.from('vocabulary').select('*').eq('level', level);
 
         if (learnedIds.length > 0) {
-          query = query.not('id', 'in', `(${learnedIds.join(',')})`);
+          query = query.not('id', 'in', learnedIds);
         }
 
         const { data } = await query.limit(goal);
@@ -332,6 +332,7 @@ const QuizPage: React.FC = () => {
       const result = await addXP(category, currentStreak);
       if (result) {
         setLastGainedXP(result.xpGained);
+        setXpNotificationKey(prev => prev + 1);
         if (result.newLevel) setShowLevelUp(true);
       }
     } else {
@@ -434,7 +435,13 @@ const QuizPage: React.FC = () => {
       'listening': 'LISTENING'
     };
     const category = xpCategoryMap[quizType] || 'VOCABULARY';
-    addXP(category, currentStreak);
+    addXP(category, currentStreak).then(res => {
+      if (res) {
+        setLastGainedXP(res.xpGained);
+        setXpNotificationKey(prev => prev + 1);
+        if (res.newLevel) setShowLevelUp(true);
+      }
+    });
   };
 
   const handleLevelComplete = async () => {
@@ -568,12 +575,24 @@ const QuizPage: React.FC = () => {
 
   if (!currentQuestion) {
     return (
-      <div className="min-h-screen bg-background-light dark:bg-background-dark flex items-center justify-center p-6 text-center">
-        <div className="max-w-md flex flex-col items-center gap-6">
-          <span className="material-symbols-outlined !text-7xl text-slate-300">sentiment_dissatisfied</span>
-          <h2 className="text-2xl font-black">No questions found for {currentLevel}</h2>
-          <p className="text-ghost-grey font-medium">It seems our library is empty for this level. Please try another one.</p>
-          <button onClick={() => navigate('/dashboard')} className="px-8 py-4 bg-primary text-white rounded-2xl font-black">Back to Dashboard</button>
+      <div className="min-h-screen bg-background-light dark:bg-background-dark flex flex-col items-center justify-center p-6 text-center">
+        <div className="max-w-md space-y-8 animate-in fade-in zoom-in duration-700">
+          <div className="size-32 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-emerald-500/20">
+            <span className="material-symbols-outlined !text-6xl text-emerald-600 dark:text-emerald-400">celebration</span>
+          </div>
+          <div className="space-y-4">
+            <h2 className="text-4xl font-black text-charcoal dark:text-white tracking-tight">
+              {isReviewMode ? 'All Caught Up!' : 'Level Mastered!'}
+            </h2>
+            <p className="text-ghost-grey dark:text-slate-400 font-medium text-lg leading-relaxed">
+              {isReviewMode
+                ? "You've finished all your reviews for today. Check back later!"
+                : `You've mastered everything in ${currentLevel}. Great job!`}
+            </p>
+          </div>
+          <button onClick={() => navigate('/dashboard')} className="w-full py-5 bg-primary text-white font-black rounded-[24px] shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
+            Return to Dashboard
+          </button>
         </div>
       </div>
     );
@@ -591,7 +610,14 @@ const QuizPage: React.FC = () => {
             <span className="font-black text-xs text-charcoal dark:text-white uppercase tracking-wider">{isReviewMode ? 'Review' : currentLevel}</span>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 relative">
+            {lastGainedXP && (
+              <div key={xpNotificationKey} className="absolute -top-8 right-24 pointer-events-none">
+                <div className="bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 text-[10px] font-black px-2.5 py-1 rounded-full shadow-lg shadow-amber-500/20 animate-float-up-fade whitespace-nowrap border border-amber-200 dark:border-amber-500/30">
+                  +{lastGainedXP} XP
+                </div>
+              </div>
+            )}
             <div className="flex flex-col items-end gap-1">
               <div className="flex items-center gap-2 text-primary">
                 <span className="material-symbols-outlined !text-base font-black">task_alt</span>
@@ -736,7 +762,6 @@ const QuizPage: React.FC = () => {
                   <div>
                     <h3 className={`text-2xl font-black mb-1 ${((currentQuestion.type === 'kanji' && showKanjiAnswer) || (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word) ? 'text-emerald-600' : 'text-red-600'}`}>
                       {((currentQuestion.type === 'kanji' && showKanjiAnswer) || (currentQuestion?.options || [])[selectedIdx!] === currentQuestion?.word) ? 'Splendid!' : 'Not quite...'}
-                      {lastGainedXP && <span className="ml-3 px-2 py-0.5 bg-amber-100 text-amber-600 text-sm rounded-lg animate-bounce inline-block">+{lastGainedXP} XP</span>}
                     </h3>
                     <p className="text-base text-ghost-grey dark:text-slate-400 font-medium">
                       {preferredLang === 'Chinese' ? '正确答案是' : 'The correct answer is'}{' '}
