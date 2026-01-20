@@ -20,7 +20,8 @@ const QuizPage: React.FC = () => {
   const [isReviewMode, setIsReviewMode] = useState(false);
   const [overallProgress, setOverallProgress] = useState({ learned: 0, total: 0 });
   const [quizType, setQuizType] = useState('vocabulary');
-  const [totalInitialDue, setTotalInitialDue] = useState(0);
+  const [totalDueToday, setTotalDueToday] = useState(0);
+  const [reviewedTodayCount, setReviewedTodayCount] = useState(0);
   const [correctlyReviewedIds, setCorrectlyReviewedIds] = useState<Set<string>>(new Set());
   const [failedIdsInSession, setFailedIdsInSession] = useState<Set<string>>(new Set());
   const [currentStreak, setCurrentStreak] = useState(0);
@@ -127,6 +128,11 @@ const QuizPage: React.FC = () => {
 
     let combinedQuestions: any[] = [];
     const now = new Date().toISOString();
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayStartISO = todayStart.toISOString();
+
+    let totalCompletedToday = 0;
 
     for (const config of typeConfigs) {
       let learnedIds: string[] = [];
@@ -137,51 +143,90 @@ const QuizPage: React.FC = () => {
         }
       }
 
-      if (config.type === 'grammar') {
-        let query = supabase.from('grammar_points').select('*, grammar_examples(*)').eq('level', level);
-        if (isReview) {
-          const { data: progress } = await supabase.from(config.table).select(config.idField).eq('user_id', user.id).lte('next_review_at', now);
-          if (progress && progress.length > 0) query = query.in('id', progress.map(p => p[config.idField as keyof typeof p]));
-          else continue;
-        } else if (learnedIds.length > 0) {
+      if (isReview) {
+        // Fetch items due for review
+        const { data: dueProgress } = await (supabase
+          .from(config.table)
+          .select(`${config.idField}, next_review_at, srs_stage`)
+          .eq('user_id', user.id)
+          .lte('next_review_at', now) as any);
+
+        // Fetch items already completed today
+        const { count: completedToday } = await supabase
+          .from(config.table)
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .gte('last_reviewed_at', todayStartISO)
+          .gt('next_review_at', now);
+
+        totalCompletedToday += completedToday || 0;
+
+        if (dueProgress && dueProgress.length > 0) {
+          const ids = dueProgress.map(p => p[config.idField as keyof typeof p]);
+          let query = config.type === 'grammar'
+            ? supabase.from('grammar_points').select('*, grammar_examples(*)').in('id', ids)
+            : supabase.from('vocabulary').select('*').in('id', ids);
+
+          const { data: questionData } = await query;
+          if (questionData) {
+            combinedQuestions.push(...questionData.map(q => {
+              const progress = dueProgress.find(p => p[config.idField as keyof typeof p] === q.id);
+              if (config.type === 'grammar') {
+                const ex = (q.grammar_examples || [])[0] || q;
+                return {
+                  id: q.id,
+                  word: q.title,
+                  reading: q.reading,
+                  sentence: ex.sentence,
+                  sentence_translation: ex.translation,
+                  sentence_translation_zh: ex.translation_zh,
+                  options: [],
+                  type: 'grammar',
+                  next_review_at: progress?.next_review_at,
+                  srs_stage: progress?.srs_stage
+                };
+              }
+              return {
+                ...q,
+                type: config.type,
+                options: [...(q.distractors || []), q.word].sort(() => Math.random() - 0.5),
+                next_review_at: progress?.next_review_at,
+                srs_stage: progress?.srs_stage
+              };
+            }));
+          }
+        }
+      } else {
+        // Learning mode - keep existing logic but apply goal limit
+        let query = config.type === 'grammar'
+          ? supabase.from('grammar_points').select('*, grammar_examples(*)').eq('level', level)
+          : supabase.from('vocabulary').select('*').eq('level', level);
+
+        if (learnedIds.length > 0) {
           query = query.not('id', 'in', `(${learnedIds.join(',')})`);
         }
 
         const { data } = await query.limit(goal);
-        if (data) combinedQuestions.push(...data.map(gp => {
-          const ex = (gp.grammar_examples || [])[0] || gp;
-          return {
-            id: gp.id,
-            word: gp.title,
-            reading: gp.reading,
-            sentence: ex.sentence,
-            sentence_translation: ex.translation,
-            sentence_translation_zh: ex.translation_zh,
-            options: [],
-            type: 'grammar'
-          };
-        }));
-      } else {
-        let query = supabase.from('vocabulary').select('*');
-        if (isReview) {
-          const { data: progress } = await supabase.from(config.table).select(config.idField).eq('user_id', user.id).lte('next_review_at', now);
-          if (progress && progress.length > 0) query = query.in('id', progress.map(p => p[config.idField as keyof typeof p]));
-          else continue;
-        } else {
-          query = query.eq('level', level);
-          if (learnedIds.length > 0) {
-            query = query.not('id', 'in', `(${learnedIds.join(',')})`);
+        if (data) {
+          if (config.type === 'grammar') {
+            combinedQuestions.push(...data.map(gp => {
+              const ex = (gp.grammar_examples || [])[0] || gp;
+              return {
+                id: gp.id, word: gp.title, reading: gp.reading, sentence: ex.sentence,
+                sentence_translation: ex.translation, sentence_translation_zh: ex.translation_zh,
+                options: [], type: 'grammar'
+              };
+            }));
+          } else {
+            combinedQuestions.push(...data.map(q => ({ ...q, type: config.type, options: [...(q.distractors || []), q.word].sort(() => Math.random() - 0.5) })));
           }
         }
-
-        const { data } = await query.limit(goal);
-        if (data) combinedQuestions.push(...data.map(q => ({ ...q, type: config.type, options: [...(q.distractors || []), q.word].sort(() => Math.random() - 0.5) })));
       }
     }
 
     // Grammar questions formatting helper
     const formatted = combinedQuestions.map(q => {
-      if (q.type === 'grammar') {
+      if (q.type === 'grammar' && q.sentence) {
         const distractors = combinedQuestions.filter(d => d.type === 'grammar' && d.id !== q.id).map(d => d.word).slice(0, 3);
         const options = [...distractors, q.word].sort(() => Math.random() - 0.5);
         let sentence = q.sentence;
@@ -192,8 +237,21 @@ const QuizPage: React.FC = () => {
       return q;
     });
 
-    setQuestions(isReview ? formatted.sort(() => Math.random() - 0.5) : formatted.sort(() => Math.random() - 0.5).slice(0, goal));
-    setTotalInitialDue(isReview ? formatted.length : Math.min(formatted.length, goal));
+    if (isReview) {
+      // Priority sorting for review: earlier next_review_at first, then lower srs_stage
+      const sorted = formatted.sort((a, b) => {
+        const dateA = new Date(a.next_review_at || 0).getTime();
+        const dateB = new Date(b.next_review_at || 0).getTime();
+        if (dateA !== dateB) return dateA - dateB;
+        return (a.srs_stage || 0) - (b.srs_stage || 0);
+      });
+      setQuestions(sorted);
+      setReviewedTodayCount(totalCompletedToday);
+      setTotalDueToday(totalCompletedToday + sorted.length);
+    } else {
+      setQuestions(formatted.sort(() => Math.random() - 0.5).slice(0, goal));
+      setTotalDueToday(Math.min(formatted.length, goal));
+    }
   };
 
   const currentQuestion = questions[currentQuestionIdx];
@@ -207,6 +265,14 @@ const QuizPage: React.FC = () => {
 
     if (isCorrect) {
       await updateSRS(true);
+      if (isReviewMode) {
+        setReviewedTodayCount(prev => {
+          if (!correctlyReviewedIds.has(currentQuestion.id)) {
+            return prev + 1;
+          }
+          return prev;
+        });
+      }
       setCorrectlyReviewedIds(prev => {
         const next = new Set(prev);
         next.add(currentQuestion.id);
@@ -373,7 +439,8 @@ const QuizPage: React.FC = () => {
 
     if (isCorrect) {
       if (failedIdsInSession.has(currentQuestion.id)) {
-        interval = 0; // Keep it due for review if it was failed earlier in this session
+        interval = 1; // Done for today, but restart learning path
+        srs_stage = 1;
       } else {
         if (srs_stage === 0) {
           interval = 1;
@@ -387,7 +454,7 @@ const QuizPage: React.FC = () => {
       }
     } else {
       srs_stage = 1;
-      interval = 0; // Immediate re-review
+      interval = 0; // Still due today
       ease_factor = Math.max(1.3, ease_factor - 0.2);
     }
 
@@ -473,7 +540,7 @@ const QuizPage: React.FC = () => {
     <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-slate-100 min-h-screen flex flex-col font-display transition-colors duration-300">
       <header className="fixed top-0 left-0 w-full z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-black/5 dark:border-white/5">
         <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800">
-          <div className="h-full bg-primary transition-all duration-500" style={{ width: `${(overallProgress.learned / overallProgress.total) * 100}%` }}></div>
+          <div className="h-full bg-primary transition-all duration-500" style={{ width: isReviewMode ? `${(reviewedTodayCount / totalDueToday) * 100}%` : `${(overallProgress.learned / overallProgress.total) * 100}%` }}></div>
         </div>
         <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -482,19 +549,23 @@ const QuizPage: React.FC = () => {
               <span className="font-black tracking-[0.2em] text-[10px] uppercase text-ghost-grey dark:text-slate-500">
                 {isReviewMode ? 'SRS Priority Review' : `${currentLevel} ${quizType === 'grammar' ? 'Grammar' : 'Vocabulary'}`}
               </span>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Mastery</span>
-                <span className="text-xs font-black text-charcoal dark:text-white">
-                  {overallProgress.learned} / {overallProgress.total}
-                </span>
-              </div>
+              {!isReviewMode && (
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Mastery</span>
+                  <span className="text-xs font-black text-charcoal dark:text-white">
+                    {overallProgress.learned} / {overallProgress.total}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3 bg-primary/10 dark:bg-primary/20 px-5 py-2.5 rounded-2xl border border-primary/20 shadow-sm">
-              <span className="text-[10px] font-black uppercase text-primary tracking-widest leading-none">Session Progress</span>
+              <span className="text-[10px] font-black uppercase text-primary tracking-widest leading-none">
+                {isReviewMode ? 'Today\'s Progress' : 'Session Progress'}
+              </span>
               <span className="text-base font-black text-primary leading-none">
-                {currentQuestionIdx + 1} / {questions.length}
+                {isReviewMode ? `${reviewedTodayCount} / ${totalDueToday}` : `${currentQuestionIdx + 1} / ${questions.length}`}
               </span>
             </div>
             <button
