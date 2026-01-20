@@ -585,27 +585,26 @@ const QuizPage: React.FC = () => {
         <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800">
           <div className="h-full bg-primary transition-all duration-500" style={{ width: isReviewMode ? `${totalDueToday > 0 ? (reviewedTodayCount / totalDueToday) * 100 : 0}%` : `${questions.length > 0 ? ((currentQuestionIdx + 1) / questions.length) * 100 : 0}%` }}></div>
         </div>
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <span className="text-primary material-symbols-outlined text-2xl">{isReviewMode ? 'auto_awesome' : 'auto_stories'}</span>
-              <span className="font-black text-xs text-charcoal dark:text-white uppercase tracking-wider">{isReviewMode ? 'Review' : currentLevel}</span>
-            </div>
-
-            <div className="h-4 w-[1px] bg-slate-200 dark:bg-white/10 hidden sm:block"></div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-ghost-grey material-symbols-outlined text-xl">school</span>
-              <span className="text-sm font-black text-charcoal dark:text-white">{overallProgress.learned} / {overallProgress.total}</span>
-            </div>
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-primary material-symbols-outlined text-2xl">{isReviewMode ? 'auto_awesome' : 'auto_stories'}</span>
+            <span className="font-black text-xs text-charcoal dark:text-white uppercase tracking-wider">{isReviewMode ? 'Review' : currentLevel}</span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-primary/5 dark:bg-primary/10 px-4 py-2 rounded-xl border border-primary/10">
-              <span className="text-primary material-symbols-outlined text-xl">task_alt</span>
-              <span className="text-sm font-black text-primary">
-                {isReviewMode ? `${reviewedTodayCount} / ${totalDueToday}` : `${currentQuestionIdx + 1} / ${questions.length}`}
-              </span>
+          <div className="flex items-center gap-6">
+            <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-2 text-primary">
+                <span className="material-symbols-outlined !text-base font-black">task_alt</span>
+                <span className="text-xs font-black tracking-tight leading-none">
+                  {isReviewMode ? `${reviewedTodayCount} / ${totalDueToday}` : `${currentQuestionIdx + 1} / ${questions.length}`}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-ghost-grey dark:text-slate-500">
+                <span className="material-symbols-outlined !text-base">school</span>
+                <span className="text-[10px] font-bold tracking-tight leading-none">
+                  {overallProgress.learned} / {overallProgress.total}
+                </span>
+              </div>
             </div>
 
             <button
