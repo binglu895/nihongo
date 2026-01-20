@@ -143,17 +143,17 @@ const ProgressPage: React.FC = () => {
       .eq('level', level);
 
     // Grammar
+    // Grammar
     const levelGrammarIds = (await supabase.from('grammar_points').select('id').eq('level', level)).data?.map(g => g.id) || [];
+    const levelExampleIds = (await supabase.from('grammar_examples').select('id').in('grammar_point_id', levelGrammarIds)).data?.map(ex => ex.id) || [];
+
     const { count: gLearned } = await supabase
-      .from('user_grammar_progress')
+      .from('user_grammar_example_progress')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
-      .in('grammar_point_id', levelGrammarIds);
+      .in('grammar_example_id', levelExampleIds);
 
-    const { count: gTotal } = await supabase
-      .from('grammar_examples')
-      .select('*', { count: 'exact', head: true })
-      .in('grammar_point_id', levelGrammarIds);
+    const gTotal = levelExampleIds.length;
 
     // Kanji Total (proxy from vocab table for now or specific kanji table if exists)
     const { count: kTotal } = await supabase.from('vocabulary').select('id', { count: 'exact', head: true }).eq('level', level);

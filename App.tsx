@@ -4,7 +4,8 @@ import AuthPage from './pages/AuthPage';
 import DashboardPage from './pages/DashboardPage';
 import ProgressPage from './pages/ProgressPage';
 import SettingsPage from './pages/SettingsPage';
-import QuizPage from './pages/QuizPage';
+import VocabularyQuizPage from './pages/VocabularyQuizPage';
+import GrammarQuizPage from './pages/GrammarQuizPage';
 import KanjiPage from './pages/KanjiPage';
 import PublicProfilePage from './pages/PublicProfilePage';
 import ListeningQuizPage from './pages/ListeningQuizPage';
@@ -80,7 +81,9 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/progress" element={<ProgressPage />} />
           <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/quiz" element={<QuizPage />} />
+          <Route path="/vocab-quiz" element={<VocabularyQuizPage />} />
+          <Route path="/grammar-quiz" element={<GrammarQuizPage />} />
+          <Route path="/quiz" element={<VocabularyQuizPage />} />
           <Route path="/listening-quiz" element={<ListeningQuizPage />} />
           <Route path="/kanji" element={<KanjiPage />} />
           <Route path="/profile/:referralCode" element={<PublicProfilePage />} />

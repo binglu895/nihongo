@@ -69,21 +69,17 @@ const DashboardPage: React.FC = () => {
     const levelNumber = parseInt(currentLevel.replace('N', '')) || 5;
     const listeningDifficulty = 6 - levelNumber; // N5 -> 1, N4 -> 2, N3 -> 3
 
-    const [vTotalRes, gTotalRes, kTotalRes, lTotalRes] = await Promise.all([
-      supabase.from('vocabulary').select('id', { count: 'exact', head: true }).eq('level', currentLevel),
-      supabase.from('grammar_points').select('id', { count: 'exact', head: true }).eq('level', currentLevel),
-      supabase.from('vocabulary').select('id', { count: 'exact', head: true }).eq('level', currentLevel), // Kanji shared with vocab
-      supabase.from('listening_questions').select('id', { count: 'exact', head: true }).eq('difficulty', listeningDifficulty)
-    ]);
-
     const vLevelIds = (await supabase.from('vocabulary').select('id').eq('level', currentLevel)).data?.map(v => v.id) || [];
-    const gLevelIds = (await supabase.from('grammar_points').select('id').eq('level', currentLevel)).data?.map(g => g.id) || [];
+    const gPoints = (await supabase.from('grammar_points').select('id').eq('level', currentLevel)).data || [];
+    const gPointIds = gPoints.map(p => p.id);
+    const gLevelExamples = (await supabase.from('grammar_examples').select('id').in('grammar_point_id', gPointIds)).data || [];
+    const gExampleIds = gLevelExamples.map(ex => ex.id);
     const lLevelIds = (await supabase.from('listening_questions').select('id').eq('difficulty', listeningDifficulty)).data?.map(l => l.id) || [];
 
     // 2. Fetch Learned and Due counts
     const [vProg, gProg, kProg, lProg] = await Promise.all([
       supabase.from('user_vocabulary_progress').select('vocabulary_id, next_review_at').eq('user_id', userId).in('vocabulary_id', vLevelIds),
-      supabase.from('user_grammar_progress').select('grammar_point_id, next_review_at').eq('user_id', userId).in('grammar_point_id', gLevelIds),
+      supabase.from('user_grammar_example_progress').select('grammar_example_id, next_review_at').eq('user_id', userId).in('grammar_example_id', gExampleIds),
       supabase.from('user_kanji_progress').select('vocabulary_id, next_review_at').eq('user_id', userId).in('vocabulary_id', vLevelIds),
       supabase.from('user_listening_progress').select('listening_question_id, next_review_at').eq('user_id', userId).in('listening_question_id', lLevelIds)
     ]);
@@ -96,10 +92,10 @@ const DashboardPage: React.FC = () => {
     };
 
     setStats({
-      kanji: getStats(kProg.data, kTotalRes.count),
-      vocabulary: getStats(vProg.data, vTotalRes.count),
-      grammar: getStats(gProg.data, gTotalRes.count),
-      listening: getStats(lProg.data, lTotalRes.count)
+      kanji: getStats(kProg.data, vLevelIds.length),
+      vocabulary: getStats(vProg.data, vLevelIds.length),
+      grammar: getStats(gProg.data, gExampleIds.length),
+      listening: getStats(lProg.data, lLevelIds.length)
     });
   };
 
@@ -125,8 +121,8 @@ const DashboardPage: React.FC = () => {
 
   const categories = [
     { title: "Kanji", icon: "draw", desc: "Master characters.", btn: "Start Practice", path: "/kanji", stats: stats.kanji },
-    { title: "Vocabulary", icon: "menu_book", desc: "Build your lexicon.", btn: "Start Practice", path: "/quiz", stats: stats.vocabulary },
-    { title: "Grammar", icon: "architecture", desc: "Understand particles.", btn: "Start Practice", path: "/quiz?type=grammar", stats: stats.grammar },
+    { title: "Vocabulary", icon: "menu_book", desc: "Build your lexicon.", btn: "Start Practice", path: "/vocab-quiz", stats: stats.vocabulary },
+    { title: "Grammar", icon: "architecture", desc: "Understand particles.", btn: "Start Practice", path: "/grammar-quiz", stats: stats.grammar },
     { title: "Listening", icon: "hearing", desc: "Native audio.", btn: "Start Practice", path: "/listening-quiz", stats: stats.listening }
   ];
 
@@ -166,7 +162,7 @@ const DashboardPage: React.FC = () => {
                 Consistency is key. You have items waiting for review.
               </p>
               <button
-                onClick={() => navigate('/quiz?mode=review&type=all')}
+                onClick={() => navigate('/vocab-quiz?mode=review')}
                 className="group relative flex items-center justify-center gap-3 bg-primary text-white font-black py-4 px-10 rounded-2xl text-lg shadow-xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-300"
               >
                 <span className="material-symbols-outlined !text-xl">fact_check</span>
@@ -184,7 +180,7 @@ const DashboardPage: React.FC = () => {
               <h2 className="text-xl font-black text-charcoal dark:text-white mb-1">All Caught Up!</h2>
               <p className="text-ghost-grey dark:text-gray-400 text-xs font-medium mb-6">No reviews due right now. Perfect time to start a new lesson.</p>
               <button
-                onClick={() => navigate('/quiz')}
+                onClick={() => navigate('/vocab-quiz')}
                 className="text-primary text-xs font-black uppercase tracking-widest hover:underline flex items-center gap-2"
               >
                 Start New Lesson <span className="material-symbols-outlined !text-sm">arrow_forward</span>
@@ -253,9 +249,9 @@ const DashboardPage: React.FC = () => {
           <span className="material-symbols-outlined !text-sm">verified</span>
           SRS Mode Active
         </div>
-      </main>
+      </main >
       <Footer />
-    </div>
+    </div >
   );
 };
 
