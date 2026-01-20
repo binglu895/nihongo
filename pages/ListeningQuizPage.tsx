@@ -20,6 +20,7 @@ const ListeningQuizPage: React.FC = () => {
     const [xpNotificationKey, setXpNotificationKey] = useState(0);
     const [searchParams] = useSearchParams();
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const [voiceMode, setVoiceMode] = useState<'default' | 'sakura' | 'sakura07' | 'sakura07reading'>('default');
 
     useEffect(() => {
         initQuiz();
@@ -29,7 +30,7 @@ const ListeningQuizPage: React.FC = () => {
         if (questions.length > 0 && questions[currentIdx] && !answered) {
             playAudio();
         }
-    }, [currentIdx, questions]);
+    }, [currentIdx, questions, voiceMode]); // Re-play when voice mode changes
 
     const initQuiz = async () => {
         setLoading(true);
@@ -139,10 +140,25 @@ const ListeningQuizPage: React.FC = () => {
         setLoading(false);
     };
 
+    const getAudioUrl = (originalUrl: string) => {
+        if (voiceMode === 'default') return originalUrl;
+        // We replace '/n5/' with the target directory. 
+        // Note: This logic assumes the original URL follows the structure /audio/listening/n5/...
+        if (!originalUrl.includes('/n5/')) return originalUrl;
+
+        switch (voiceMode) {
+            case 'sakura': return originalUrl.replace('/n5/', '/n5_sakura/');
+            case 'sakura07': return originalUrl.replace('/n5/', '/n5_sakura_07/');
+            case 'sakura07reading': return originalUrl.replace('/n5/', '/n5_sakura_07_reading/');
+            default: return originalUrl;
+        }
+    };
+
     const playAudio = () => {
         if (questions[currentIdx]?.audio_url) {
             if (audioRef.current) {
-                audioRef.current.src = questions[currentIdx].audio_url;
+                const url = getAudioUrl(questions[currentIdx].audio_url);
+                audioRef.current.src = url;
                 audioRef.current.play().catch(e => console.error("Audio play failed:", e));
             }
         }
@@ -313,7 +329,21 @@ const ListeningQuizPage: React.FC = () => {
             <main className="flex-grow flex flex-col items-center justify-center px-6 pt-24 pb-12 w-full">
                 <div className="w-full max-w-2xl">
 
+
                     <div className="flex flex-col items-center mb-16">
+                        <div className="mb-6 flex gap-2 items-center">
+                            <label className="text-xs font-bold uppercase tracking-widest text-ghost-grey dark:text-slate-400">Voice:</label>
+                            <select
+                                value={voiceMode}
+                                onChange={(e) => setVoiceMode(e.target.value as any)}
+                                className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm font-bold text-charcoal dark:text-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                            >
+                                <option value="default">Default (Gemini/Google)</option>
+                                <option value="sakura">Sakura (Normal)</option>
+                                <option value="sakura07">Sakura (0.7x Speed)</option>
+                                <option value="sakura07reading">Sakura (Reading, 0.7x)</option>
+                            </select>
+                        </div>
                         <button
                             onClick={playAudio}
                             className="size-32 rounded-full bg-primary text-white flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all mb-8"
