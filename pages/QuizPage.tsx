@@ -583,39 +583,36 @@ const QuizPage: React.FC = () => {
     <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-slate-100 min-h-screen flex flex-col font-display transition-colors duration-300">
       <header className="fixed top-0 left-0 w-full z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-black/5 dark:border-white/5">
         <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800">
-          <div className="h-full bg-primary transition-all duration-500" style={{ width: isReviewMode ? `${(reviewedTodayCount / totalDueToday) * 100}%` : `${(overallProgress.learned / overallProgress.total) * 100}%` }}></div>
+          <div className="h-full bg-primary transition-all duration-500" style={{ width: isReviewMode ? `${totalDueToday > 0 ? (reviewedTodayCount / totalDueToday) * 100 : 0}%` : `${questions.length > 0 ? ((currentQuestionIdx + 1) / questions.length) * 100 : 0}%` }}></div>
         </div>
-        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-primary material-symbols-outlined text-3xl">{isReviewMode ? 'auto_awesome' : 'auto_stories'}</span>
-            <div className="flex flex-col">
-              <span className="font-black tracking-[0.2em] text-[10px] uppercase text-ghost-grey dark:text-slate-500">
-                {isReviewMode ? 'SRS Priority Review' : `${currentLevel} ${quizType === 'grammar' ? 'Grammar' : 'Vocabulary'}`}
-              </span>
-              {!isReviewMode && (
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Mastery</span>
-                  <span className="text-xs font-black text-charcoal dark:text-white">
-                    {overallProgress.learned} / {overallProgress.total}
-                  </span>
-                </div>
-              )}
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="text-primary material-symbols-outlined text-2xl">{isReviewMode ? 'auto_awesome' : 'auto_stories'}</span>
+              <span className="font-black text-xs text-charcoal dark:text-white uppercase tracking-wider">{isReviewMode ? 'Review' : currentLevel}</span>
+            </div>
+
+            <div className="h-4 w-[1px] bg-slate-200 dark:bg-white/10 hidden sm:block"></div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-ghost-grey material-symbols-outlined text-xl">school</span>
+              <span className="text-sm font-black text-charcoal dark:text-white">{overallProgress.learned} / {overallProgress.total}</span>
             </div>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3 bg-primary/10 dark:bg-primary/20 px-5 py-2.5 rounded-2xl border border-primary/20 shadow-sm">
-              <span className="text-[10px] font-black uppercase text-primary tracking-widest leading-none">
-                {isReviewMode ? 'Today\'s Progress' : 'Session Progress'}
-              </span>
-              <span className="text-base font-black text-primary leading-none">
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 bg-primary/5 dark:bg-primary/10 px-4 py-2 rounded-xl border border-primary/10">
+              <span className="text-primary material-symbols-outlined text-xl">task_alt</span>
+              <span className="text-sm font-black text-primary">
                 {isReviewMode ? `${reviewedTodayCount} / ${totalDueToday}` : `${currentQuestionIdx + 1} / ${questions.length}`}
               </span>
             </div>
+
             <button
               onClick={() => navigate('/dashboard')}
-              className="flex items-center justify-center size-12 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/20 text-ghost-grey hover:text-red-500 transition-all border border-black/5 dark:border-white/5"
+              className="flex items-center justify-center size-10 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-ghost-grey hover:text-red-500 transition-all border border-black/5 dark:border-white/5"
             >
-              <span className="material-symbols-outlined text-2xl">close</span>
+              <span className="material-symbols-outlined text-xl">close</span>
             </button>
           </div>
         </div>
