@@ -209,7 +209,7 @@ const DashboardPage: React.FC = () => {
               </p>
               <button
                 onClick={() => navigate(card.path)}
-                className="w-full py-3 bg-primary/10 hover:bg-primary text-primary hover:text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 bg-primary text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
               >
                 <span>{card.btn}</span>
                 <span className="material-symbols-outlined !text-sm">arrow_forward</span>
