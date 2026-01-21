@@ -134,26 +134,45 @@ const VocabularyQuizPage: React.FC = () => {
             }
         } else {
             // Learning Mode
-            // Get learned IDs for THIS level only
+            // Get all vocabulary IDs for THIS level first
+            const { data: levelVocab } = await supabase
+                .from('vocabulary')
+                .select('id')
+                .eq('level', level);
+
+            const levelIds = levelVocab?.map(v => v.id) || [];
+
+            // Get learned IDs for THIS level only to keep the exclusion list small
             const { data: learnedProgress } = await supabase
                 .from('user_vocabulary_progress')
                 .select('vocabulary_id')
                 .eq('user_id', user.id)
+                .in('vocabulary_id', levelIds)
                 .gt('correct_count', 0);
 
             const learnedIds = learnedProgress?.map(p => p.vocabulary_id) || [];
+            console.log(`Debug Vocab: Level=${level}, LevelTotal=${levelIds.length}, LearnedInLevel=${learnedIds.length}`);
 
             let query = supabase.from('vocabulary').select('*').eq('level', level);
+
             if (learnedIds.length > 0) {
-                query = query.not('id', 'in', learnedIds);
+                // Safeguard against URL length limits (400 Bad Request)
+                const exclusionList = learnedIds.slice(0, 400);
+                query = query.not('id', 'in', `(${exclusionList.join(',')})`);
             }
 
-            const { data } = await query.limit(goal);
-            if (data) {
+            const { data, error } = await query.limit(goal);
+            if (error) {
+                console.error('Supabase Vocab Query Error:', error);
+            }
+
+            if (data && data.length > 0) {
                 setQuestions(data.map(v => ({
                     ...v,
                     options: [...(v.distractors || []), v.word].sort(() => Math.random() - 0.5)
                 })));
+            } else {
+                console.log('No vocab questions found for criteria.');
             }
         }
     };
@@ -261,17 +280,38 @@ const VocabularyQuizPage: React.FC = () => {
                     </div>
                     <div className="space-y-4">
                         <h2 className="text-4xl font-black text-charcoal dark:text-white tracking-tight">
-                            {isReviewMode ? 'All Caught Up!' : 'Level Mastered!'}
+                            {isReviewMode ? 'All Caught Up!' : `${currentLevel || 'Level'} Mastered!`}
                         </h2>
                         <p className="text-ghost-grey dark:text-slate-400 font-medium text-lg leading-relaxed">
                             {isReviewMode
                                 ? "You've finished all your vocabulary reviews for today. Check back later!"
-                                : `You've mastered all vocabulary in ${currentLevel}. Great job!`}
+                                : `You've mastered all vocabulary in ${currentLevel || 'this level'}. Great job!`}
                         </p>
+                        <div className="pt-2 text-[10px] font-mono text-slate-400">
+                            Version: 2026-01-21-V5 | Level: {currentLevel} | Items: {questions.length}
+                        </div>
                     </div>
-                    <button onClick={() => navigate('/dashboard')} className="w-full py-5 bg-primary text-white font-black rounded-[24px] shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
-                        Return to Dashboard
-                    </button>
+                    <div className="flex flex-col gap-3">
+                        <button onClick={() => navigate('/dashboard')} className="w-full py-5 bg-primary text-white font-black rounded-[24px] shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
+                            Return to Dashboard
+                        </button>
+                        {!isReviewMode && (
+                            <button
+                                onClick={async () => {
+                                    const { data: { user } } = await supabase.auth.getUser();
+                                    if (user) {
+                                        await supabase.from('profiles').update({ current_level: 'N5' }).eq('id', user.id);
+                                        window.location.reload();
+                                    } else {
+                                        alert('Please log in first.');
+                                    }
+                                }}
+                                className="text-primary font-bold text-sm hover:underline"
+                            >
+                                Not seeing questions? Click here to Reset to N5
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         );

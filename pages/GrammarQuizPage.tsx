@@ -123,24 +123,42 @@ const GrammarQuizPage: React.FC = () => {
                 }
             }
         } else {
+            // Learning Mode
+            // 1. Get all example IDs for this level
+            const { data: levelExamples } = await supabase
+                .from('grammar_examples')
+                .select('id')
+                .in('grammar_point_id', pointIds);
+
+            const levelExampleIds = levelExamples?.map(ex => ex.id) || [];
+
+            // 2. Get learned examples for THIS level only
             const { data: learnedProgress } = await supabase
                 .from('user_grammar_example_progress')
                 .select('grammar_example_id')
                 .eq('user_id', userId)
+                .in('grammar_example_id', levelExampleIds)
                 .gt('correct_count', 0);
 
             const learnedIds = learnedProgress?.map(p => p.grammar_example_id) || [];
+            console.log(`Debug Grammar: Level=${level}, LvlExamples=${levelExampleIds.length}, LearnedInLvl=${learnedIds.length}`);
 
             let query = supabase.from('grammar_examples')
                 .select('*, grammar_points(title)')
                 .in('grammar_point_id', pointIds);
 
             if (learnedIds.length > 0) {
-                query = query.not('id', 'in', learnedIds);
+                // Safeguard against URL length limits
+                const exclusionList = learnedIds.slice(0, 400);
+                query = query.not('id', 'in', `(${exclusionList.join(',')})`);
             }
 
-            const { data: examples } = await query.limit(goal);
-            if (examples) {
+            const { data: examples, error } = await query.limit(goal);
+            if (error) {
+                console.error('Supabase Grammar Query Error:', error);
+            }
+
+            if (examples && examples.length > 0) {
                 setQuestions(examples.map(ex => {
                     const title = (ex.grammar_points as any).title;
                     const distractors = pointTitles.filter(t => t !== title).sort(() => Math.random() - 0.5).slice(0, 3);
@@ -150,6 +168,8 @@ const GrammarQuizPage: React.FC = () => {
                         options: [...distractors, title].sort(() => Math.random() - 0.5)
                     };
                 }));
+            } else {
+                console.log('No grammar questions found for criteria.');
             }
         }
     };
@@ -255,17 +275,38 @@ const GrammarQuizPage: React.FC = () => {
                     </div>
                     <div className="space-y-4">
                         <h2 className="text-4xl font-black text-charcoal dark:text-white tracking-tight">
-                            {isReviewMode ? 'All Caught Up!' : 'Level Mastered!'}
+                            {isReviewMode ? 'All Caught Up!' : `${currentLevel || 'Level'} Mastered!`}
                         </h2>
                         <p className="text-ghost-grey dark:text-slate-400 font-medium text-lg leading-relaxed">
                             {isReviewMode
                                 ? "You've finished all your grammar reviews for today. Check back later!"
-                                : `You've mastered all grammar examples in ${currentLevel}. Great job!`}
+                                : `You've mastered all grammar examples in ${currentLevel || 'this level'}. Great job!`}
                         </p>
+                        <div className="pt-2 text-[10px] font-mono text-slate-400">
+                            Version: 2026-01-21-V5 | Level: {currentLevel} | Items: {questions.length}
+                        </div>
                     </div>
-                    <button onClick={() => navigate('/dashboard')} className="w-full py-5 bg-primary text-white font-black rounded-[24px] shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
-                        Return to Dashboard
-                    </button>
+                    <div className="flex flex-col gap-3">
+                        <button onClick={() => navigate('/dashboard')} className="w-full py-5 bg-primary text-white font-black rounded-[24px] shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
+                            Return to Dashboard
+                        </button>
+                        {!isReviewMode && (
+                            <button
+                                onClick={async () => {
+                                    const { data: { user } } = await supabase.auth.getUser();
+                                    if (user) {
+                                        await supabase.from('profiles').update({ current_level: 'N5' }).eq('id', user.id);
+                                        window.location.reload();
+                                    } else {
+                                        alert('Please log in first.');
+                                    }
+                                }}
+                                className="text-primary font-bold text-sm hover:underline"
+                            >
+                                Not seeing questions? Click here to Reset to N5
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         );
