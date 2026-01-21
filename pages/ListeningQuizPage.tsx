@@ -40,8 +40,9 @@ const ListeningQuizPage: React.FC = () => {
             return;
         }
 
-        const { data: profile } = await supabase.from('profiles').select('current_level').eq('id', user.id).single();
+        const { data: profile } = await supabase.from('profiles').select('current_level, daily_goal').eq('id', user.id).single();
         const currentLevel = profile?.current_level || 'N5';
+        const goal = profile?.daily_goal || 20;
         const levelNumber = parseInt(currentLevel.replace('N', '')) || 5;
         const difficulty = 6 - levelNumber;
 
@@ -51,6 +52,8 @@ const ListeningQuizPage: React.FC = () => {
 
         let questionData: any[] = [];
         const now = new Date().toISOString();
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
 
         if (isReview) {
             const { data: dueProgress } = await supabase
@@ -60,7 +63,15 @@ const ListeningQuizPage: React.FC = () => {
                 .lte('next_review_at', now);
 
             const dueIds = dueProgress?.map(p => p.listening_question_id) || [];
-            setTotalDueToday(dueIds.length);
+            const { count: completedToday } = await supabase
+                .from('user_listening_progress')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', user.id)
+                .gte('last_reviewed_at', todayStart.toISOString())
+                .gt('next_review_at', now);
+
+            setReviewedTodayCount(completedToday || 0);
+            setTotalDueToday(dueIds.length + (completedToday || 0));
 
             if (dueIds.length > 0) {
                 const { data } = await supabase
@@ -80,9 +91,9 @@ const ListeningQuizPage: React.FC = () => {
             const learnedIds = learnedProgress?.map(p => p.listening_question_id) || [];
             let query = supabase.from('listening_questions').select('*').eq('difficulty', difficulty);
             if (learnedIds.length > 0) {
-                query = query.not('id', 'in', learnedIds);
+                query = query.not('id', 'in', `(${learnedIds.join(',')})`);
             }
-            const { data } = await query;
+            const { data } = await query.limit(goal);
             questionData = data || [];
         }
 
@@ -125,17 +136,10 @@ const ListeningQuizPage: React.FC = () => {
             total: totalCount || 0
         });
 
-        // Fetch items already completed today for session tracking parity
-        const todayStart = new Date();
-        todayStart.setHours(0, 0, 0, 0);
-        const { count: completedToday } = await supabase
-            .from('user_listening_progress')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', user.id)
-            .gte('last_reviewed_at', todayStart.toISOString())
-            .gt('next_review_at', now);
-
-        setReviewedTodayCount(completedToday || 0);
+        setOverallProgress({
+            learned: learnedCount || 0,
+            total: totalCount || 0
+        });
 
         setLoading(false);
     };
@@ -283,6 +287,20 @@ const ListeningQuizPage: React.FC = () => {
                     <button onClick={() => navigate('/dashboard')} className="w-full py-5 bg-primary text-white font-black rounded-[24px] shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
                         Return to Dashboard
                     </button>
+                    {!isReviewMode && (
+                        <button
+                            onClick={async () => {
+                                const { data: { user } } = await supabase.auth.getUser();
+                                if (user) {
+                                    await supabase.from('profiles').update({ current_level: 'N5' }).eq('id', user.id);
+                                    window.location.reload();
+                                }
+                            }}
+                            className="text-primary font-bold text-sm hover:underline mt-4"
+                        >
+                            Not seeing questions? Reset to N5
+                        </button>
+                    )}
                 </div>
             </div>
         );

@@ -11,6 +11,7 @@ import { getReferralInfo, generateShareLink, getDailyStatsSnapshot } from '../se
 const ProgressPage: React.FC = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({ kanji: 0, vocab: 0, grammar: 0, listening: 0 });
+  const [individualDues, setIndividualDues] = useState({ kanji: 0, vocab: 0, grammar: 0, listening: 0 });
   const [profile, setProfile] = useState<any>({ streak: 0, completion: 0, level: 'N5', display_name: '', avatar_id: 'samurai' });
   const [dueCount, setDueCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -67,6 +68,12 @@ const ProgressPage: React.FC = () => {
 
       const totalDue = (vDue.count || 0) + (gDue.count || 0) + (kDue.count || 0) + (lDue.count || 0);
       setDueCount(totalDue);
+      setIndividualDues({
+        vocab: vDue.count || 0,
+        grammar: gDue.count || 0,
+        kanji: kDue.count || 0,
+        listening: lDue.count || 0
+      });
 
       // Fetch Global Stats for ratios
       const allGlobalStats = await fetchGlobalStats(profileData.current_level || 'N5', user.id);
@@ -87,7 +94,8 @@ const ProgressPage: React.FC = () => {
       setStats({
         kanji: allGlobalStats.kanji.learned,
         vocab: allGlobalStats.vocabulary.learned,
-        grammar: allGlobalStats.grammar.learned
+        grammar: allGlobalStats.grammar.learned,
+        listening: allGlobalStats.listening.learned
       });
 
       // Fetch sharing/referral info
@@ -248,9 +256,16 @@ const ProgressPage: React.FC = () => {
                     }
                   }
                   // Simpler: Use the same logic as Dashboard
-                  if (globalStats.vocabulary.total > 0) navigate('/vocab-quiz?mode=review');
-                  else if (globalStats.kanji.total > 0) navigate('/kanji?mode=review');
-                  else if (globalStats.grammar.total > 0) navigate('/grammar-quiz?mode=review');
+                  // Simpler: Use the same logic as Dashboard
+                  if (dueCount > 0) {
+                    if (globalStats.vocabulary.learned < globalStats.vocabulary.total) {
+                      // Fallthrough logic matches Dashboard
+                    }
+                  }
+                  if (individualDues.vocab > 0) navigate('/vocab-quiz?mode=review');
+                  else if (individualDues.kanji > 0) navigate('/kanji?mode=review');
+                  else if (individualDues.grammar > 0) navigate('/grammar-quiz?mode=review');
+                  else if (individualDues.listening > 0) navigate('/listening-quiz?mode=review');
                   else navigate('/dashboard');
                 }}
                 className="group relative flex items-center justify-center gap-3 bg-primary text-white font-black py-4 px-10 rounded-2xl text-lg shadow-xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-300"

@@ -83,15 +83,15 @@ const DashboardPage: React.FC = () => {
 
     // 2. Fetch Learned and Due counts
     const [vProg, gProg, kProg, lProg] = await Promise.all([
-      supabase.from('user_vocabulary_progress').select('vocabulary_id, next_review_at').eq('user_id', userId).in('vocabulary_id', vLevelIds),
-      supabase.from('user_grammar_example_progress').select('grammar_example_id, next_review_at').eq('user_id', userId).in('grammar_example_id', gExampleIds),
-      supabase.from('user_kanji_progress').select('vocabulary_id, next_review_at').eq('user_id', userId).in('vocabulary_id', vLevelIds),
-      supabase.from('user_listening_progress').select('listening_question_id, next_review_at').eq('user_id', userId).in('listening_question_id', lLevelIds)
+      supabase.from('user_vocabulary_progress').select('vocabulary_id, next_review_at, correct_count').eq('user_id', userId).in('vocabulary_id', vLevelIds),
+      supabase.from('user_grammar_example_progress').select('grammar_example_id, next_review_at, correct_count').eq('user_id', userId).in('grammar_example_id', gExampleIds),
+      supabase.from('user_kanji_progress').select('vocabulary_id, next_review_at, correct_count').eq('user_id', userId).in('vocabulary_id', vLevelIds),
+      supabase.from('user_listening_progress').select('listening_question_id, next_review_at, correct_count').eq('user_id', userId).in('listening_question_id', lLevelIds)
     ]);
 
     const getStats = (progData: any[] | null, total: number | null, globalDue: number) => {
       if (!progData) return { learned: 0, total: total || 0, due: 0, globalDue };
-      const learned = progData.filter(p => p.next_review_at !== null).length;
+      const learned = progData.filter(p => p.correct_count > 0).length;
       const due = progData.filter(p => p.next_review_at && p.next_review_at <= now).length;
       return { learned, total: total || 0, due, globalDue };
     };
