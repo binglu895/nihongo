@@ -92,12 +92,23 @@ const KanjiPage: React.FC = () => {
                 .eq('user_id', user.id)
                 .gt('correct_count', 0);
 
-            const learnedIds = learnedProgress?.map(p => p.vocabulary_id) || [];
+            const learnedIds = (learnedProgress || []).map(p => p.vocabulary_id);
+            console.log(`Debug Kanji: Level=${level}, LearnedCount=${learnedIds.length}`);
+
             let query = supabase.from('vocabulary').select('*').eq('level', level);
+
+            // To avoid long URL errors with .not('id', 'in', ...), we limit the exclusion list 
+            // or use a different strategy if it's very large. For now, let's ensure it's valid.
             if (learnedIds.length > 0) {
-                query = query.not('id', 'in', learnedIds);
+                // If the list is too long, it might cause 400 Bad Request. 
+                // We'll take the first 500 learned IDs as a safety measure.
+                query = query.not('id', 'in', `(${learnedIds.slice(0, 500).join(',')})`);
             }
-            const { data } = await query.limit(goal);
+
+            const { data, error } = await query.limit(goal);
+            if (error) {
+                console.error('Supabase Query Error:', error);
+            }
             questionData = data || [];
         }
 
