@@ -351,12 +351,14 @@ const VocabularyQuizPage: React.FC = () => {
 
             <main className="flex-1 flex flex-col items-center justify-center p-6 pt-24">
                 <div className="w-full max-w-lg space-y-8">
-                    <div className="text-center space-y-4">
-                        <h1 className="text-6xl md:text-7xl font-black text-charcoal dark:text-white tracking-tighter">
-                            {currentQuestion.word}
+                    <div className="text-center space-y-6">
+                        <h1 className="text-4xl md:text-5xl font-black text-charcoal dark:text-white leading-tight">
+                            {currentQuestion.sentence || currentQuestion.word}
                         </h1>
                         <p className="text-xl text-ghost-grey dark:text-gray-400 font-medium">
-                            {currentQuestion.meaning}
+                            {preferredLang === 'Chinese'
+                                ? (currentQuestion.sentence_translation_zh || currentQuestion.meaning_zh)
+                                : (currentQuestion.sentence_translation || currentQuestion.meaning)}
                         </p>
                     </div>
 
@@ -393,12 +395,27 @@ const VocabularyQuizPage: React.FC = () => {
                     </div>
 
                     {answered && (
-                        <button
-                            onClick={handleNext}
-                            className="w-full py-5 bg-charcoal dark:bg-white text-white dark:text-charcoal rounded-3xl font-black text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
-                        >
-                            Next Question
-                        </button>
+                        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
+                            <div className="p-8 bg-emerald-50 dark:bg-emerald-900/20 rounded-[32px] border border-emerald-100 dark:border-emerald-500/20">
+                                <p className="text-emerald-700 dark:text-emerald-300 font-black mb-2 flex items-center gap-2">
+                                    <span className="material-symbols-outlined">lightbulb</span>
+                                    Word Detail
+                                </p>
+                                <div className="space-y-1">
+                                    <p className="text-3xl font-black text-charcoal dark:text-white">{currentQuestion.word}</p>
+                                    <p className="text-lg font-bold text-ghost-grey dark:text-slate-400">{currentQuestion.reading}</p>
+                                    <p className="text-lg text-charcoal dark:text-slate-300">
+                                        {preferredLang === 'Chinese' ? currentQuestion.meaning_zh : currentQuestion.meaning}
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={handleNext}
+                                className="w-full py-5 bg-charcoal dark:bg-white text-white dark:text-charcoal rounded-3xl font-black text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
+                            >
+                                Next Question
+                            </button>
+                        </div>
                     )}
                 </div>
             </main>
