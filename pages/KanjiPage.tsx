@@ -304,23 +304,30 @@ const KanjiPage: React.FC = () => {
                                 ? "You've finished all your Kanji handwriting reviews for today."
                                 : `You've practiced all Kanji in ${currentLevel || 'this level'}. Excellent focus!`}
                         </p>
+                        <div className="pt-2 text-[10px] font-mono text-slate-400">
+                            Version: 2026-01-21-V4 | Level: {currentLevel} | Items: {questions.length}
+                        </div>
                     </div>
                     <div className="flex flex-col gap-3">
                         <button onClick={() => navigate('/dashboard')} className="w-full py-5 bg-primary text-white font-black rounded-[24px] shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
                             Return to Dashboard
                         </button>
-                        {!isReviewMode && currentLevel !== 'N5' && (
+                        {!isReviewMode && (
                             <button
                                 onClick={async () => {
                                     const { data: { user } } = await supabase.auth.getUser();
                                     if (user) {
                                         await supabase.from('profiles').update({ current_level: 'N5' }).eq('id', user.id);
+                                        // Clear all kanji progress for this level to test
+                                        console.log('Resetting level to N5...');
                                         window.location.reload();
+                                    } else {
+                                        alert('Please log in first.');
                                     }
                                 }}
                                 className="text-primary font-bold text-sm hover:underline"
                             >
-                                Switch to N5 and try again
+                                Not seeing questions? Click here to Reset to N5
                             </button>
                         )}
                     </div>
