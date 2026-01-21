@@ -22,12 +22,16 @@ async function updateGrammarQuestions() {
 
     for (const ex of examples) {
         const title = (ex.grammar_points as any).title;
-        const cleanTitle = title.replace(/[～~]/g, '');
+        // Split title by slash (e.g., "は/が") and try each variation
+        const variations = title.split(/[/／]/).map((v: string) => v.replace(/[～~]/g, '').trim());
 
-        // Simple heuristic: if cleanTitle is in the sentence, replace it
-        // Note: For more complex conjugation, this might need Gemini, 
-        // but for N5 many basic points like particles or fixed endings work.
-        const questionSentence = ex.sentence.replace(cleanTitle, '（　　）');
+        let questionSentence = ex.sentence;
+        for (const variation of variations) {
+            if (variation && questionSentence.includes(variation)) {
+                questionSentence = questionSentence.replace(variation, '（　　）');
+                break;
+            }
+        }
 
         if (questionSentence !== ex.sentence) {
             const { error: updateError } = await supabase

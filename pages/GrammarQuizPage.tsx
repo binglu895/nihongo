@@ -313,8 +313,21 @@ const GrammarQuizPage: React.FC = () => {
     }
 
     // Format the sentence to hide the grammar point
-    const displaySentence = currentQuestion.question_sentence ||
-        currentQuestion.sentence.replace(currentQuestion.word.replace(/[～~]/g, ''), '（　　）');
+    let displaySentence = currentQuestion.question_sentence;
+
+    if (!displaySentence) {
+        displaySentence = currentQuestion.sentence;
+        // Split title by slash (e.g., "は/が") and try each variation
+        const variations = currentQuestion.word.split(/[/／]/).map(v => v.replace(/[～~]/g, '').trim());
+
+        for (const variation of variations) {
+            if (variation && displaySentence.includes(variation)) {
+                // Replace ONLY the first occurrence to avoid over-masking
+                displaySentence = displaySentence.replace(variation, '（　　）');
+                break;
+            }
+        }
+    }
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-slate-100 min-h-screen flex flex-col font-display transition-colors duration-300">
