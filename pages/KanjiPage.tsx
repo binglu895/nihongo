@@ -71,6 +71,7 @@ const KanjiPage: React.FC = () => {
                 .from('user_kanji_progress')
                 .select('vocabulary_id')
                 .eq('user_id', user.id)
+                .gt('correct_count', 0) // Only review learned items
                 .lte('next_review_at', now);
 
             const dueIds = dueProgress?.map(p => p.vocabulary_id) || [];

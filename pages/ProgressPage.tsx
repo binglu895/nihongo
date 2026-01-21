@@ -57,13 +57,13 @@ const ProgressPage: React.FC = () => {
 
       if (statsError) throw statsError;
 
-      // Fetch due items count from all categories
-      const now = new Date().toISOString();
+      // Fetch due items count from all categories (Learned items only)
+      const now = new Date(Date.now() + 5000).toISOString();
       const [vDue, gDue, kDue, lDue] = await Promise.all([
-        supabase.from('user_vocabulary_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_grammar_example_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now)
+        supabase.from('user_vocabulary_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0).lte('next_review_at', now),
+        supabase.from('user_grammar_example_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0).lte('next_review_at', now),
+        supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0).lte('next_review_at', now),
+        supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).gt('correct_count', 0).lte('next_review_at', now)
       ]);
 
       const totalDue = (vDue.count || 0) + (gDue.count || 0) + (kDue.count || 0) + (lDue.count || 0);

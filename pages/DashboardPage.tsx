@@ -91,11 +91,15 @@ const DashboardPage: React.FC = () => {
       supabase.from('user_listening_progress').select('listening_question_id, next_review_at, correct_count').eq('user_id', userId).in('listening_question_id', lLevelIds)
     ]);
 
-    const getStats = (progData: any[] | null, total: number | null, globalDue: number) => {
-      if (!progData) return { learned: 0, total: total || 0, due: 0, globalDue };
+    const getStats = (progData: any[] | null, total: number, globalDue: number) => {
+      if (!progData) return { learned: 0, total, due: 0, globalDue };
       const learned = progData.filter(p => p.correct_count > 0).length;
-      const due = progData.filter(p => p.next_review_at && p.next_review_at <= now).length;
-      return { learned, total: total || 0, due, globalDue };
+      const due = progData.filter(p =>
+        p.correct_count > 0 &&
+        p.next_review_at &&
+        new Date(p.next_review_at) <= new Date(now)
+      ).length;
+      return { learned, total, due, globalDue };
     };
 
     setStats({
