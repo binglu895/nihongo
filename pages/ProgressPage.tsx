@@ -60,10 +60,10 @@ const ProgressPage: React.FC = () => {
       // Fetch due items count from all categories
       const now = new Date().toISOString();
       const [vDue, gDue, kDue, lDue] = await Promise.all([
-        supabase.from('user_vocabulary_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_grammar_example_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now)
+        supabase.from('user_vocabulary_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now).gt('correct_count', 0),
+        supabase.from('user_grammar_example_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now).gt('correct_count', 0),
+        supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now).gt('correct_count', 0),
+        supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now).gt('correct_count', 0)
       ]);
 
       const totalDue = (vDue.count || 0) + (gDue.count || 0) + (kDue.count || 0) + (lDue.count || 0);
@@ -143,6 +143,7 @@ const ProgressPage: React.FC = () => {
       .from('user_vocabulary_progress')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
+      .gt('correct_count', 0)
       .in('vocabulary_id', (await supabase.from('vocabulary').select('id').eq('level', level)).data?.map(v => v.id) || []);
 
     const { count: vTotal } = await supabase
@@ -159,6 +160,7 @@ const ProgressPage: React.FC = () => {
       .from('user_grammar_example_progress')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
+      .gt('correct_count', 0)
       .in('grammar_example_id', levelExampleIds);
 
     const gTotal = levelExampleIds.length;

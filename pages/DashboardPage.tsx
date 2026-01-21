@@ -43,10 +43,10 @@ const DashboardPage: React.FC = () => {
       // Fetch due items count from all categories
       const now = new Date().toISOString();
       const [vocabDue, grammarDue, kanjiDue, listeningDue] = await Promise.all([
-        supabase.from('user_vocabulary_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_grammar_example_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now)
+        supabase.from('user_vocabulary_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now).gt('correct_count', 0),
+        supabase.from('user_grammar_example_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now).gt('correct_count', 0),
+        supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now).gt('correct_count', 0),
+        supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now).gt('correct_count', 0)
       ]);
 
       const totalDue = (vocabDue.count || 0) + (grammarDue.count || 0) + (kanjiDue.count || 0) + (listeningDue.count || 0);
@@ -92,7 +92,7 @@ const DashboardPage: React.FC = () => {
     const getStats = (progData: any[] | null, total: number | null, globalDue: number) => {
       if (!progData) return { learned: 0, total: total || 0, due: 0, globalDue };
       const learned = progData.filter(p => p.correct_count > 0).length;
-      const due = progData.filter(p => p.next_review_at && p.next_review_at <= now).length;
+      const due = progData.filter(p => p.correct_count > 0 && p.next_review_at && p.next_review_at <= now).length;
       return { learned, total: total || 0, due, globalDue };
     };
 

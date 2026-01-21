@@ -130,7 +130,8 @@ const GrammarQuizPage: React.FC = () => {
                 .from('user_grammar_example_progress')
                 .select('grammar_example_id, next_review_at, srs_stage')
                 .eq('user_id', userId)
-                .lte('next_review_at', now);
+                .lte('next_review_at', now)
+                .gt('correct_count', 0);
 
             const { count: completedToday } = await supabase
                 .from('user_grammar_example_progress')
@@ -238,7 +239,7 @@ const GrammarQuizPage: React.FC = () => {
                 ease_factor = Math.min(2.5, ease_factor + 0.1);
             }
         } else {
-            srs_stage = 1;
+            srs_stage = 0;
             interval = 0;
             ease_factor = Math.max(1.3, ease_factor - 0.2);
         }
