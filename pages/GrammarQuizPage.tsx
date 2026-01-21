@@ -1,8 +1,51 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { addXP } from '../services/gamificationService';
+
+const smartShuffle = (list: any[]) => {
+    if (list.length <= 1) return list;
+
+    // Group by grammar point
+    const groups: Record<string, any[]> = {};
+    list.forEach(item => {
+        const key = item.grammar_point_id || item.word;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(item);
+    });
+
+    // Shuffle each group internally
+    Object.values(groups).forEach(group => group.sort(() => Math.random() - 0.5));
+
+    const result: any[] = [];
+    let lastKey: string | null = null;
+
+    while (true) {
+        // Find available keys (those with items left)
+        const availableKeys = Object.keys(groups).filter(k => groups[k].length > 0);
+        if (availableKeys.length === 0) break;
+
+        // Try to pick a key different from the last one
+        let nextKey: string;
+        const differentKeys = availableKeys.filter(k => k !== lastKey);
+
+        if (differentKeys.length > 0) {
+            // Pick a random key from the different ones
+            nextKey = differentKeys[Math.floor(Math.random() * differentKeys.length)];
+        } else {
+            // Only the same key is available
+            nextKey = availableKeys[0];
+        }
+
+        const item = groups[nextKey].shift();
+        if (item) {
+            result.push(item);
+            lastKey = nextKey;
+        }
+    }
+
+    return result;
+};
 
 const GrammarQuizPage: React.FC = () => {
     const navigate = useNavigate();
@@ -43,7 +86,6 @@ const GrammarQuizPage: React.FC = () => {
     }, [searchParams]);
 
     const fetchGlobalProgress = async (level: string, userId: string) => {
-        // 1. Get all grammar point IDs for this level
         const { data: points } = await supabase.from('grammar_points').select('id').eq('level', level);
         const pointIds = points?.map(p => p.id) || [];
 
@@ -52,13 +94,11 @@ const GrammarQuizPage: React.FC = () => {
             return;
         }
 
-        // 2. Count all examples for these points
         const { count: total } = await supabase
             .from('grammar_examples')
             .select('id', { count: 'exact', head: true })
             .in('grammar_point_id', pointIds);
 
-        // 3. Count learned examples from these pointIds
         const { data: levelExamples } = await supabase.from('grammar_examples').select('id').in('grammar_point_id', pointIds);
         const exampleIds = levelExamples?.map(ex => ex.id) || [];
 
@@ -118,13 +158,11 @@ const GrammarQuizPage: React.FC = () => {
                             srs_stage: progress?.srs_stage
                         };
                     });
-                    combined.sort((a, b) => new Date(a.next_review_at).getTime() - new Date(b.next_review_at).getTime());
-                    setQuestions(combined);
+                    combined.sort((a, b) => new Date(a.next_review_at!).getTime() - new Date(b.next_review_at!).getTime());
+                    setQuestions(smartShuffle(combined));
                 }
             }
         } else {
-            // Learning Mode
-            // 1. Get all example IDs for this level
             const { data: levelExamples } = await supabase
                 .from('grammar_examples')
                 .select('id')
@@ -132,7 +170,6 @@ const GrammarQuizPage: React.FC = () => {
 
             const levelExampleIds = levelExamples?.map(ex => ex.id) || [];
 
-            // 2. Get learned examples for THIS level only
             const { data: learnedProgress } = await supabase
                 .from('user_grammar_example_progress')
                 .select('grammar_example_id')
@@ -141,25 +178,21 @@ const GrammarQuizPage: React.FC = () => {
                 .gt('correct_count', 0);
 
             const learnedIds = learnedProgress?.map(p => p.grammar_example_id) || [];
-            console.log(`Debug Grammar: Level=${level}, LvlExamples=${levelExampleIds.length}, LearnedInLvl=${learnedIds.length}`);
 
             let query = supabase.from('grammar_examples')
                 .select('*, grammar_points(title)')
                 .in('grammar_point_id', pointIds);
 
             if (learnedIds.length > 0) {
-                // Safeguard against URL length limits
                 const exclusionList = learnedIds.slice(0, 400);
                 query = query.not('id', 'in', `(${exclusionList.join(',')})`);
             }
 
             const { data: examples, error } = await query.limit(goal);
-            if (error) {
-                console.error('Supabase Grammar Query Error:', error);
-            }
+            if (error) console.error('Supabase Grammar Query Error:', error);
 
             if (examples && examples.length > 0) {
-                setQuestions(examples.map(ex => {
+                const processed = examples.map(ex => {
                     const title = (ex.grammar_points as any).title;
                     const distractors = pointTitles.filter(t => t !== title).sort(() => Math.random() - 0.5).slice(0, 3);
                     return {
@@ -167,9 +200,8 @@ const GrammarQuizPage: React.FC = () => {
                         word: title,
                         options: [...distractors, title].sort(() => Math.random() - 0.5)
                     };
-                }));
-            } else {
-                console.log('No grammar questions found for criteria.');
+                });
+                setQuestions(smartShuffle(processed));
             }
         }
     };
@@ -283,7 +315,7 @@ const GrammarQuizPage: React.FC = () => {
                                 : `You've mastered all grammar examples in ${currentLevel || 'this level'}. Great job!`}
                         </p>
                         <div className="pt-2 text-[10px] font-mono text-slate-400">
-                            Version: 2026-01-21-V5 | Level: {currentLevel} | Items: {questions.length}
+                            Version: 2026-01-21-V6 | Level: {currentLevel} | Items: {questions.length}
                         </div>
                     </div>
                     <div className="flex flex-col gap-3">
@@ -312,19 +344,16 @@ const GrammarQuizPage: React.FC = () => {
         );
     }
 
-    // Format the sentence to hide the grammar point
     let displaySentence = currentQuestion.question_sentence;
 
     if (!displaySentence) {
         displaySentence = currentQuestion.sentence;
-        // Split title by slash (e.g., "は/が") and handle optional parts in parentheses
         const rawVariations = currentQuestion.word.split(/[/／]/);
         const variations: string[] = [];
 
         rawVariations.forEach(v => {
             const clean = v.replace(/[～~]/g, '').trim();
             if (clean.includes('(') && clean.includes(')')) {
-                // Add version with parenthesis content and version without
                 variations.push(clean.replace(/[()]/g, ''));
                 variations.push(clean.replace(/\(.*\)/g, ''));
             } else {
@@ -334,7 +363,6 @@ const GrammarQuizPage: React.FC = () => {
 
         for (const variation of variations) {
             if (variation && displaySentence.includes(variation)) {
-                // Replace ONLY the first occurrence to avoid over-masking
                 displaySentence = displaySentence.replace(variation, '（　　）');
                 break;
             }
