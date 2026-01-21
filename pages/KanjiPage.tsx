@@ -22,6 +22,7 @@ const KanjiPage: React.FC = () => {
     const [preferredLang, setPreferredLang] = useState('English');
     const [lastGainedXP, setLastGainedXP] = useState<number | null>(null);
     const [xpNotificationKey, setXpNotificationKey] = useState(0);
+    const [currentLevel, setCurrentLevel] = useState<string | null>(null);
 
     // Canvas drawing state
     const lastPos = useRef({ x: 0, y: 0 });
@@ -34,6 +35,8 @@ const KanjiPage: React.FC = () => {
             setIsReviewMode(isReview);
 
             const { level, goal } = await fetchUserLevel();
+            setCurrentLevel(level);
+            console.log(`Kanji Quiz Init - Level: ${level}, Goal: ${goal}, Mode: ${isReview ? 'Review' : 'Learn'}`);
             await fetchQuestions(level, goal, isReview);
             setLoading(false);
         };
@@ -51,7 +54,7 @@ const KanjiPage: React.FC = () => {
             const lang = data?.preferred_language || 'English';
             const goal = data?.daily_goal || 20;
             setPreferredLang(lang);
-            return { level: data?.current_level || 'N5', goal };
+            return { level: data?.current_level || 'N5', goal: Math.max(goal, 10) };
         }
         return { level: 'N5', goal: 20 };
     };
@@ -101,6 +104,8 @@ const KanjiPage: React.FC = () => {
         if (questionData.length > 0) {
             setQuestions(questionData);
             setCurrentQuestion(questionData[0]);
+        } else {
+            console.log('No questions found for criteria.');
         }
 
         const { data: levelVocab } = await supabase.from('vocabulary').select('id').eq('level', level);
@@ -292,17 +297,33 @@ const KanjiPage: React.FC = () => {
                     </div>
                     <div className="space-y-4">
                         <h2 className="text-4xl font-black text-charcoal dark:text-white tracking-tight">
-                            {isReviewMode ? 'All Caught Up!' : 'Level Mastered!'}
+                            {isReviewMode ? 'All Caught Up!' : `${currentLevel || 'Level'} Mastered!`}
                         </h2>
                         <p className="text-ghost-grey dark:text-slate-400 font-medium text-lg leading-relaxed">
                             {isReviewMode
                                 ? "You've finished all your Kanji handwriting reviews for today."
-                                : "You've practiced all Kanji in this level. Excellent focus!"}
+                                : `You've practiced all Kanji in ${currentLevel || 'this level'}. Excellent focus!`}
                         </p>
                     </div>
-                    <button onClick={() => navigate('/dashboard')} className="w-full py-5 bg-primary text-white font-black rounded-[24px] shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
-                        Return to Dashboard
-                    </button>
+                    <div className="flex flex-col gap-3">
+                        <button onClick={() => navigate('/dashboard')} className="w-full py-5 bg-primary text-white font-black rounded-[24px] shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
+                            Return to Dashboard
+                        </button>
+                        {!isReviewMode && currentLevel !== 'N5' && (
+                            <button
+                                onClick={async () => {
+                                    const { data: { user } } = await supabase.auth.getUser();
+                                    if (user) {
+                                        await supabase.from('profiles').update({ current_level: 'N5' }).eq('id', user.id);
+                                        window.location.reload();
+                                    }
+                                }}
+                                className="text-primary font-bold text-sm hover:underline"
+                            >
+                                Switch to N5 and try again
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         );
