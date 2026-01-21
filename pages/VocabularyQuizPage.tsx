@@ -95,8 +95,7 @@ const VocabularyQuizPage: React.FC = () => {
                 .from('user_vocabulary_progress')
                 .select('vocabulary_id, next_review_at, srs_stage')
                 .eq('user_id', user.id)
-                .lte('next_review_at', now)
-                .gt('correct_count', 0);
+                .lte('next_review_at', now);
 
             // 2. Fetch items already completed today
             const { count: completedToday } = await supabase
@@ -206,7 +205,7 @@ const VocabularyQuizPage: React.FC = () => {
                 ease_factor = Math.min(2.5, ease_factor + 0.1);
             }
         } else {
-            srs_stage = 0;
+            srs_stage = 1;
             interval = 0;
             ease_factor = Math.max(1.3, ease_factor - 0.2);
         }
