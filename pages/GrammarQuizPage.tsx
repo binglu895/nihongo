@@ -317,8 +317,20 @@ const GrammarQuizPage: React.FC = () => {
 
     if (!displaySentence) {
         displaySentence = currentQuestion.sentence;
-        // Split title by slash (e.g., "は/が") and try each variation
-        const variations = currentQuestion.word.split(/[/／]/).map(v => v.replace(/[～~]/g, '').trim());
+        // Split title by slash (e.g., "は/が") and handle optional parts in parentheses
+        const rawVariations = currentQuestion.word.split(/[/／]/);
+        const variations: string[] = [];
+
+        rawVariations.forEach(v => {
+            const clean = v.replace(/[～~]/g, '').trim();
+            if (clean.includes('(') && clean.includes(')')) {
+                // Add version with parenthesis content and version without
+                variations.push(clean.replace(/[()]/g, ''));
+                variations.push(clean.replace(/\(.*\)/g, ''));
+            } else {
+                variations.push(clean);
+            }
+        });
 
         for (const variation of variations) {
             if (variation && displaySentence.includes(variation)) {

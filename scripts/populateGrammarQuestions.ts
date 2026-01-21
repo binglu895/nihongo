@@ -22,8 +22,20 @@ async function updateGrammarQuestions() {
 
     for (const ex of examples) {
         const title = (ex.grammar_points as any).title;
-        // Split title by slash (e.g., "は/が") and try each variation
-        const variations = title.split(/[/／]/).map((v: string) => v.replace(/[～~]/g, '').trim());
+        // Split title by slash (e.g., "は/が") and handle optional parts in parentheses
+        const rawVariations = title.split(/[/／]/);
+        const variations: string[] = [];
+
+        rawVariations.forEach((v: string) => {
+            const clean = v.replace(/[～~]/g, '').trim();
+            if (clean.includes('(') && clean.includes(')')) {
+                // Add version with parenthesis content and version without
+                variations.push(clean.replace(/[()]/g, ''));
+                variations.push(clean.replace(/\(.*\)/g, ''));
+            } else {
+                variations.push(clean);
+            }
+        });
 
         let questionSentence = ex.sentence;
         for (const variation of variations) {
