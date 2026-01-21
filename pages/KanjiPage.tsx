@@ -51,9 +51,9 @@ const KanjiPage: React.FC = () => {
             const lang = data?.preferred_language || 'English';
             const goal = data?.daily_goal || 20;
             setPreferredLang(lang);
-            return { level: data?.current_level || 'N3', goal };
+            return { level: data?.current_level || 'N5', goal };
         }
-        return { level: 'N3', goal: 20 };
+        return { level: 'N5', goal: 20 };
     };
 
     const fetchQuestions = async (level: string, goal: number, isReview: boolean = false) => {
@@ -103,17 +103,19 @@ const KanjiPage: React.FC = () => {
             setCurrentQuestion(questionData[0]);
         }
 
-        // Fetch overall progress
+        const { data: levelVocab } = await supabase.from('vocabulary').select('id').eq('level', level);
+        const levelVocabIds = levelVocab?.map(v => v.id) || [];
+
         const { count: learnedCount } = await supabase
             .from('user_kanji_progress')
             .select('*', { count: 'exact', head: true })
             .eq('user_id', user.id)
-            .gt('correct_count', 0);
+            .gt('correct_count', 0)
+            .in('vocabulary_id', levelVocabIds);
 
-        const { data: levelVocab } = await supabase.from('vocabulary').select('id').eq('level', level);
         setOverallProgress({
             learned: learnedCount || 0,
-            total: levelVocab?.length || 0
+            total: levelVocabIds.length
         });
 
         // Fetch items already completed today for session tracking parity

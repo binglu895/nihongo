@@ -8,7 +8,7 @@ import { supabase } from '../services/supabaseClient';
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const [level, setLevel] = useState<JLPTLevel>('N3');
+  const [level, setLevel] = useState<JLPTLevel>('N5');
   const [loading, setLoading] = useState(true);
   const [dueCount, setDueCount] = useState(0);
   const [dailyGoal, setDailyGoal] = useState(20);

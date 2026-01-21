@@ -11,7 +11,7 @@ const GrammarQuizPage: React.FC = () => {
     const [questions, setQuestions] = useState<any[]>([]);
     const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [currentLevel, setCurrentLevel] = useState('N3');
+    const [currentLevel, setCurrentLevel] = useState('N5');
     const [isReviewMode, setIsReviewMode] = useState(false);
     const [overallProgress, setOverallProgress] = useState({ learned: 0, total: 0 });
     const [totalDueToday, setTotalDueToday] = useState(0);
@@ -31,7 +31,7 @@ const GrammarQuizPage: React.FC = () => {
             if (!user) return;
 
             const { data: profile } = await supabase.from('profiles').select('current_level, daily_grammar_goal').eq('id', user.id).single();
-            const level = profile?.current_level || 'N3';
+            const level = profile?.current_level || 'N5';
             const goal = profile?.daily_grammar_goal || 10;
             setCurrentLevel(level);
 

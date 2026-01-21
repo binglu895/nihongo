@@ -15,7 +15,7 @@ const VocabularyQuizPage: React.FC = () => {
     const [questions, setQuestions] = useState<any[]>([]);
     const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [currentLevel, setCurrentLevel] = useState('N3');
+    const [currentLevel, setCurrentLevel] = useState('N5');
     const [preferredLang, setPreferredLang] = useState('English');
     const [isReviewMode, setIsReviewMode] = useState(false);
     const [overallProgress, setOverallProgress] = useState({ learned: 0, total: 0 });
@@ -48,13 +48,13 @@ const VocabularyQuizPage: React.FC = () => {
                 .select('current_level, preferred_language, daily_goal')
                 .eq('id', user.id)
                 .single();
-            const level = data?.current_level || 'N3';
+            const level = data?.current_level || 'N5';
             const goal = data?.daily_goal || 20;
             setCurrentLevel(level);
             setPreferredLang(data?.preferred_language || 'English');
             return { level, goal };
         }
-        return { level: 'N3', goal: 20 };
+        return { level: 'N5', goal: 20 };
     };
 
     const fetchGlobalProgress = async (level: string) => {
