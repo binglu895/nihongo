@@ -5,7 +5,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const genAI = new GoogleGenerativeAI(process.env.VITE_GEMINI_API_KEY || "");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const grammarPoints = [
@@ -34,7 +34,8 @@ async function generateExamples() {
     4. The Chinese translation.
     5. Difficulty level (1 = Simple, 2 = Medium, 3 = Complex). Provide 2 sentences for each difficulty level.
 
-    Return the result as a JSON array of objects with keys: sentence, reading, translation, translation_zh, difficulty.
+    Return the result as a JSON array of objects with keys: sentence, reading, translation, translation_zh, difficulty, question_sentence.
+    In "question_sentence", replace the grammar point structure in the sentence with a placeholder "（　　）" (full-width brackets).
     Do not include markdown formatting in the output, just the raw JSON.`;
 
         try {
@@ -60,8 +61,10 @@ async function generateExamples() {
             const escapedTranslation = ex.translation.replace(/'/g, "''");
             const escapedTranslationZh = ex.translation_zh.replace(/'/g, "''");
 
-            sql += `INSERT INTO grammar_examples (grammar_point_id, sentence, reading, translation, translation_zh, difficulty)
-SELECT id, '${escapedSentence}', '${escapedReading}', '${escapedTranslation}', '${escapedTranslationZh}', ${ex.difficulty}
+            const escapedQuestionSentence = (ex.question_sentence || '').replace(/'/g, "''");
+
+            sql += `INSERT INTO grammar_examples (grammar_point_id, sentence, reading, translation, translation_zh, difficulty, question_sentence)
+SELECT id, '${escapedSentence}', '${escapedReading}', '${escapedTranslation}', '${escapedTranslationZh}', ${ex.difficulty}, '${escapedQuestionSentence}'
 FROM grammar_points WHERE title = '${group.point}' LIMIT 1;\n`;
         }
     }

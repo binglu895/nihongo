@@ -313,7 +313,8 @@ const GrammarQuizPage: React.FC = () => {
     }
 
     // Format the sentence to hide the grammar point
-    const displaySentence = currentQuestion.sentence.replace(currentQuestion.word.replace(/[～~]/g, ''), '____');
+    const displaySentence = currentQuestion.question_sentence ||
+        currentQuestion.sentence.replace(currentQuestion.word.replace(/[～~]/g, ''), '（　　）');
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-slate-100 min-h-screen flex flex-col font-display transition-colors duration-300">
