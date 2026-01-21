@@ -203,7 +203,7 @@ const DashboardPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full max-w-[1200px] px-2">
           {categories.map((card, i) => {
             const isCompleted = card.stats.learned >= card.stats.total && card.stats.total > 0;
-            const hasReviews = card.stats.due > 0;
+            const hasReviews = card.stats.globalDue > 0;
 
             return (
               <div
@@ -250,7 +250,7 @@ const DashboardPage: React.FC = () => {
                       }`}
                   >
                     <span className="material-symbols-outlined !text-sm">fact_check</span>
-                    <span>Review ({card.stats.due})</span>
+                    <span>Review ({card.stats.globalDue})</span>
                   </button>
                 </div>
               </div>
