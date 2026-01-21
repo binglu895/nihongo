@@ -62,6 +62,7 @@ const GrammarQuizPage: React.FC = () => {
     const [failedIdsInSession] = useState<Set<string>>(new Set());
     const [lastGainedXP, setLastGainedXP] = useState<number | null>(null);
     const [xpNotificationKey, setXpNotificationKey] = useState(0);
+    const [preferredLang, setPreferredLang] = useState('English');
     const [searchParams] = useSearchParams();
 
     useEffect(() => {
@@ -73,10 +74,13 @@ const GrammarQuizPage: React.FC = () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
 
-            const { data: profile } = await supabase.from('profiles').select('current_level, daily_grammar_goal').eq('id', user.id).single();
+            const { data: profile } = await supabase.from('profiles').select('current_level, daily_grammar_goal, preferred_language').eq('id', user.id).single();
             const level = profile?.current_level || 'N5';
             const goal = profile?.daily_grammar_goal || 10;
+            const lang = profile?.preferred_language || 'English';
+
             setCurrentLevel(level);
+            setPreferredLang(lang);
 
             await fetchGlobalProgress(level, user.id);
             await fetchQuestions(level, goal, mode === 'review', user.id);
@@ -408,7 +412,7 @@ const GrammarQuizPage: React.FC = () => {
                             {displaySentence}
                         </h1>
                         <p className="text-xl text-ghost-grey dark:text-gray-400 font-medium">
-                            {currentQuestion.translation}
+                            {preferredLang === 'Chinese' ? (currentQuestion.translation_zh || currentQuestion.translation) : currentQuestion.translation}
                         </p>
                     </div>
 
