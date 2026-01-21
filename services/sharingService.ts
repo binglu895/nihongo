@@ -33,9 +33,9 @@ export const getDailyStatsSnapshot = async (userId: string) => {
 
     const categories = [
         { key: 'vocab', table: 'user_vocabulary_progress', field: 'vocabulary_id' },
-        { key: 'grammar', table: 'user_grammar_progress', field: 'grammar_point_id' },
+        { key: 'grammar', table: 'user_grammar_example_progress', field: 'grammar_example_id' },
         { key: 'kanji', table: 'user_kanji_progress', field: 'vocabulary_id' },
-        { key: 'listening', table: 'user_listening_progress', field: 'vocabulary_id' }
+        { key: 'listening', table: 'user_listening_progress', field: 'listening_question_id' }
     ];
 
     // Reviews today
@@ -131,7 +131,7 @@ export const getProfileByReferralCode = async (code: string) => {
 
     const categories = [
         { key: 'vocab', table: 'user_vocabulary_progress' },
-        { key: 'grammar', table: 'user_grammar_progress' },
+        { key: 'grammar', table: 'user_grammar_example_progress' },
         { key: 'kanji', table: 'user_kanji_progress' },
         { key: 'listening', table: 'user_listening_progress' }
     ];

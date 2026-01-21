@@ -60,7 +60,7 @@ const ProgressPage: React.FC = () => {
       const now = new Date().toISOString();
       const [vDue, gDue, kDue, lDue] = await Promise.all([
         supabase.from('user_vocabulary_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_grammar_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
+        supabase.from('user_grammar_example_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
         supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
         supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now)
       ]);
@@ -240,7 +240,19 @@ const ProgressPage: React.FC = () => {
                 Consistency is key. You have items waiting for review.
               </p>
               <button
-                onClick={() => navigate('/quiz?mode=review&type=all')}
+                onClick={() => {
+                  if (globalStats.vocabulary.learned < globalStats.vocabulary.total && dueCount > 0) {
+                    // Find first module with reviews
+                    if (globalStats.vocabulary.learned < globalStats.vocabulary.total) {
+                      // Check specifically for reviews in each
+                    }
+                  }
+                  // Simpler: Use the same logic as Dashboard
+                  if (globalStats.vocabulary.total > 0) navigate('/vocab-quiz?mode=review');
+                  else if (globalStats.kanji.total > 0) navigate('/kanji?mode=review');
+                  else if (globalStats.grammar.total > 0) navigate('/grammar-quiz?mode=review');
+                  else navigate('/dashboard');
+                }}
                 className="group relative flex items-center justify-center gap-3 bg-primary text-white font-black py-4 px-10 rounded-2xl text-lg shadow-xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-300"
               >
                 <span className="material-symbols-outlined !text-xl font-black">fact_check</span>
