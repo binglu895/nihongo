@@ -38,7 +38,7 @@ const questions = [
         reading: "そこからえきまでどのくらいかかりますか？",
         translation: "How long does it take from there to the station?",
         translation_zh: "从那里到车站要花多久？",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_station_time",
         distractors: ["あそこから駅までどのくらいかかりますか？", "ここから駅までどのくらいかかりますか？", "そこから学校までどのくらいかかりますか？"],
         level: "n5"
@@ -98,7 +98,7 @@ const questions = [
         reading: "わたしはきょうとにいったことがあります",
         translation: "I have been to Kyoto.",
         translation_zh: "我去过京都。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_been_kyoto",
         distractors: ["私は京都に住んだことがあります", "私は京都に行きたいです", "私は東京に行ったことがあります"],
         level: "n5"
@@ -108,7 +108,7 @@ const questions = [
         reading: "わたしはあしたてがみをかいたりべんきょうしたりします",
         translation: "Tomorrow, I will do things like writing letters and studying.",
         translation_zh: "我明天写信、学习等等。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_tomorrow_study",
         distractors: ["私は明日手紙を書いて勉強します", "私は明日手紙を読んだり勉強したりします", "私は昨日手紙を書いたり勉強したりしました"],
         level: "n5"
@@ -118,7 +118,7 @@ const questions = [
         reading: "にほんじんははしでごはんをたべます",
         translation: "Japanese people eat rice with chopsticks.",
         translation_zh: "日本人用筷子吃饭。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_eat_chopsticks",
         distractors: ["日本人は箸でお茶を飲みます", "中国人は箸でご飯を食べます", "日本人は手でご飯を食べます"],
         level: "n5"
@@ -148,7 +148,7 @@ const questions = [
         reading: "さとうさんはえいごをはなすことができます",
         translation: "Mr./Ms. Sato can speak English.",
         translation_zh: "佐藤先生/女士会说英语。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_sato_english",
         distractors: ["佐藤さんは英語を話したいです", "佐藤さんは日本語を話すことができます", "田中さんは英語を話すことができます"],
         level: "n5"
@@ -158,7 +158,7 @@ const questions = [
         reading: "わたしはいまかのじょをまっています",
         translation: "I am waiting for her now.",
         translation_zh: "我现在正在等她。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_waiting_her",
         distractors: ["私は今彼女を呼んでいます", "私は昨日彼女を待っていました", "私は今彼を待っています"],
         level: "n5"
@@ -168,7 +168,7 @@ const questions = [
         reading: "わたしはあさおきてあさごはんをたべます",
         translation: "I wake up in the morning and eat breakfast.",
         translation_zh: "我早上起床吃早饭。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_morning_routine",
         distractors: ["私は朝起きて顔を洗います", "私は朝起きてから朝ごはんを食べます", "私は夜起きて朝ごはんを食べます"],
         level: "n5"
@@ -188,7 +188,7 @@ const questions = [
         reading: "わたしはかいものしてからいえにかえります",
         translation: "I will go home after shopping.",
         translation_zh: "我买完东西后回家。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_shopping_home",
         distractors: ["私は買い物して家に帰ります", "私は掃除してから家に帰ります", "私は買い物してから学校に行きます"],
         level: "n5"
@@ -228,7 +228,7 @@ const questions = [
         reading: "としょかんでねてはいけません",
         translation: "You must not sleep in the library.",
         translation_zh: "不准在图书馆睡觉。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_no_sleep_library",
         distractors: ["図書館で話してはいけません", "図書館で寝てもいいです", "教室で寝てはいけません"],
         level: "n5"
@@ -258,7 +258,7 @@ const questions = [
         reading: "あした、あめがふるとおもいます",
         translation: "I think it will rain tomorrow.",
         translation_zh: "我想明天会下雨。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_rain_tomorrow",
         distractors: ["明日、雨が降りました", "明日、雪が降ると思います", "昨日、雨が降ったと思います"],
         level: "n5"
@@ -278,7 +278,7 @@ const questions = [
         reading: "かれ、にほんごがじょうずだとおもいます",
         translation: "I think he is good at Japanese.",
         translation_zh: "我觉得他日语很好。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_he_good_jp",
         distractors: ["彼、日本語が下手だと思います", "彼女、日本語が上手だと思います", "彼、日本語が上手でした"],
         level: "n5"
@@ -298,7 +298,7 @@ const questions = [
         reading: "わたしはひまなときえいがをみます",
         translation: "I watch movies when I'm free.",
         translation_zh: "我有空的时候看电影。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_free_movie",
         distractors: ["私は忙しいとき映画を見ます", "私は暇なとき音楽を聴きます", "私は暇なとき本を読みます"],
         level: "n5"
@@ -308,7 +308,7 @@ const questions = [
         reading: "わたしはねるときでんきをけします",
         translation: "I turn off the lights when I go to sleep.",
         translation_zh: "我睡觉的时候关灯。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_sleep_light_off",
         distractors: ["私は寝るときテレビを消します", "私は寝るとき電気をつけます", "私は起きるとき電気を消します"],
         level: "n5"
@@ -318,7 +318,7 @@ const questions = [
         reading: "せんせいはねむいときこーひーをのみます",
         translation: "The teacher drinks coffee when they are sleepy.",
         translation_zh: "老师困的时候喝咖啡。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_teacher_sleepy",
         distractors: ["先生は暇なときコーヒーを飲みます", "学生は眠いときコーヒーを飲みます", "先生は眠いときお茶を飲みます"],
         level: "n5"
@@ -338,7 +338,7 @@ const questions = [
         reading: "やまださんはどのひとですか",
         translation: "Which person is Mr./Ms. Yamada?",
         translation_zh: "山田是哪个人？",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_which_person_yamada",
         distractors: ["山田さんはだれですか", "田中さんはどの人ですか", "山田さんはどこにいますか"],
         level: "n5"
@@ -348,7 +348,7 @@ const questions = [
         reading: "あなたのおかあさんはどんなひとですか",
         translation: "What kind of person is your mother?",
         translation_zh: "你妈妈是个怎样的人？",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_what_kind_mother",
         distractors: ["あなたのお父さんはどんな人ですか", "あなたのお母さんはだれですか", "あなたのお母さんはどこですか"],
         level: "n5"
@@ -368,7 +368,7 @@ const questions = [
         reading: "わたしはげーむをしないでべんきょうします",
         translation: "I study without playing games.",
         translation_zh: "我不玩游戏而是学习。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_study_no_game",
         distractors: ["私はゲームをして勉強します", "私はテレビを見ないで勉強します", "私は勉強しないでゲームをします"],
         level: "n5"
@@ -388,7 +388,7 @@ const questions = [
         reading: "わたしはおんがくをききながらはしります",
         translation: "I run while listening to music.",
         translation_zh: "我边听音乐边跑步。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_run_music",
         distractors: ["私は音楽を聴いて走ります", "私は歌を歌いながら走ります", "私は音楽を聴きながら歩きます"],
         level: "n5"
@@ -398,7 +398,7 @@ const questions = [
         reading: "わたしはあしたあさななじにおきなければなりません",
         translation: "I must wake up at 7 o'clock tomorrow morning.",
         translation_zh: "我明天早上7点必须起床。",
-        difficulty: 3,
+        difficulty: 1,
         filename: "listening_must_wake_up",
         distractors: ["私は明日朝7時に起きます", "私は明日朝8時に起きなければなりません", "私は今日朝7時に起きなければなりませんでした"],
         level: "n5"
@@ -408,7 +408,7 @@ const questions = [
         reading: "わたしはびーるをのむとかおがあかくなる",
         translation: "When I drink beer, my face turns red.",
         translation_zh: "我一喝啤酒脸就会红。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_beer_red_face",
         distractors: ["私はお酒を飲むと顔が赤くなる", "私はビールを飲んで顔が赤くなった", "私はビールを飲むと顔が白くなる"],
         level: "n5"
@@ -448,7 +448,7 @@ const questions = [
         reading: "ちゅうごくはにほんよりおおきいです",
         translation: "China is larger than Japan.",
         translation_zh: "中国比日本大。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_china_japan_size",
         distractors: ["日本は中国より大きいです", "中国は日本より小さいです", "アメリカは日本より大きいです"],
         level: "n5"
@@ -458,7 +458,7 @@ const questions = [
         reading: "わたしはてすとのまえにべんきょうします",
         translation: "I study before the test.",
         translation_zh: "我在考试前学习。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_study_before_test",
         distractors: ["私はテストの後で勉強します", "私はテストの前に休みます", "私は宿題の前に勉強します"],
         level: "n5"
@@ -498,7 +498,7 @@ const questions = [
         reading: "わたしはやきゅうじまでねます",
         translation: "I sleep until 9 PM.",
         translation_zh: "我睡到晚上9点。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_sleep_until_9",
         distractors: ["私は夜9時に寝ます", "私は夜10时まで寝ます", "私は夜9時までに寝ます"],
         level: "n5"
@@ -508,7 +508,7 @@ const questions = [
         reading: "わたしはやきゅうじまでにねます",
         translation: "I will go to bed by 9 PM.",
         translation_zh: "我会在晚上9点前睡觉。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_sleep_by_9",
         distractors: ["私は夜9時まで寝ます", "私は夜10时までに寝ます", "私は夜9時に寝ます"],
         level: "n5"
@@ -548,7 +548,7 @@ const questions = [
         reading: "これはわたしがかったはなです",
         translation: "This is the flower that I bought.",
         translation_zh: "这是我买的花。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_bought_flower",
         distractors: ["これは私がもらった花です", "あれは私が買った花です", "これは君が買った花です"],
         level: "n5"
@@ -558,7 +558,7 @@ const questions = [
         reading: "わたしはとしょかんでかりたほんをよみます",
         translation: "I read the book I borrowed from the library.",
         translation_zh: "我读在图书馆借的书。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_borrowed_book_read",
         distractors: ["私は図書館で買った本を読みます", "私は図書館で借りた本を返します", "私は図書館で借りた雑誌を読みます"],
         level: "n5"
@@ -568,7 +568,7 @@ const questions = [
         reading: "わたしはとしょかんでかりたほんがよみたいです",
         translation: "I want to read the book I borrowed from the library.",
         translation_zh: "我想读在图书馆借的书。",
-        difficulty: 2,
+        difficulty: 1,
         filename: "listening_borrowed_book_want",
         distractors: ["私は図書館で借りた本を読みました", "私は図書館で借りた本を読みたくないです", "私は図書館で借りた本が読みたかったです"],
         level: "n5"
