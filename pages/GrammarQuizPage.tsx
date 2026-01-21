@@ -130,7 +130,6 @@ const GrammarQuizPage: React.FC = () => {
                 .from('user_grammar_example_progress')
                 .select('grammar_example_id, next_review_at, srs_stage')
                 .eq('user_id', userId)
-                .gt('correct_count', 0) // Only review learned items
                 .lte('next_review_at', now);
 
             const { count: completedToday } = await supabase

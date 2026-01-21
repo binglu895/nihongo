@@ -95,7 +95,6 @@ const VocabularyQuizPage: React.FC = () => {
                 .from('user_vocabulary_progress')
                 .select('vocabulary_id, next_review_at, srs_stage')
                 .eq('user_id', user.id)
-                .gt('correct_count', 0) // Only review learned items
                 .lte('next_review_at', now);
 
             // 2. Fetch items already completed today

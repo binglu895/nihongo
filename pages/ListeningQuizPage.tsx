@@ -60,7 +60,6 @@ const ListeningQuizPage: React.FC = () => {
                 .from('user_listening_progress')
                 .select('listening_question_id')
                 .eq('user_id', user.id)
-                .gt('correct_count', 0) // Only review learned items
                 .lte('next_review_at', now);
 
             const dueIds = dueProgress?.map(p => p.listening_question_id) || [];
