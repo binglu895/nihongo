@@ -241,15 +241,17 @@ const DashboardPage: React.FC = () => {
                     {!isCompleted && <span className="material-symbols-outlined !text-sm">arrow_forward</span>}
                   </button>
 
-                  {hasReviews && (
-                    <button
-                      onClick={() => navigate(`${card.path}${card.path.includes('?') ? '&' : '?'}mode=review`)}
-                      className="w-full py-2.5 bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
-                    >
-                      <span className="material-symbols-outlined !text-sm">fact_check</span>
-                      <span>Review ({card.stats.due})</span>
-                    </button>
-                  )}
+                  <button
+                    onClick={() => hasReviews && navigate(`${card.path}${card.path.includes('?') ? '&' : '?'}mode=review`)}
+                    disabled={!hasReviews}
+                    className={`w-full py-2.5 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${hasReviews
+                      ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-95'
+                      : 'bg-slate-100 dark:bg-slate-800/50 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-dashed border-slate-200 dark:border-white/5'
+                      }`}
+                  >
+                    <span className="material-symbols-outlined !text-sm">fact_check</span>
+                    <span>Review ({card.stats.due})</span>
+                  </button>
                 </div>
               </div>
             );
