@@ -13,10 +13,10 @@ const DashboardPage: React.FC = () => {
   const [dueCount, setDueCount] = useState(0);
   const [dailyGoal, setDailyGoal] = useState(20);
   const [stats, setStats] = useState({
-    kanji: { learned: 0, total: 0, due: 0 },
-    vocabulary: { learned: 0, total: 0, due: 0 },
-    grammar: { learned: 0, total: 0, due: 0 },
-    listening: { learned: 0, total: 0, due: 0 }
+    kanji: { learned: 0, total: 0, due: 0, globalDue: 0 },
+    vocabulary: { learned: 0, total: 0, due: 0, globalDue: 0 },
+    grammar: { learned: 0, total: 0, due: 0, globalDue: 0 },
+    listening: { learned: 0, total: 0, due: 0, globalDue: 0 }
   });
 
   useEffect(() => {
@@ -53,7 +53,12 @@ const DashboardPage: React.FC = () => {
       setDueCount(totalDue);
 
       // Fetch Global Progress
-      await fetchGlobalStats(data?.current_level || level, user.id);
+      await fetchGlobalStats(data?.current_level || level, user.id, {
+        v: vocabDue.count || 0,
+        g: grammarDue.count || 0,
+        k: kanjiDue.count || 0,
+        l: listeningDue.count || 0
+      });
 
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -62,7 +67,7 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  const fetchGlobalStats = async (currentLevel: string, userId: string) => {
+  const fetchGlobalStats = async (currentLevel: string, userId: string, globalDues: any) => {
     const now = new Date().toISOString();
 
     // 1. Fetch Totals for the level
@@ -84,18 +89,18 @@ const DashboardPage: React.FC = () => {
       supabase.from('user_listening_progress').select('listening_question_id, next_review_at').eq('user_id', userId).in('listening_question_id', lLevelIds)
     ]);
 
-    const getStats = (progData: any[] | null, total: number | null) => {
-      if (!progData) return { learned: 0, total: total || 0, due: 0 };
+    const getStats = (progData: any[] | null, total: number | null, globalDue: number) => {
+      if (!progData) return { learned: 0, total: total || 0, due: 0, globalDue };
       const learned = progData.filter(p => p.next_review_at !== null).length;
       const due = progData.filter(p => p.next_review_at && p.next_review_at <= now).length;
-      return { learned, total: total || 0, due };
+      return { learned, total: total || 0, due, globalDue };
     };
 
     setStats({
-      kanji: getStats(kProg.data, vLevelIds.length),
-      vocabulary: getStats(vProg.data, vLevelIds.length),
-      grammar: getStats(gProg.data, gExampleIds.length),
-      listening: getStats(lProg.data, lLevelIds.length)
+      kanji: getStats(kProg.data, vLevelIds.length, globalDues.k),
+      vocabulary: getStats(vProg.data, vLevelIds.length, globalDues.v),
+      grammar: getStats(gProg.data, gExampleIds.length, globalDues.g),
+      listening: getStats(lProg.data, lLevelIds.length, globalDues.l)
     });
   };
 
@@ -163,10 +168,10 @@ const DashboardPage: React.FC = () => {
               </p>
               <button
                 onClick={() => {
-                  if (stats.vocabulary.due > 0) navigate('/vocab-quiz?mode=review');
-                  else if (stats.kanji.due > 0) navigate('/kanji?mode=review');
-                  else if (stats.grammar.due > 0) navigate('/grammar-quiz?mode=review');
-                  else if (stats.listening.due > 0) navigate('/listening-quiz?mode=review');
+                  if (stats.vocabulary.globalDue > 0) navigate('/vocab-quiz?mode=review');
+                  else if (stats.kanji.globalDue > 0) navigate('/kanji?mode=review');
+                  else if (stats.grammar.globalDue > 0) navigate('/grammar-quiz?mode=review');
+                  else if (stats.listening.globalDue > 0) navigate('/listening-quiz?mode=review');
                   else navigate('/vocab-quiz?mode=review');
                 }}
                 className="group relative flex items-center justify-center gap-3 bg-primary text-white font-black py-4 px-10 rounded-2xl text-lg shadow-xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-300"
