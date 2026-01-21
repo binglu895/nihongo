@@ -110,7 +110,11 @@ const VocabularyQuizPage: React.FC = () => {
 
             if (dueProgress && dueProgress.length > 0) {
                 const ids = dueProgress.map(p => p.vocabulary_id);
-                const { data: vocabulary } = await supabase.from('vocabulary').select('*').in('id', ids);
+                const { data: vocabulary } = await supabase
+                    .from('vocabulary')
+                    .select('*')
+                    .eq('level', level) // Filter by level
+                    .in('id', ids);
 
                 if (vocabulary) {
                     const combined = vocabulary.map(v => {

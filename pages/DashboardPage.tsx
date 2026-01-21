@@ -41,7 +41,7 @@ const DashboardPage: React.FC = () => {
       }
 
       // Fetch due items count from all categories
-      const now = new Date().toISOString();
+      const now = new Date(Date.now() + 5000).toISOString();
       const [vocabDue, grammarDue, kanjiDue, listeningDue] = await Promise.all([
         supabase.from('user_vocabulary_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
         supabase.from('user_grammar_example_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
@@ -50,6 +50,7 @@ const DashboardPage: React.FC = () => {
       ]);
 
       const totalDue = (vocabDue.count || 0) + (grammarDue.count || 0) + (kanjiDue.count || 0) + (listeningDue.count || 0);
+      // We will override this after fetchGlobalStats to be level-specific
       setDueCount(totalDue);
 
       // Fetch Global Progress
@@ -68,7 +69,8 @@ const DashboardPage: React.FC = () => {
   };
 
   const fetchGlobalStats = async (currentLevel: string, userId: string, globalDues: any) => {
-    const now = new Date().toISOString();
+    // Add a 5-second buffer to catch items due "immediately"
+    const now = new Date(Date.now() + 5000).toISOString();
 
     // 1. Fetch Totals for the level
     const levelNumber = parseInt(currentLevel.replace('N', '')) || 5;
@@ -102,6 +104,14 @@ const DashboardPage: React.FC = () => {
       grammar: getStats(gProg.data, gExampleIds.length, globalDues.g),
       listening: getStats(lProg.data, lLevelIds.length, globalDues.l)
     });
+
+    // Update dueCount to be level-specific
+    const levelDue =
+      getStats(vProg.data, vLevelIds.length, globalDues.v).due +
+      getStats(gProg.data, gExampleIds.length, globalDues.g).due +
+      getStats(kProg.data, vLevelIds.length, globalDues.k).due +
+      getStats(lProg.data, lLevelIds.length, globalDues.l).due;
+    setDueCount(levelDue);
   };
 
   const updateLevel = async (newLevel: JLPTLevel) => {
@@ -168,10 +178,10 @@ const DashboardPage: React.FC = () => {
               </p>
               <button
                 onClick={() => {
-                  if (stats.vocabulary.globalDue > 0) navigate('/vocab-quiz?mode=review');
-                  else if (stats.kanji.globalDue > 0) navigate('/kanji?mode=review');
-                  else if (stats.grammar.globalDue > 0) navigate('/grammar-quiz?mode=review');
-                  else if (stats.listening.globalDue > 0) navigate('/listening-quiz?mode=review');
+                  if (stats.vocabulary.due > 0) navigate('/vocab-quiz?mode=review');
+                  else if (stats.kanji.due > 0) navigate('/kanji?mode=review');
+                  else if (stats.grammar.due > 0) navigate('/grammar-quiz?mode=review');
+                  else if (stats.listening.due > 0) navigate('/listening-quiz?mode=review');
                   else navigate('/vocab-quiz?mode=review');
                 }}
                 className="group relative flex items-center justify-center gap-3 bg-primary text-white font-black py-4 px-10 rounded-2xl text-lg shadow-xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-300"
@@ -203,7 +213,7 @@ const DashboardPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full max-w-[1200px] px-2">
           {categories.map((card, i) => {
             const isCompleted = card.stats.learned >= card.stats.total && card.stats.total > 0;
-            const hasReviews = card.stats.globalDue > 0;
+            const hasReviews = card.stats.due > 0;
 
             return (
               <div
@@ -250,7 +260,7 @@ const DashboardPage: React.FC = () => {
                       }`}
                   >
                     <span className="material-symbols-outlined !text-sm">fact_check</span>
-                    <span>Review ({card.stats.globalDue})</span>
+                    <span>Review ({card.stats.due})</span>
                   </button>
                 </div>
               </div>

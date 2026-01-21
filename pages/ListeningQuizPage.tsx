@@ -74,9 +74,12 @@ const ListeningQuizPage: React.FC = () => {
             setTotalDueToday(dueIds.length + (completedToday || 0));
 
             if (dueIds.length > 0) {
+                // To support level-specific review as requested, we filter by difficulty if not global
+                // Although currently, it's safer to just fetch and then filter by levelIds here
                 const { data } = await supabase
                     .from('listening_questions')
                     .select('*')
+                    .eq('difficulty', difficulty) // Filter by current level difficulty
                     .in('id', dueIds);
                 questionData = data || [];
             }

@@ -144,9 +144,11 @@ const GrammarQuizPage: React.FC = () => {
 
             if (dueProgress && dueProgress.length > 0) {
                 const ids = dueProgress.map(p => p.grammar_example_id);
+                // Filter examples by current level's grammar points
                 const { data: examples } = await supabase
                     .from('grammar_examples')
                     .select('*, grammar_points(title)')
+                    .in('grammar_point_id', pointIds) // Limit to current level
                     .in('id', ids);
 
                 if (examples) {
