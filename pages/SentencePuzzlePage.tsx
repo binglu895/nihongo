@@ -324,14 +324,22 @@ const SentencePuzzlePage: React.FC = () => {
                                 // Find which placeholder this is
                                 const placeholderIdx = current.puzzleSegments.slice(0, idx).filter((s: any) => !s.isFixed).length;
                                 const selection = userSelections[placeholderIdx];
+                                const isCorrect = answered && selection === current.selectableTexts[placeholderIdx];
+                                const isIncorrect = answered && selection !== current.selectableTexts[placeholderIdx];
+
+                                let statusClass = selection
+                                    ? 'border-primary text-primary animate-in fade-in slide-in-from-bottom-2'
+                                    : 'border-slate-200 dark:border-slate-700 text-transparent';
+
+                                if (answered) {
+                                    if (isCorrect) statusClass = 'border-emerald-500 text-emerald-500';
+                                    else statusClass = 'border-rose-500 text-rose-500';
+                                }
 
                                 return (
                                     <div
                                         key={idx}
-                                        className={`min-w-[80px] px-4 py-1 border-b-4 transition-all duration-300 ${selection
-                                                ? 'border-primary text-primary animate-in fade-in slide-in-from-bottom-2'
-                                                : 'border-slate-200 dark:border-slate-700 text-transparent'
-                                            }`}
+                                        className={`min-w-[80px] px-4 py-1 border-b-4 transition-all duration-300 ${statusClass}`}
                                     >
                                         {selection || '___'}
                                     </div>
@@ -349,8 +357,8 @@ const SentencePuzzlePage: React.FC = () => {
                                     disabled={isUsed || answered}
                                     onClick={() => handleOptionSelect(option, idx)}
                                     className={`p-4 rounded-2xl font-bold text-lg transition-all border-2 flex items-center justify-center ${isUsed
-                                            ? 'bg-slate-50 dark:bg-slate-800/50 border-transparent text-slate-300 dark:text-slate-600 cursor-not-allowed scale-95'
-                                            : 'bg-white dark:bg-slate-900 border-black/5 dark:border-white/5 hover:border-primary hover:bg-primary/5 shadow-sm active:scale-95'
+                                        ? 'bg-slate-50 dark:bg-slate-800/50 border-transparent text-slate-300 dark:text-slate-600 cursor-not-allowed scale-95'
+                                        : 'bg-white dark:bg-slate-900 border-black/5 dark:border-white/5 hover:border-primary hover:bg-primary/5 shadow-sm active:scale-95'
                                         }`}
                                 >
                                     {option}
