@@ -37,8 +37,11 @@ const SentencePuzzlePage: React.FC = () => {
             return;
         }
 
-        const { data: profile } = await supabase.from('profiles').select('current_level, preferred_language').eq('id', user.id).single();
+        const { data: profile } = await supabase.from('profiles').select('current_level, preferred_language, daily_puzzle_goal, show_puzzle_distractors').eq('id', user.id).single();
         const level = profile?.current_level || 'N5';
+        const goal = profile?.daily_puzzle_goal || 10;
+        const showDistractors = profile?.show_puzzle_distractors !== false;
+
         setCurrentLevel(level);
         setPreferredLang(profile?.preferred_language || 'English');
 
@@ -86,7 +89,7 @@ const SentencePuzzlePage: React.FC = () => {
             if (learnedIds.length > 0) {
                 query = query.not('id', 'in', `(${learnedIds.join(',')})`);
             }
-            const { data } = await query.limit(10);
+            const { data } = await query.limit(goal);
             questionData = data || [];
         }
 
@@ -112,8 +115,11 @@ const SentencePuzzlePage: React.FC = () => {
                     .filter((s: any) => !s.isFixed)
                     .map((s: any) => s.text);
 
-                // Add distractors if available (not implemented in schema yet, but good to have)
-                const options = [...selectableTexts].sort(() => Math.random() - 0.5);
+                let options = [...selectableTexts];
+                if (showDistractors && q.distractors && q.distractors.length > 0) {
+                    options = [...options, ...q.distractors];
+                }
+                options.sort(() => Math.random() - 0.5);
 
                 return { ...q, puzzleSegments, placeholderIndices, options, selectableTexts };
             });

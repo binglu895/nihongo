@@ -1,0 +1,1202 @@
+[
+  {
+    "id": 1,
+    "translation_cn": "我有空的时候看电影。",
+    "translation_en": "I watch movies when I'm free.",
+    "audio_url": "",
+    "template": "___ は ___ ___ を ___ 。",
+    "correct_sequence": ["私", "暇なとき", "映画", "みます"],
+    "distractors": ["朝", "本", "読みます"],
+    "grammar_point": "时间名词+とき"
+  },
+  {
+    "id": 2,
+    "translation_cn": "去买生日礼物。",
+    "translation_en": "Going to buy a birthday present.",
+    "audio_url": "",
+    "template": "___ ___ の ___ を ___ ___ ___ 。",
+    "correct_sequence": ["誕生日", "の", "プレゼント", "買い", "に", "行きます"],
+    "distractors": ["ケーキ", "を", "打つ"],
+    "grammar_point": "目的助词に"
+  },
+  {
+    "id": 3,
+    "translation_cn": "我每天晚上做作业。",
+    "translation_en": "I do homework every night.",
+    "audio_url": "",
+    "template": "___ は ___ ___ を ___ 。",
+    "correct_sequence": ["私", "毎晩", "宿題", "します"],
+    "distractors": ["昨日", "テレビ", "きます"],
+    "grammar_point": "时间副词"
+  },
+  {
+    "id": 4,
+    "translation_cn": "想在百货商店买鞋吗？",
+    "translation_en": "Do you want to buy shoes at the department store?",
+    "audio_url": "",
+    "template": "___ ___ ___ を ___ ___ ___ ？",
+    "correct_sequence": ["デパート", "で", "靴", "買い", "たい", "ですか"],
+    "distractors": ["に", "服", "みます"],
+    "grammar_point": "场所助词で + 意志たい"
+  },
+  {
+    "id": 5,
+    "translation_cn": "我今天去百货商店买包。",
+    "translation_en": "I'm going to the department store to buy a bag today.",
+    "audio_url": "",
+    "template": "___ は ___ ___ ___ ___ を ___ ___ 。",
+    "correct_sequence": ["私", "今日", "デパート", "に", "カバン", "買い", "に行きます"],
+    "distractors": ["学校", "で", "食べ"],
+    "grammar_point": "复杂移动目的句"
+  },
+  {
+    "id": 6,
+    "translation_cn": "请不要在这里拍照。",
+    "translation_en": "Please don't take photos here.",
+    "audio_url": "",
+    "template": "___ ___ ___ を ___ ___ ___ ___ 。",
+    "correct_sequence": ["ここ", "で", "写真", "撮ら", "ない", "で", "ください"],
+    "distractors": ["に", "撮り", "ます"],
+    "grammar_point": "禁止请求ないでください"
+  },
+  {
+    "id": 7,
+    "translation_cn": "洗完手后再吃。",
+    "translation_en": "Eat after washing your hands.",
+    "audio_url": "",
+    "template": "___ を ___ ___ ___ 。",
+    "correct_sequence": ["手", "洗っ", "てから", "食べます"],
+    "distractors": ["足", "洗う", "前に"],
+    "grammar_point": "动作先后てから"
+  },
+  {
+    "id": 8,
+    "translation_cn": "睡觉前请关灯。",
+    "translation_en": "Turn off the light before sleeping.",
+    "audio_url": "",
+    "template": "___ ___ ， ___ を ___ 。",
+    "correct_sequence": ["寝る", "前に", "電気", "消してください"],
+    "distractors": ["とき", "窓", "開けて"],
+    "grammar_point": "动作之前前に"
+  },
+  {
+    "id": 9,
+    "translation_cn": "可以在这里看电视。 ",
+    "translation_en": "You may watch TV here.",
+    "audio_url": "",
+    "template": "___ ___ ___ を ___ ___ ___ 。",
+    "correct_sequence": ["ここ", "で", "テレビ", "见", "ても", "いいです"],
+    "distractors": ["に", "映画", "はいけません"],
+    "grammar_point": "许可てもいい"
+  },
+  {
+    "id": 10,
+    "translation_cn": "必须吃药。",
+    "translation_en": "Must take medicine.",
+    "audio_url": "",
+    "template": "___ を ___ ___ ___ ___ 。",
+    "correct_sequence": ["薬", "饮ま", "なければ", "なり", "ません"],
+    "distractors": ["水", "饮み", "ない"],
+    "grammar_point": "义务なければならない"
+  },
+  {
+    "id": 11,
+    "translation_cn": "今天必须得练习汉字。",
+    "translation_en": "I must practice Kanji today.",
+    "audio_url": "",
+    "template": "___ は ___ を ___ ___ ___ ___ 。",
+    "correct_sequence": ["今日", "漢字", "練習", "しなければ", "なり", "ません"],
+    "distractors": ["明日", "英語", "した"],
+    "grammar_point": "必须做某事"
+  },
+  {
+    "id": 12,
+    "translation_cn": "打算在日本工作。",
+    "translation_en": "I intend to work in Japan.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["日本", "で", "働く", "つもり", "です"],
+    "distractors": ["に", "働いた", "とき"],
+    "grammar_point": "意志打算"
+  },
+  {
+    "id": 13,
+    "translation_cn": "用日语写了信。",
+    "translation_en": "Wrote a letter in Japanese.",
+    "audio_url": "",
+    "template": "___ ___ ___ を ___ 。",
+    "correct_sequence": ["日本語", "で", "手紙", "書きました"],
+    "distractors": ["に", "本", "読みました"],
+    "grammar_point": "手段助词で"
+  },
+  {
+    "id": 14,
+    "translation_cn": "请教我这个汉字的读法。",
+    "translation_en": "Please tell me how to read this kanji.",
+    "audio_url": "",
+    "template": "___ ___ ___ の ___ ___ を ___ ___ 。",
+    "correct_sequence": ["この", "漢字", "の", "読み", "方", "教え", "てください"],
+    "distractors": ["その", "書", "方", "見せ"],
+    "grammar_point": "名词+方 (方法)"
+  },
+  {
+    "id": 15,
+    "translation_cn": "下雨了，所以坐出租车去。",
+    "translation_en": "It's raining, so I'll go by taxi.",
+    "audio_url": "",
+    "template": "___ が ___ ___ ___ ， ___ ___ ___ 。",
+    "correct_sequence": ["雨", "降っ", "て", "いるので", "タクシー", "で", "行きます"],
+    "distractors": ["雪", "から", "バス"],
+    "grammar_point": "原因理由ので"
+  },
+  {
+    "id": 16,
+    "translation_cn": "鱼比肉更喜欢。",
+    "translation_en": "I like fish more than meat.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ が ___ です 。",
+    "correct_sequence": ["肉", "より", "鱼", "の", "ほう", "好き"],
+    "distractors": ["と", "一番", "嫌い"],
+    "grammar_point": "比较级：より...のほうが"
+  },
+  {
+    "id": 17,
+    "translation_cn": "写汉字比读汉字更简单。",
+    "translation_en": "Writing kanji is easier than reading it.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ ___ です 。",
+    "correct_sequence": ["漢字", "を", "書く", "より", "読む", "ほう", "が", "簡単"],
+    "distractors": ["は", "難しい", "とき"],
+    "grammar_point": "动作比较"
+  },
+  {
+    "id": 18,
+    "translation_cn": "在水果中，最喜欢苹果。",
+    "translation_en": "Among fruits, I like apples best.",
+    "audio_url": "",
+    "template": "___ ___ ___ ， ___ が ___ ___ です 。",
+    "correct_sequence": ["果物", "の", "中で", "りんご", "一番", "好き"],
+    "distractors": ["は", "より", "料理"],
+    "grammar_point": "最高级：一番"
+  },
+  {
+    "id": 19,
+    "translation_cn": "昨晚喝太多了。",
+    "translation_en": "I drank too much last night.",
+    "audio_url": "",
+    "template": "___ は ___ ___ 。",
+    "correct_sequence": ["昨夜", "飲み", "すぎました"],
+    "distractors": ["明日", "食べ", "ました"],
+    "grammar_point": "过量表达：～すぎます"
+  },
+  {
+    "id": 20,
+    "translation_cn": "因为太重了，所以拿不动。",
+    "translation_en": "Because it's too heavy, I can't carry it.",
+    "audio_url": "",
+    "template": "___ ___ は ___ ___ ___ ___ ， ___ ___ 。",
+    "correct_sequence": ["この", "カバン", "重", "すぎ", "ます", "から", "持て", "ません"],
+    "distractors": ["あの", "軽い", "ので", "持ち"],
+    "grammar_point": "可能形否定 + 原因"
+  },
+  {
+    "id": 21,
+    "translation_cn": "想在将来成为医生。",
+    "translation_en": "I want to become a doctor in the future.",
+    "audio_url": "",
+    "template": "___ ， ___ ___ ___ ___ ですか 。",
+    "correct_sequence": ["将来", "何", "に", "なり", "たい"],
+    "distractors": ["今", "どこ", "で", "した"],
+    "grammar_point": "变化：～になります + 意志"
+  },
+  {
+    "id": 22,
+    "translation_cn": "请教我这个汉字的读法。",
+    "translation_en": "Please teach me how to read this kanji.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ を ___ ___ 。",
+    "correct_sequence": ["この", "漢字", "の", "読み", "方", "教え", "てください"],
+    "distractors": ["その", "書", "に", "見せ"],
+    "grammar_point": "方式：～方 (かた)"
+  },
+  {
+    "id": 23,
+    "translation_cn": "明天的天气应该会很好吧。",
+    "translation_en": "Tomorrow's weather will probably be good.",
+    "audio_url": "",
+    "template": "___ ___ ___ は ___ ___ 。",
+    "correct_sequence": ["あした", "の", "天気", "いい", "でしょう"],
+    "distractors": ["今日", "悪い", "でした"],
+    "grammar_point": "推测：～でしょう"
+  },
+  {
+    "id": 24,
+    "translation_cn": "那个红色的车是老师的。",
+    "translation_en": "That red car belongs to the teacher.",
+    "audio_url": "",
+    "template": "___ ___ ___ は ___ ___ ___ 。",
+    "correct_sequence": ["あの", "赤い", "くるま", "先生", "の", "です"],
+    "distractors": ["この", "青い", "私", "に"],
+    "grammar_point": "所属关系"
+  },
+  {
+    "id": 25,
+    "translation_cn": "在这个房间里不能抽烟。",
+    "translation_en": "You must not smoke in this room.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ を ___ ___ ___ ___ 。",
+    "correct_sequence": ["この", "部屋", "で", "タバコ", "吸っ", "ては", "いけ", "ません"],
+    "distractors": ["に", "お酒", "てもいい", "ない"],
+    "grammar_point": "禁止：～てはいけません"
+  },
+  {
+    "id": 26,
+    "translation_cn": "下雨了，朋友在等我。",
+    "translation_en": "It is raining, and my friend is waiting for me.",
+    "audio_url": "",
+    "template": "___ が ___ ___ ___ ， ___ を ___ ___ ___ 。",
+    "correct_sequence": ["雨", "降っ", "て", "います", "友達", "待っ", "て", "います"],
+    "distractors": ["雪", "に", "私", "会い"],
+    "grammar_point": "正在进行：～ている"
+  },
+  {
+    "id": 27,
+    "translation_cn": "我有过登富士山的经历。",
+    "translation_en": "I have climbed Mt. Fuji before.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["富士山", "に", "登っ", "た", "こと", "が", "あります"],
+    "distractors": ["で", "登る", "は", "ない"],
+    "grammar_point": "经验：～たことがあります"
+  },
+  {
+    "id": 28,
+    "translation_cn": "稍微休息一下吧。",
+    "translation_en": "Let's take a short break.",
+    "audio_url": "",
+    "template": "___ ___ ___ 。",
+    "correct_sequence": ["少し", "休み", "ましょう"],
+    "distractors": ["たくさん", "休んで", "ください"],
+    "grammar_point": "提议：～ましょう"
+  },
+  {
+    "id": 29,
+    "translation_cn": "因为很危险，请小心。",
+    "translation_en": "It's dangerous, so please be careful.",
+    "audio_url": "",
+    "template": "___ ___ ___ ， ___ ___ ___ 。",
+    "correct_sequence": ["危ない", "です", "から", "気", "を", "つけて", "ください"],
+    "distractors": ["暇な", "ので", "目", "見て"],
+    "grammar_point": "原因 + 祈使"
+  },
+  {
+    "id": 30,
+    "translation_cn": "吃饭之前请洗手。",
+    "translation_en": "Please wash your hands before meals.",
+    "audio_url": "",
+    "template": "___ ___ ___ ， ___ を ___ 。",
+    "correct_sequence": ["食事", "の", "前に", "手", "洗いましょう"],
+    "distractors": ["あとで", "とき", "足", "磨き"],
+    "grammar_point": "时间先后：前に"
+  },
+  {
+    "id": 31,
+    "translation_cn": "因为明天有考试，必须学习。",
+    "translation_en": "I have an exam tomorrow, so I must study.",
+    "audio_url": "",
+    "template": "___ ___ ___ が ___ ___ ___ ， ___ ___ ___ ___ 。",
+    "correct_sequence": ["明日", "テスト", "が", "あり", "ます", "から", "勉強", "しなければ", "なり", "ません"],
+    "distractors": ["昨日", "の", "し"],
+    "grammar_point": "原因+义务：～なければなりません"
+  },
+  {
+    "id": 32,
+    "translation_cn": "因为已经饱了，不必全部吃掉。",
+    "translation_en": "I'm full, so I don't have to eat everything.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ， ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["おなかが", "いっぱい", "です", "から", "全部", "食べ", "なくても", "いい", "です"],
+    "distractors": ["ので", "少し", "ない"],
+    "grammar_point": "不必要：～なくてもいいです"
+  },
+  {
+    "id": 33,
+    "translation_cn": "请不要在这里游泳，因为很危险。",
+    "translation_en": "Please don't swim here because it's dangerous.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ ___ 。 ___ ___ ___ ___ 。",
+    "correct_sequence": ["ここ", "で", "泳が", "ない", "で", "ください", "危ない", "です", "から"],
+    "distractors": ["に", "泳ぎ", "ので"],
+    "grammar_point": "否定请求+倒装原因"
+  },
+  {
+    "id": 34,
+    "translation_cn": "请不要忘记约定。",
+    "translation_en": "Please don't forget the promise.",
+    "audio_url": "",
+    "template": "___ を ___ ___ ___ ___ 。",
+    "correct_sequence": ["約束", "忘れ", "ない", "で", "ください"],
+    "distractors": ["写真", "撮ら", "ます"],
+    "grammar_point": "否定请求：～ないでください"
+  },
+  {
+    "id": 35,
+    "translation_cn": "洗完手后再吃。",
+    "translation_en": "Eat after washing your hands.",
+    "audio_url": "",
+    "template": "___ を ___ ___ ___ 。",
+    "correct_sequence": ["手", "洗っ", "てから", "食べます"],
+    "distractors": ["足", "洗う", "前に"],
+    "grammar_point": "动作先后：～てから"
+  },
+  {
+    "id": 36,
+    "translation_cn": "做完作业后再玩。",
+    "translation_en": "Play after doing your homework.",
+    "audio_url": "",
+    "template": "___ を ___ ___ ___ 。",
+    "correct_sequence": ["宿題", "し", "てから", "遊びます"],
+    "distractors": ["勉強", "する", "あとで"],
+    "grammar_point": "动作先后：～てから"
+  },
+  {
+    "id": 37,
+    "translation_cn": "因为今天是休息日，不工作也可以。",
+    "translation_en": "Today is a holiday, so you don't have to work.",
+    "audio_url": "",
+    "template": "___ は ___ ___ ___ ， ___ ___ ___ ___ 。",
+    "correct_sequence": ["今日", "休み", "です", "から", "働か", "なくても", "いい", "です"],
+    "distractors": ["明日", "に", "働い"],
+    "grammar_point": "不必要：～なくてもいい"
+  },
+  {
+    "id": 38,
+    "translation_cn": "可以在考试的时候查字典。",
+    "translation_en": "You can use a dictionary during the exam.",
+    "audio_url": "",
+    "template": "___ ___ ___ ， ___ を ___ ___ ___ 。",
+    "correct_sequence": ["テスト", "の", "とき", "辞書", "引い", "ても", "いいです"],
+    "distractors": ["は", "本", "引か"],
+    "grammar_point": "许可：～てもいいです"
+  },
+  {
+    "id": 39,
+    "translation_cn": "喝酒后不可以开车。",
+    "translation_en": "You must not drive after drinking alcohol.",
+    "audio_url": "",
+    "template": "___ を ___ ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["お酒", "饮ん", "で", "運転", "し", "ては", "いけ", "ません"],
+    "distractors": ["水", "饮み", "ます"],
+    "grammar_point": "禁止：～てはいけません"
+  },
+  {
+    "id": 40,
+    "translation_cn": "打算在日本工作。",
+    "translation_en": "I intend to work in Japan.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["日本", "で", "働く", "つもり", "です"],
+    "distractors": ["に", "働いた", "とき"],
+    "grammar_point": "意志打算：～つもりです"
+  },
+  {
+    "id": 41,
+    "translation_cn": "为了学日语来到了日本。",
+    "translation_en": "I came to Japan to study Japanese.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["日本", "に", "日本語", "を", "勉強", "し", "に", "来ました"],
+    "distractors": ["で", "の", "行く"],
+    "grammar_point": "移动目的：～しに来る"
+  },
+  {
+    "id": 42,
+    "translation_cn": "稍微休息一下吧。",
+    "translation_en": "Let's rest for a bit.",
+    "audio_url": "",
+    "template": "___ ___ ___ 。",
+    "correct_sequence": ["少し", "休み", "ましょう"],
+    "distractors": ["たくさん", "休んで", "ください"],
+    "grammar_point": "提议：～ましょう"
+  },
+  {
+    "id": 43,
+    "translation_cn": "用智能手机拍了很多照片。",
+    "translation_en": "Took a lot of photos with a smartphone.",
+    "audio_url": "",
+    "template": "___ ___ ___ を ___ ___ ___ 。",
+    "correct_sequence": ["スマホ", "で", "写真", "たくさん", "撮り", "ました"],
+    "distractors": ["に", "動画", "撮る"],
+    "grammar_point": "工具手段：で"
+  },
+  {
+    "id": 44,
+    "translation_cn": "在这个房间里有花。",
+    "translation_en": "There are flowers in this room.",
+    "audio_url": "",
+    "template": "___ ___ ___ が ___ 。",
+    "correct_sequence": ["部屋", "に", "花", "あります"],
+    "distractors": ["で", "は", "います"],
+    "grammar_point": "存在：にあります"
+  },
+  {
+    "id": 45,
+    "translation_cn": "九点在车站等我（请在车站等）。",
+    "translation_en": "Wait for me at the station at nine.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["九時", "に", "駅", "で", "待っ", "てください"],
+    "distractors": ["は", "から", "待ち"],
+    "grammar_point": "时间与地点助词"
+  },
+  {
+    "id": 46,
+    "translation_cn": "包里有书和词典等东西。",
+    "translation_en": "There are books, dictionaries, and so on in the bag.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ ___ が ___ 。",
+    "correct_sequence": ["カバン", "の", "中", "に", "本", "や", "辞書", "など", "あります"],
+    "distractors": ["で", "と", "います"],
+    "grammar_point": "列举：や...など"
+  },
+  {
+    "id": 47,
+    "translation_cn": "我想喝茶。",
+    "translation_en": "I want to drink tea.",
+    "audio_url": "",
+    "template": "___ を ___ ___ ___ 。",
+    "correct_sequence": ["お茶", "饮み", "たい", "です"],
+    "distractors": ["食べ", "ます", "た"],
+    "grammar_point": "愿望：～たい"
+  },
+  {
+    "id": 48,
+    "translation_cn": "我住在东京。",
+    "translation_en": "I live in Tokyo.",
+    "audio_url": "",
+    "template": "___ は ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["私", "東京", "に", "住ん", "で", "います"],
+    "distractors": ["で", "住み", "ます"],
+    "grammar_point": "状态持续：～に住んでいる"
+  },
+  {
+    "id": 49,
+    "translation_cn": "虽然想买新车，但是没钱。",
+    "translation_en": "I want to buy a new car, but I have no money.",
+    "audio_url": "",
+    "template": "___ ___ を ___ ___ ___ ___ ， ___ が ___ ___ 。",
+    "correct_sequence": ["新しい", "車", "買い", "たい", "です", "が", "お金", "あり", "ません"],
+    "distractors": ["古い", "は", "ない"],
+    "grammar_point": "愿望+转折：～たいですが"
+  },
+  {
+    "id": 50,
+    "translation_cn": "生日那天最想要什么？",
+    "translation_en": "What do you want most for your birthday?",
+    "audio_url": "",
+    "template": "___ ___ ___ が ___ ___ ___ ___ ？",
+    "correct_sequence": ["誕生日", "に", "何", "が", "一番", "ほしい", "ですか"],
+    "distractors": ["は", "どこ", "たい"],
+    "grammar_point": "欲求：名词+がほしい"
+  },
+  {
+    "id": 51,
+    "translation_cn": "冰箱里什么都没有。",
+    "translation_en": "There is nothing in the refrigerator.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["冷蔵庫", "の", "中", "に", "何も", "あり", "ません"],
+    "distractors": ["で", "何か", "います"],
+    "grammar_point": "全面否定：何も...ない"
+  },
+  {
+    "id": 52,
+    "translation_cn": "正在下雨呢。",
+    "translation_en": "It is raining, isn't it?",
+    "audio_url": "",
+    "template": "___ が ___ ___ ___ ___ 。",
+    "correct_sequence": ["雨", "降っ", "て", "います", "ね"],
+    "distractors": ["雪", "た", "よ"],
+    "grammar_point": "正在进行+语气词ね"
+  },
+  {
+    "id": 53,
+    "translation_cn": "在那儿有一只猫哦。请看。",
+    "translation_en": "There is a cat over there. Look!",
+    "audio_url": "",
+    "template": "___ ___ ___ が ___ ___ 。 ___ ___ ___ 。",
+    "correct_sequence": ["あそこに", "猫", "が", "います", "よ", "见て", "ください"],
+    "distractors": ["どこに", "は", "あります", "见"],
+    "grammar_point": "存在+语气词よ"
+  },
+  {
+    "id": 54,
+    "translation_cn": "今天哪儿也不想去。",
+    "translation_en": "I don't want to go anywhere today.",
+    "audio_url": "",
+    "template": "___ は ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["今日", "どこ", "へ", "も", "行き", "たく", "ない", "です"],
+    "distractors": ["明日", "に", "は", "たい"],
+    "grammar_point": "否定愿望：～たくない"
+  },
+  {
+    "id": 55,
+    "translation_cn": "那个领带很适合你呢。",
+    "translation_en": "That tie looks good on you, doesn't it?",
+    "audio_url": "",
+    "template": "___ ___ ， ___ ___ ___ ___ 。",
+    "correct_sequence": ["その", "ネクタイ", "似合っ", "て", "います", "ね"],
+    "distractors": ["この", "靴", "ました"],
+    "grammar_point": "状态确认"
+  },
+  {
+    "id": 56,
+    "translation_cn": "在这本词典里有这种汉字的读法。",
+    "translation_en": "In this dictionary, there is the reading of this kanji.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ ___ が ___ 。",
+    "correct_sequence": ["この", "辞書", "に", "漢字", "の", "読み", "方", "が", "あります"],
+    "distractors": ["で", "は", "教え"],
+    "grammar_point": "存在+复合名词"
+  },
+  {
+    "id": 57,
+    "translation_cn": "打算在夏天去北海道。",
+    "translation_en": "I intend to go to Hokkaido in the summer vacation.",
+    "audio_url": "",
+    "template": "___ ___ は ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["夏休み", "は", "北海道", "へ", "行く", "つもり", "です"],
+    "distractors": ["冬休み", "に", "行った"],
+    "grammar_point": "意志打算：～つもり"
+  },
+  {
+    "id": 58,
+    "translation_cn": "请稍微休息一下。",
+    "translation_en": "Please rest for a moment.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ 。",
+    "correct_sequence": ["少し", "休ん", "で", "ください"],
+    "distractors": ["たくさん", "休め", "ないで"],
+    "grammar_point": "请求：～てください"
+  },
+  {
+    "id": 59,
+    "translation_cn": "那是我的书哦。",
+    "translation_en": "That is my book.",
+    "audio_url": "",
+    "template": "___ は ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["あれ", "は", "私", "の", "本", "です", "よ"],
+    "distractors": ["これ", "に", "ね"],
+    "grammar_point": "判断+提示语气"
+  },
+  {
+    "id": 60,
+    "translation_cn": "我想更多地练习日语。",
+    "translation_en": "I want to practice Japanese more.",
+    "audio_url": "",
+    "template": "___ ___ ___ を ___ ___ ___ 。",
+    "correct_sequence": ["もっと", "日本語", "練習", "し", "たい", "です"],
+    "distractors": ["あまり", "を", "し"],
+    "grammar_point": "愿望+程度副词"
+  },
+  {
+    "id": 61,
+    "translation_cn": "和家人一起去京都。",
+    "translation_en": "I will go to Kyoto with my family.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["家族", "と", "一緒", "に", "京都", "へ", "行きます"],
+    "distractors": ["は", "に", "来た"],
+    "grammar_point": "伴随与目的地助词"
+  },
+  {
+    "id": 62,
+    "translation_cn": "下雨了，所以请关上窗户。",
+    "translation_en": "It's raining, so please close the window.",
+    "audio_url": "",
+    "template": "___ が ___ ___ ___ ， ___ を ___ ___ ___ 。",
+    "correct_sequence": ["雨", "降っ", "て", "いるので", "窓", "閉め", "て", "ください"],
+    "distractors": ["から", "は", "開けて"],
+    "grammar_point": "原因理由+请求"
+  },
+  {
+    "id": 63,
+    "translation_cn": "见过朋友了。",
+    "translation_en": "I met my friend.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["友達", "に", "会い", "ました"],
+    "distractors": ["を", "は", "会う"],
+    "grammar_point": "交互动词助词：に"
+  },
+  {
+    "id": 64,
+    "translation_cn": "坐公交车回家。",
+    "translation_en": "I go home by bus.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ 。",
+    "correct_sequence": ["バス", "で", "帰り", "ます"],
+    "distractors": ["に", "歩いて", "くる"],
+    "grammar_point": "交通手段助词：で"
+  },
+  {
+    "id": 65,
+    "translation_cn": "生病的时候，必须去医院。",
+    "translation_en": "When you are sick, you must go to the hospital.",
+    "audio_url": "",
+    "template": "___ ___ ___ ， ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["病気", "の", "とき", "病院", "へ", "行か", "なければ", "なり", "ません"],
+    "distractors": ["は", "に", "行ってもいい"],
+    "grammar_point": "名词+とき + 义务"
+  },
+  {
+    "id": 66,
+    "translation_cn": "在图书馆学习。",
+    "translation_en": "Study at the library.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["図書館", "で", "勉強", "し", "ます"],
+    "distractors": ["に", "は", "する"],
+    "grammar_point": "场所助词：で"
+  },
+  {
+    "id": 67,
+    "translation_cn": "想买三千日元的字典。",
+    "translation_en": "I want to buy a 3,000 yen dictionary.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ を ___ ___ ___ 。",
+    "correct_sequence": ["三千円", "で", "この", "辞書", "買い", "たい", "です"],
+    "distractors": ["に", "を", "飲み"],
+    "grammar_point": "限定/价格助词：で"
+  },
+  {
+    "id": 68,
+    "translation_cn": "来月和家人一起去京都。",
+    "translation_en": "Next month, I will go to Kyoto with my family.",
+    "audio_url": "",
+    "template": "___ ， ___ ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["来月", "家族", "と", "一緒", "に", "京都", "へ", "行きます"],
+    "distractors": ["先月", "に", "で"],
+    "grammar_point": "伴随状态"
+  },
+  {
+    "id": 69,
+    "translation_cn": "想喝咖啡。",
+    "translation_en": "I want to drink coffee.",
+    "audio_url": "",
+    "template": "___ を ___ ___ ___ 。",
+    "correct_sequence": ["コーヒー", "饮み", "たい", "です"],
+    "distractors": ["お茶", "食べる", "た"],
+    "grammar_point": "愿望表达"
+  },
+  {
+    "id": 70,
+    "translation_cn": "请不要在这个房间里抽烟。",
+    "translation_en": "Please do not smoke in this room.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ を ___ ___ ___ ___ 。",
+    "correct_sequence": ["この", "部屋", "で", "タバコ", "吸わ", "ない", "で", "ください"],
+    "distractors": ["に", "吸い", "ます"],
+    "grammar_point": "否定请求"
+  },
+  {
+    "id": 71,
+    "translation_cn": "用筷子吃饭。",
+    "translation_en": "Eat with chopsticks.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ 。",
+    "correct_sequence": ["箸", "で", "食べ", "ます"],
+    "distractors": ["に", "スプーン", "を"],
+    "grammar_point": "工具助词：で"
+  },
+  {
+    "id": 72,
+    "translation_cn": "虽然很冷，但还是打算去散步。",
+    "translation_en": "Even though it's cold, I intend to go for a walk.",
+    "audio_url": "",
+    "template": "___ ___ ___ ， ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["寒い", "です", "が", "散歩", "に", "行く", "つもり", "です"],
+    "distractors": ["から", "ので", "行った"],
+    "grammar_point": "逆接+意志打算"
+  },
+  {
+    "id": 73,
+    "translation_cn": "想成为医生。",
+    "translation_en": "I want to become a doctor.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["医者", "に", "なり", "たい", "です"],
+    "distractors": ["は", "なる", "を"],
+    "grammar_point": "变化+愿望"
+  },
+  {
+    "id": 74,
+    "translation_cn": "洗过手后再吃饭比较好哦。",
+    "translation_en": "It's better to eat after washing your hands.",
+    "audio_url": "",
+    "template": "___ を ___ ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["手", "洗っ", "てから", "食べ", "た", "ほうが", "いい", "ですよ"],
+    "distractors": ["は", "洗う", "前に"],
+    "grammar_point": "てから + 建议"
+  },
+  {
+    "id": 75,
+    "translation_cn": "在这个公园里有狗。",
+    "translation_en": "There is a dog in this park.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ が ___ 。",
+    "correct_sequence": ["この", "公園", "に", "犬", "が", "います"],
+    "distractors": ["で", "は", "あります"],
+    "grammar_point": "存在表达"
+  },
+  {
+    "id": 76,
+    "translation_cn": "吃了药后，身体变好了。",
+    "translation_en": "I feel better after taking the medicine.",
+    "audio_url": "",
+    "template": "___ を ___ ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["薬", "饮ん", "でから", "体", "が", "良く", "なり", "ました"],
+    "distractors": ["は", "饮む", "悪く"],
+    "grammar_point": "てから + 变化（くなる）"
+  },
+  {
+    "id": 77,
+    "translation_cn": "明天之前必须完成这项工作。",
+    "translation_en": "I must finish this work by tomorrow.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ を ___ ___ ___ ___ 。",
+    "correct_sequence": ["明日", "までに", "この", "仕事", "終わらせ", "なければ", "なり", "ません"],
+    "distractors": ["から", "は", "終わって"],
+    "grammar_point": "期限助词 + 必须（なければなりません）"
+  },
+  {
+    "id": 78,
+    "translation_cn": "因为已经饱了，所以不全吃完也可以。",
+    "translation_en": "Since I'm full, I don't have to eat it all.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ， ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["おなかが", "いっぱい", "です", "から", "全部", "食べ", "なくても", "いい", "です"],
+    "distractors": ["ので", "少し", "ない"],
+    "grammar_point": "不必要（なくてもいい）"
+  },
+  {
+    "id": 79,
+    "translation_cn": "因为做了扫除，房间变漂亮了。",
+    "translation_en": "The room became clean because I cleaned it.",
+    "audio_url": "",
+    "template": "___ を ___ ___ ___ ， ___ が ___ ___ ___ 。",
+    "correct_sequence": ["掃除", "し", "ました", "から", "部屋", "きれい", "に", "なりました"],
+    "distractors": ["は", "ので", "くて"],
+    "grammar_point": "变化（になます）"
+  },
+  {
+    "id": 80,
+    "translation_cn": "在这个房间里可以拍照吗？",
+    "translation_en": "May I take pictures in this room?",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ を ___ ___ ___ ___ ___ ？",
+    "correct_sequence": ["この", "部屋", "で", "写真", "撮っ", "ても", "いい", "です", "か"],
+    "distractors": ["に", "は", "撮ら"],
+    "grammar_point": "许可（てもいいです）"
+  },
+  {
+    "id": 81,
+    "translation_cn": "我不怎么喝咖啡。",
+    "translation_en": "I don't drink coffee much.",
+    "audio_url": "",
+    "template": "___ は ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["私", "コーヒー", "あまり", "饮み", "ません"],
+    "distractors": ["を", "とても", "ます"],
+    "grammar_point": "副词（あまり）与否定呼应"
+  },
+  {
+    "id": 82,
+    "translation_cn": "虽然想买新车，但是没钱。",
+    "translation_en": "I want to buy a new car, but I have no money.",
+    "audio_url": "",
+    "template": "___ ___ を ___ ___ ___ ___ ， ___ が ___ ___ 。",
+    "correct_sequence": ["新しい", "車", "買い", "たい", "です", "が", "お金", "あり", "ません"],
+    "distractors": ["古い", "は", "ない"],
+    "grammar_point": "愿望 + 转折（が）"
+  },
+  {
+    "id": 83,
+    "translation_cn": "明天也是休息日。",
+    "translation_en": "Tomorrow is also a holiday.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ 。",
+    "correct_sequence": ["明日", "も", "休み", "です"],
+    "distractors": ["は", "に", "でした"],
+    "grammar_point": "助词（も）"
+  },
+  {
+    "id": 84,
+    "translation_cn": "因为很忙，请明天再来。",
+    "translation_en": "I'm busy, so please come again tomorrow.",
+    "audio_url": "",
+    "template": "___ ___ ___ ， ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["忙しい", "です", "から", "また", "明日", "来", "てください"],
+    "distractors": ["ので", "は", "行って"],
+    "grammar_point": "原因 + 请求"
+  },
+  {
+    "id": 85,
+    "translation_cn": "这个汉字比那个汉字难写。",
+    "translation_en": "This kanji is harder to write than that one.",
+    "audio_url": "",
+    "template": "___ ___ は ___ ___ ___ ___ ___ ___ ___ です 。",
+    "correct_sequence": ["この", "漢字", "あちら", "より", "書く", "の", "が", "難しい"],
+    "distractors": ["に", "は", "簡単"],
+    "grammar_point": "比较级（より） + 名词化（の）"
+  },
+  {
+    "id": 86,
+    "translation_cn": "虽然想吃，但没有钱。",
+    "translation_en": "I want to eat, but I don't have money.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ， ___ が ___ ___ 。",
+    "correct_sequence": ["食べ", "たい", "です", "が", "お金", "あり", "ません"],
+    "distractors": ["たくない", "は", "ある"],
+    "grammar_point": "愿望 + 逆接"
+  },
+  {
+    "id": 87,
+    "translation_cn": "已经饱了，所以不吃也可以。",
+    "translation_en": "Full already, so don't have to eat.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ， ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["もう", "いっぱい", "です", "から", "食べ", "なくても", "いい", "です"],
+    "distractors": ["は", "ので", "食べ"],
+    "grammar_point": "不必要（なくてもいい）"
+  },
+  {
+    "id": 88,
+    "translation_cn": "打算在暑假期间练习日语。",
+    "translation_en": "I intend to practice Japanese during summer vacation.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ を ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["夏休み", "の", "間に", "日本語", "練習", "する", "つもり", "です"],
+    "distractors": ["とき", "は", "した"],
+    "grammar_point": "期间（間に） + 打算（つもり）"
+  },
+  {
+    "id": 89,
+    "translation_cn": "请教我一下去那里的方法。",
+    "translation_en": "Please tell me how to get there.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ を ___ ___ 。",
+    "correct_sequence": ["あそこ", "へ", "の", "行き", "方", "教え", "てください"],
+    "distractors": ["に", "は", "方", "見せ"],
+    "grammar_point": "方式（方）"
+  },
+  {
+    "id": 90,
+    "translation_cn": "那个红色的包是母亲的。",
+    "translation_en": "That red bag is my mother's.",
+    "audio_url": "",
+    "template": "___ ___ ___ は ___ ___ ___ ___ 。",
+    "correct_sequence": ["あの", "赤い", "カバン", "母", "の", "です"],
+    "distractors": ["この", "は", "に"],
+    "grammar_point": "判断句"
+  },
+  {
+    "id": 91,
+    "translation_cn": "一年中哪个月最冷？",
+    "translation_en": "Which month is the coldest in a year?",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ ___ は ___ ___ ___ ？",
+    "correct_sequence": ["一年", "で", "一番", "寒い", "月", "何月", "です", "か"],
+    "distractors": ["は", "より", "どこ"],
+    "grammar_point": "最高级：范围+で一番"
+  },
+  {
+    "id": 92,
+    "translation_cn": "世界上最高的山在哪里？",
+    "translation_en": "Where is the highest mountain in the world?",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ ___ は ___ ___ ___ ？",
+    "correct_sequence": ["世界", "で", "一番", "高い", "山", "どこ", "です", "か"],
+    "distractors": ["は", "に", "何"],
+    "grammar_point": "最高级：范围+で一番"
+  },
+  {
+    "id": 93,
+    "translation_cn": "这个测试太难了。",
+    "translation_en": "This test is too difficult.",
+    "audio_url": "",
+    "template": "___ ___ ___ は ___ ___ ___ ___ 。",
+    "correct_sequence": ["この", "テスト", "は", "難し", "すぎ", "ます"],
+    "distractors": ["あの", "簡単", "すぎない"],
+    "grammar_point": "程度过限：～すぎます"
+  },
+  {
+    "id": 94,
+    "translation_cn": "天气渐渐变热了。",
+    "translation_en": "It is getting hotter and hotter.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["だんだん", "暑く", "なり", "ました"],
+    "distractors": ["あまり", "寒く", "なる"],
+    "grammar_point": "变化：～くなります"
+  },
+  {
+    "id": 95,
+    "translation_cn": "请教我一下这个汉字的读法。",
+    "translation_en": "Please tell me how to read this kanji.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ を ___ ___ 。",
+    "correct_sequence": ["この", "漢字", "の", "読み", "方", "教え", "てください"],
+    "distractors": ["その", "書", "に", "見せ"],
+    "grammar_point": "方式：～方"
+  },
+  {
+    "id": 96,
+    "translation_cn": "虽然想买新车，但是没钱。",
+    "translation_en": "I want to buy a new car, but I have no money.",
+    "audio_url": "",
+    "template": "___ ___ を ___ ___ ___ ___ ， ___ が ___ ___ 。",
+    "correct_sequence": ["新しい", "車", "買い", "たい", "です", "が", "お金", "あり", "ません"],
+    "distractors": ["古い", "は", "ない"],
+    "grammar_point": "愿望+转折"
+  },
+  {
+    "id": 97,
+    "translation_cn": "练习一下筷子的拿法吧。",
+    "translation_en": "Let's practice how to hold chopsticks.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ を ___ ___ ___ ___ 。",
+    "correct_sequence": ["お箸", "の", "持ち", "方", "を", "練習", "し", "て", "います"],
+    "distractors": ["で", "読み", "た"],
+    "grammar_point": "正在练习某种方法"
+  },
+  {
+    "id": 98,
+    "translation_cn": "打算在将来开自己的公司。",
+    "translation_en": "I intend to start my own company in the future.",
+    "audio_url": "",
+    "template": "___ ， ___ ___ ___ を ___ ___ ___ ___ 。",
+    "correct_sequence": ["将来", "自分", "の", "会社", "作る", "つもり", "です"],
+    "distractors": ["今", "は", "作った"],
+    "grammar_point": "意志打算"
+  },
+  {
+    "id": 99,
+    "translation_cn": "九点在车站等我（请在车站等）。",
+    "translation_en": "Please wait at the station at 9:00.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["九時", "に", "駅", "で", "待っ", "てください"],
+    "distractors": ["は", "から", "待ち"],
+    "grammar_point": "时间与场所助词区分"
+  },
+  {
+    "id": 100,
+    "translation_cn": "坐公交车回家。",
+    "translation_en": "Go home by bus.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ 。",
+    "correct_sequence": ["バス", "で", "帰り", "ます"],
+    "distractors": ["に", "歩い", "くる"],
+    "grammar_point": "工具手段：で"
+  },
+  {
+    "id": 101,
+    "translation_cn": "虽然想去日本，但是没有时间。",
+    "translation_en": "I want to go to Japan, but I have no time.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ ， ___ が ___ ___ 。",
+    "correct_sequence": ["日本", "へ", "行き", "たい", "です", "が", "时间", "あり", "ません"],
+    "distractors": ["に", "は", "ない"],
+    "grammar_point": "愿望+转折"
+  },
+  {
+    "id": 102,
+    "translation_cn": "用日语写了信。",
+    "translation_en": "I wrote a letter in Japanese.",
+    "audio_url": "",
+    "template": "___ ___ ___ を ___ ___ 。",
+    "correct_sequence": ["日本語", "で", "手紙", "書き", "ました"],
+    "distractors": ["に", "本", "読み"],
+    "grammar_point": "手段：で"
+  },
+  {
+    "id": 103,
+    "translation_cn": "昨天比今天冷。",
+    "translation_en": "It was colder yesterday than today.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ です 。",
+    "correct_sequence": ["今日", "より", "昨日", "の", "ほう", "が", "寒い"],
+    "distractors": ["は", "明日", "一番"],
+    "grammar_point": "比较：～より～のほうが"
+  },
+  {
+    "id": 104,
+    "translation_cn": "正在下雨，所以坐出租车去。",
+    "translation_en": "It's raining, so I'll go by taxi.",
+    "audio_url": "",
+    "template": "___ が ___ ___ ___ ___ ___ ， ___ ___ ___ ___ 。",
+    "correct_sequence": ["雨", "降っ", "て", "います", "から", "タクシー", "で", "行きます"],
+    "distractors": ["雪", "ので", "バス"],
+    "grammar_point": "原因+手段"
+  },
+  {
+    "id": 105,
+    "translation_cn": "因为已经饱了，不必全都吃掉。",
+    "translation_en": "I'm full, so I don't have to eat it all.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ， ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["おなかが", "いっぱい", "です", "から", "全部", "食べ", "なくても", "いい", "です"],
+    "distractors": ["ので", "は", "ない"],
+    "grammar_point": "不必：～なくてもいい"
+  },
+  {
+    "id": 106,
+    "translation_cn": "因为已经很晚了，请快点睡。",
+    "translation_en": "It's late already, so please go to bed early.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ， ___ ___ ___ ___ 。",
+    "correct_sequence": ["もう", "遅い", "です", "から", "早く", "寝", "て", "ください"],
+    "distractors": ["ので", "は", "ゆっくり"],
+    "grammar_point": "原因+祈使"
+  },
+  {
+    "id": 107,
+    "translation_cn": "虽然想学日语，但是很难。",
+    "translation_en": "I want to study Japanese, but it's difficult.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ ， ___ ___ です 。",
+    "correct_sequence": ["日本語", "を", "勉強", "し", "たい", "です", "が", "難しい"],
+    "distractors": ["は", "に", "簡単"],
+    "grammar_point": "愿望+转折"
+  },
+  {
+    "id": 108,
+    "translation_cn": "如果到了十点，请叫醒我。",
+    "translation_en": "When it becomes ten o'clock, please wake me up.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ， ___ ___ ___ ___ 。",
+    "correct_sequence": ["十時", "に", "なっ", "たら", "私", "を", "起こして", "ください"],
+    "distractors": ["は", "とき", "寝て"],
+    "grammar_point": "假定条件：～たら"
+  },
+  {
+    "id": 109,
+    "translation_cn": "请喝杯热咖啡后再走。",
+    "translation_en": "Please leave after drinking a cup of hot coffee.",
+    "audio_url": "",
+    "template": "___ ___ ___ を ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["熱い", "コーヒー", "饮ん", "でから", "行って", "ください"],
+    "distractors": ["冷たい", "を", "前に"],
+    "grammar_point": "动作先后：～てから"
+  },
+  {
+    "id": 110,
+    "translation_cn": "打算在暑假去京都旅行。",
+    "translation_en": "I intend to travel to Kyoto during summer vacation.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["夏休み", "に", "京都", "へ", "旅行", "に", "行く", "つもり", "です"],
+    "distractors": ["で", "を", "行った"],
+    "grammar_point": "意志打算：～つもり"
+  },
+  {
+    "id": 111,
+    "translation_cn": "因为没有钱，什么都买不了。",
+    "translation_en": "Because I have no money, I can't buy anything.",
+    "audio_url": "",
+    "template": "___ が ___ ___ ___ ， ___ ___ ___ ___ 。",
+    "correct_sequence": ["お金", "あり", "ません", "から", "何も", "買え", "ません"],
+    "distractors": ["は", "ので", "何か"],
+    "grammar_point": "全盘否定：何も+否定"
+  },
+  {
+    "id": 112,
+    "translation_cn": "请告诉我不懂的单词的意思。",
+    "translation_en": "Please tell me the meaning of the words you don't understand.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ を ___ ___ 。",
+    "correct_sequence": ["わから", "ない", "単語", "の", "意味", "教え", "てください"],
+    "distractors": ["は", "知って", "みせて"],
+    "grammar_point": "修饰句+请求"
+  },
+  {
+    "id": 113,
+    "translation_cn": "即使不下雨，也会带伞去。",
+    "translation_en": "Even if it doesn't rain, I will take an umbrella.",
+    "audio_url": "",
+    "template": "___ が ___ ___ ___ ___ ， ___ を ___ ___ ___ 。",
+    "correct_sequence": ["雨", "降ら", "なく", "ても", "傘", "持って", "いき", "ます"],
+    "distractors": ["は", "ので", "ないで"],
+    "grammar_point": "逆接假定：～なくても"
+  },
+  {
+    "id": 114,
+    "translation_cn": "在水果中，最喜欢苹果和香蕉。",
+    "translation_en": "Among fruits, I like apples and bananas best.",
+    "audio_url": "",
+    "template": "___ ___ ___ ， ___ ___ ___ が ___ ___ です 。",
+    "correct_sequence": ["果物", "の", "中で", "りんご", "と", "バナナ", "一番", "好き"],
+    "distractors": ["は", "や", "より"],
+    "grammar_point": "范围+并列+最高级"
+  },
+  {
+    "id": 115,
+    "translation_cn": "我想更多地了解日本文化。",
+    "translation_en": "I want to know more about Japanese culture.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ を ___ ___ ___ 。",
+    "correct_sequence": ["もっと", "日本", "の", "文化", "知り", "たい", "です"],
+    "distractors": ["あまり", "は", "知って"],
+    "grammar_point": "愿望：～たい"
+  },
+  {
+    "id": 116,
+    "translation_cn": "因为太难了，谁都解不出来。",
+    "translation_en": "It's too difficult, so no one can solve it.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ， ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["難し", "すぎ", "ます", "から", "誰", "も", "解け", "ません"],
+    "distractors": ["は", "ので", "何"],
+    "grammar_point": "过限+全盘否定+可能形否定"
+  },
+  {
+    "id": 117,
+    "translation_cn": "如果不运动的话，身体会变差哦。",
+    "translation_en": "If you don't exercise, your body will get worse.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ， ___ が ___ ___ ___ ___ 。",
+    "correct_sequence": ["運動", "し", "ない", "と", "体", "悪く", "なり", "ます", "よ"],
+    "distractors": ["は", "たら", "良く", "ね"],
+    "grammar_point": "恒常条件：～と + 变化"
+  },
+  {
+    "id": 118,
+    "translation_cn": "正在下雪，所以请慢点开车。",
+    "translation_en": "It's snowing, so please drive slowly.",
+    "audio_url": "",
+    "template": "___ が ___ ___ ___ ___ ， ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["雪", "降っ", "て", "います", "から", "ゆっくり", "運転", "し", "て", "ください"],
+    "distractors": ["雨", "ので", "早く"],
+    "grammar_point": "状态+原因+请求"
+  },
+  {
+    "id": 119,
+    "translation_cn": "九点在图书馆见吧。",
+    "translation_en": "Let's meet at the library at nine.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ___ 。",
+    "correct_sequence": ["九時", "に", "図書館", "で", "会い", "ましょう"],
+    "distractors": ["は", "を", "会って"],
+    "grammar_point": "时间与场所助词"
+  },
+  {
+    "id": 120,
+    "translation_cn": "洗完澡后，就打算睡觉了。",
+    "translation_en": "After taking a bath, I intend to go to sleep.",
+    "audio_url": "",
+    "template": "___ ___ ___ ___ ___ ___ ， ___ ___ ___ ___ 。",
+    "correct_sequence": ["お風呂", "に", "入っ", "てから", "寝る", "つもり", "です"],
+    "distractors": ["は", "入る", "前に"],
+    "grammar_point": "てから + つもり"
+  }
+]

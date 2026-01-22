@@ -26,6 +26,8 @@ const SettingsPage: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [dailyGoal, setDailyGoal] = useState(20);
   const [dailyGrammarGoal, setDailyGrammarGoal] = useState(10);
+  const [dailyPuzzleGoal, setDailyPuzzleGoal] = useState(10);
+  const [showPuzzleDistractors, setShowPuzzleDistractors] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -41,7 +43,7 @@ const SettingsPage: React.FC = () => {
   const fetchProfile = async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('preferred_font, preferred_color, preferred_language, daily_goal, daily_grammar_goal')
+      .select('preferred_font, preferred_color, preferred_language, daily_goal, daily_grammar_goal, daily_puzzle_goal, show_puzzle_distractors')
       .eq('id', userId)
       .single();
 
@@ -51,6 +53,8 @@ const SettingsPage: React.FC = () => {
       if (data.preferred_language) setSelectedLanguage(data.preferred_language);
       if (data.daily_goal) setDailyGoal(data.daily_goal);
       if (data.daily_grammar_goal) setDailyGrammarGoal(data.daily_grammar_goal);
+      if (data.daily_puzzle_goal) setDailyPuzzleGoal(data.daily_puzzle_goal);
+      if (data.show_puzzle_distractors !== undefined) setShowPuzzleDistractors(data.show_puzzle_distractors);
     }
   };
 
@@ -68,6 +72,8 @@ const SettingsPage: React.FC = () => {
         preferred_language: selectedLanguage,
         daily_goal: dailyGoal,
         daily_grammar_goal: dailyGrammarGoal,
+        daily_puzzle_goal: dailyPuzzleGoal,
+        show_puzzle_distractors: showPuzzleDistractors,
         updated_at: new Date().toISOString(),
       })
       .eq('id', session.user.id);
@@ -153,6 +159,59 @@ const SettingsPage: React.FC = () => {
                       {goal}
                     </button>
                   ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Sentence Puzzle Daily Goal */}
+          <section className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl transition-all">
+            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Sentence Puzzle Goal</h2>
+            <div className="p-8">
+              <div className="flex flex-col gap-6">
+                <div className="flex justify-between items-end">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm font-black text-charcoal dark:text-white">Items per Session</span>
+                    <span className="text-xs text-ghost-grey dark:text-slate-500 font-medium">How many sentence puzzles to practice in one sitting.</span>
+                  </div>
+                  <span className="text-4xl font-black text-primary">{dailyPuzzleGoal}</span>
+                </div>
+                <div className="grid grid-cols-4 gap-4">
+                  {[5, 10, 15, 20].map((goal) => (
+                    <button
+                      key={goal}
+                      onClick={() => setDailyPuzzleGoal(goal)}
+                      className={`py-4 rounded-2xl border-2 font-black transition-all
+                        ${dailyPuzzleGoal === goal
+                          ? 'border-primary bg-primary/5 text-primary'
+                          : 'border-slate-50 dark:border-slate-800 text-ghost-grey dark:text-slate-500 hover:border-slate-200 dark:hover:border-slate-700'}`}
+                    >
+                      {goal}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="pt-6 border-t border-gray-50 dark:border-white/5">
+                  <div className="flex items-center justify-between group">
+                    <div className="flex items-center gap-5">
+                      <div className="text-primary flex items-center justify-center rounded-2xl bg-primary/10 shrink-0 size-14 shadow-sm group-hover:scale-110 transition-transform">
+                        <span className="material-symbols-outlined !text-3xl">extension</span>
+                      </div>
+                      <div className="flex flex-col justify-center">
+                        <p className="text-charcoal dark:text-white text-base font-black leading-normal">Show Distractors</p>
+                        <p className="text-ghost-grey dark:text-slate-400 text-sm font-medium leading-snug">Add incorrect options to increase difficulty.</p>
+                      </div>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={showPuzzleDistractors}
+                        onChange={(e) => setShowPuzzleDistractors(e.target.checked)}
+                        className="sr-only peer"
+                      />
+                      <div className="w-14 h-8 bg-gray-100 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-200 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
