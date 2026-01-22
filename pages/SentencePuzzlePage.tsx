@@ -94,11 +94,13 @@ const SentencePuzzlePage: React.FC = () => {
             const processed = questionData.map(q => {
                 // Fixed elements: は, を, and punctuation (usually ends with 。 or ?)
                 // Others are placeholders.
-                const fixedElements = ['は', 'を', '。', '？', '?', '.'];
-                const puzzleSegments = q.segments.map((seg: string) => ({
-                    text: seg,
-                    isFixed: fixedElements.includes(seg)
-                }));
+                const fixedElements = ['は', 'を', '。', '？', '?', '.', '，', '、', '！', '!', '；', ';', '：', ':'];
+                const puzzleSegments = q.segments
+                    .filter((seg: string) => seg !== '___') // Remove unfilled placeholders from seed mistakes
+                    .map((seg: string) => ({
+                        text: seg,
+                        isFixed: fixedElements.includes(seg)
+                    }));
 
                 // Construct the placeholder indices (where users need to fill)
                 const placeholderIndices = puzzleSegments
