@@ -59,12 +59,16 @@ const PronunciationPage: React.FC = () => {
             };
 
             recog.onend = () => {
-                setIsRecording(false);
                 // Auto-check when recognition stops
-                // Use a slight timeout to ensure state has updated from final result
+                setIsRecording(false);
                 setTimeout(() => {
                     checkAnswer();
                 }, 100);
+            };
+
+            recog.onerror = (event: any) => {
+                console.error('Speech recognition error:', event.error);
+                setIsRecording(false);
             };
 
             setRecognition(recog);
@@ -247,13 +251,17 @@ const PronunciationPage: React.FC = () => {
     };
 
     const stopRecording = () => {
-        if (mediaRecorderRef.current && isRecording) {
+        setIsRecording(false);
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
             mediaRecorderRef.current.stop();
         }
         if (recognition) {
-            recognition.stop();
+            try {
+                recognition.stop();
+            } catch (e) {
+                console.error("Stop recognition failed:", e);
+            }
         }
-        setIsRecording(false);
     };
 
     const playReference = () => {
@@ -289,25 +297,23 @@ const PronunciationPage: React.FC = () => {
     };
 
     // Helper to align sentence (Kanji) with reading (Kana)
-    const getAlignedSegments = (sentence: string, reading: string) => {
+    const getAlignedSegments = (sentence: string, readingStr: string) => {
         const segments: { k: string; r: string; isKanji: boolean }[] = [];
+        const reading = readingStr || '';
         let sIdx = 0;
         let rIdx = 0;
 
         while (sIdx < sentence.length) {
             const char = sentence[sIdx];
-            // Check if char is Kanji
-            const isKanji = /[\u4e00-\u9faf]/.test(char);
+            const isKanji = /[\u4e00-\u9faf\u3400-\u4dbf]/.test(char);
 
             if (isKanji) {
-                // Find Kanji cluster
                 let kCluster = '';
-                while (sIdx < sentence.length && /[\u4e00-\u9faf]/.test(sentence[sIdx])) {
+                while (sIdx < sentence.length && /[\u4e00-\u9faf\u3400-\u4dbf]/.test(sentence[sIdx])) {
                     kCluster += sentence[sIdx];
                     sIdx++;
                 }
 
-                // Find matching cluster in reading
                 let anchor = '';
                 if (sIdx < sentence.length) {
                     anchor = sentence[sIdx];
@@ -329,9 +335,13 @@ const PronunciationPage: React.FC = () => {
                 }
                 segments.push({ k: kCluster, r: rCluster, isKanji: true });
             } else {
+                // If it's kana/punctuation, try to find it in reading to stay in sync
+                const rCharIdx = reading.indexOf(char, rIdx);
+                if (rCharIdx !== -1) {
+                    rIdx = rCharIdx + 1;
+                }
                 segments.push({ k: char, r: char, isKanji: false });
                 sIdx++;
-                rIdx++;
             }
         }
         return segments;
