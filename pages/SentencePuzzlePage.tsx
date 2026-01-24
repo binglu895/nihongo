@@ -337,7 +337,7 @@ const SentencePuzzlePage: React.FC = () => {
 
                     {/* Main content wrapper with relative positioning for the report button */}
                     <div className="text-center space-y-8 relative">
-                        <div className="flex items-center justify-center gap-4">
+                        <div className="flex items-center justify-center gap-4 relative group">
                             <p className="text-xl md:text-2xl text-ghost-grey dark:text-gray-400 font-bold max-w-lg">
                                 {preferredLang === 'Chinese' ? current.meaning_zh : current.meaning}
                             </p>
@@ -346,15 +346,14 @@ const SentencePuzzlePage: React.FC = () => {
                                     <span className="material-symbols-outlined !text-xl">volume_up</span>
                                 </button>
                             )}
-                        </div>
 
-                        {/* Top-right Report Button */}
-                        <ReportButton
-                            itemType="puzzle"
-                            itemId={current.id}
-                            onReported={handleReport}
-                            className="absolute -top-12 right-0 sm:-right-8 size-10 z-20"
-                        />
+                            {/* Floating Report Button */}
+                            <ReportButton
+                                itemType="puzzle"
+                                itemId={current.id}
+                                className="absolute -top-2 -right-4 size-8 opacity-40 hover:opacity-100 group-hover:opacity-70 transition-all z-20"
+                            />
+                        </div>
 
                         <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-4 text-3xl md:text-5xl font-black text-charcoal dark:text-white leading-relaxed">
                             {current.puzzleSegments.map((seg: any, idx: number) => {

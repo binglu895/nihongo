@@ -328,17 +328,10 @@ const ListeningQuizPage: React.FC = () => {
                     ></div>
                 </div>
                 <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <button onClick={() => navigate('/dashboard')} className="flex items-center gap-2 text-ghost-grey hover:text-primary transition-colors font-bold text-sm">
-                            <span className="material-symbols-outlined !text-xl">arrow_back</span>
-                            <span>Exit</span>
-                        </button>
-                        <ReportButton
-                            itemType="listening"
-                            itemId={questions[currentIdx]?.id}
-                            className="size-8"
-                        />
-                    </div>
+                    <button onClick={() => navigate('/dashboard')} className="flex items-center gap-2 text-ghost-grey hover:text-primary transition-colors font-bold text-sm">
+                        <span className="material-symbols-outlined !text-xl">arrow_back</span>
+                        <span>Exit</span>
+                    </button>
                     <div className="flex flex-col items-center">
                         <div className="text-[10px] font-black uppercase tracking-[0.2em] text-ghost-grey">
                             {isReviewMode ? 'Listening Review' : 'Listening Practice'}
@@ -364,7 +357,12 @@ const ListeningQuizPage: React.FC = () => {
                 <div className="w-full max-w-2xl">
 
 
-                    <div className="flex flex-col items-center mb-16">
+                    <div className="flex flex-col items-center mb-16 relative group">
+                        <ReportButton
+                            itemType="listening"
+                            itemId={questions[currentIdx]?.id}
+                            className="absolute -top-2 -right-4 size-8 opacity-40 hover:opacity-100 group-hover:opacity-70 transition-all z-20"
+                        />
                         <div className="mb-6 flex gap-2 items-center">
                             <label className="text-xs font-bold uppercase tracking-widest text-ghost-grey dark:text-slate-400">Voice:</label>
                             <select

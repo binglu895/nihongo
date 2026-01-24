@@ -393,14 +393,14 @@ const KanjiPage: React.FC = () => {
 
             <main className="flex-grow flex flex-col items-center justify-center px-6 pt-24 pb-12 w-full">
                 {/* question card container */}
-                <div className="w-full max-w-3xl relative">
-                    <ReportButton
-                        itemType="vocabulary"
-                        itemId={currentQuestion.id}
-                        className="absolute -top-12 right-0 size-10 z-20"
-                    />
+                <div className="w-full max-w-3xl">
                     {/* Question Area */}
-                    <div className="w-full text-center mb-10 animate-in fade-in zoom-in-95 duration-500">
+                    <div className="w-full text-center mb-10 animate-in fade-in zoom-in-95 duration-500 relative group">
+                        <ReportButton
+                            itemType="vocabulary"
+                            itemId={currentQuestion.id}
+                            className="absolute -top-2 -right-4 size-8 opacity-40 hover:opacity-100 group-hover:opacity-70 transition-all z-20"
+                        />
                         <h1 className="text-4xl md:text-6xl font-black leading-[1.4] mb-3 text-charcoal dark:text-white tracking-tight">
                             {(currentQuestion?.sentence || '').split('（　　）').map((part: string, i: number, arr: any[]) => (
                                 <React.Fragment key={i}>

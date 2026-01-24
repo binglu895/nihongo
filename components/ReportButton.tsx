@@ -72,19 +72,17 @@ const ReportButton: React.FC<ReportButtonProps> = ({ itemType, itemId, onReporte
                         className="fixed inset-0 z-30"
                         onClick={() => setShowMenu(false)}
                     />
-                    <div className="absolute top-full right-0 mt-2 z-40 bg-white dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl p-2 flex flex-col gap-1 min-w-[140px] animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute top-full right-0 mt-2 z-40 bg-white dark:bg-slate-900 border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl p-2 flex flex-col gap-1 min-w-[120px] animate-in fade-in zoom-in-95 duration-200">
                         <button
                             onClick={() => handleReport('wrong_question')}
-                            className="px-4 py-2.5 text-left text-sm font-bold text-charcoal dark:text-white hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-all flex items-center gap-2"
+                            className="px-4 py-2 text-left text-xs font-black uppercase tracking-wider text-charcoal dark:text-white hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-all"
                         >
-                            <span className="material-symbols-outlined !text-base">quiz</span>
                             Wrong Question
                         </button>
                         <button
                             onClick={() => handleReport('wrong_answer')}
-                            className="px-4 py-2.5 text-left text-sm font-bold text-charcoal dark:text-white hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-all flex items-center gap-2"
+                            className="px-4 py-2 text-left text-xs font-black uppercase tracking-wider text-charcoal dark:text-white hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-all"
                         >
-                            <span className="material-symbols-outlined !text-base">check_circle</span>
                             Wrong Answer
                         </button>
                     </div>
