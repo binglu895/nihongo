@@ -227,6 +227,7 @@ const PronunciationPage: React.FC = () => {
     const startRecording = async () => {
         setRecognizedText('');
         recognizedTextRef.current = '';
+        setAnswered(false);
         setRecordedBlob(null);
         setIsRecording(true);
         chunksRef.current = [];
@@ -397,6 +398,7 @@ const PronunciationPage: React.FC = () => {
         setCurrentIdx(prev => prev + 1);
         setAnswered(false);
         setRecognizedText('');
+        recognizedTextRef.current = '';
         setRecordedBlob(null);
         setLastGainedXP(null);
     };
@@ -432,7 +434,6 @@ const PronunciationPage: React.FC = () => {
 
     const renderDiff = () => {
         const current = questions[currentIdx];
-        if (!recognizedText) return <span className="text-ghost-grey opacity-50 italic">Waiting for recording...</span>;
 
         const segments = getAlignedSegments(current.sentence, current.reading || '');
         let userRemaining = normalizeText(recognizedText);
@@ -574,7 +575,7 @@ const PronunciationPage: React.FC = () => {
 
                         <div className="space-y-2">
                             <div className="text-5xl md:text-7xl font-black text-charcoal dark:text-white leading-tight tracking-tight">
-                                {answered ? current.sentence : renderDiff()}
+                                {(isRecording || recognizedText || answered) ? renderDiff() : current.sentence}
                             </div>
                             <p className="text-lg font-bold text-ghost-grey dark:text-slate-500 opacity-60">{current.reading}</p>
                         </div>
@@ -582,26 +583,34 @@ const PronunciationPage: React.FC = () => {
 
                     <div className="bg-white dark:bg-slate-900 rounded-[32px] p-8 border border-black/5 dark:border-white/5 shadow-2xl space-y-8">
                         <div className="flex flex-col items-center gap-6">
-                            <button
-                                onMouseDown={!answered ? startRecording : undefined}
-                                onMouseUp={!answered ? stopRecording : undefined}
-                                onTouchStart={!answered ? startRecording : undefined}
-                                onTouchEnd={!answered ? stopRecording : undefined}
-                                onClick={answered ? playMyRecording : undefined}
-                                className={`size-24 rounded-full flex items-center justify-center transition-all shadow-2xl relative
-                                    ${isRecording
-                                        ? 'bg-rose-500 text-white scale-110 ring-8 ring-rose-500/20'
-                                        : answered
-                                            ? 'bg-emerald-500 text-white hover:scale-105 active:scale-95'
+                            <div className="flex items-center gap-8">
+                                <button
+                                    onMouseDown={startRecording}
+                                    onMouseUp={stopRecording}
+                                    onTouchStart={startRecording}
+                                    onTouchEnd={stopRecording}
+                                    className={`size-24 rounded-full flex items-center justify-center transition-all shadow-2xl relative
+                                        ${isRecording
+                                            ? 'bg-rose-500 text-white scale-110 ring-8 ring-rose-500/20'
                                             : 'bg-primary text-white hover:scale-105 active:scale-95'}`}
-                            >
-                                {isRecording && <div className="absolute inset-0 rounded-full animate-ping bg-rose-500/30"></div>}
-                                <span className="material-symbols-outlined !text-4xl">
-                                    {isRecording ? 'graphic_eq' : answered ? 'play_arrow' : 'mic'}
-                                </span>
-                            </button>
+                                >
+                                    {isRecording && <div className="absolute inset-0 rounded-full animate-ping bg-rose-500/30"></div>}
+                                    <span className="material-symbols-outlined !text-4xl">
+                                        {isRecording ? 'graphic_eq' : 'mic'}
+                                    </span>
+                                </button>
+
+                                {recordedBlob && !isRecording && (
+                                    <button
+                                        onClick={playMyRecording}
+                                        className="size-16 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all animate-in zoom-in"
+                                    >
+                                        <span className="material-symbols-outlined !text-3xl">play_arrow</span>
+                                    </button>
+                                )}
+                            </div>
                             <p className="text-sm font-black text-ghost-grey dark:text-slate-400 uppercase tracking-[0.2em]">
-                                {isRecording ? 'Recording Now...' : answered ? 'Listen to yourself' : 'Hold to record your voice'}
+                                {isRecording ? 'Recording Now...' : 'Hold to record your voice'}
                             </p>
                         </div>
 
