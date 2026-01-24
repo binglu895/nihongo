@@ -20,6 +20,9 @@ const SentencePuzzlePage: React.FC = () => {
     const [failedIdsInSession] = useState<Set<string>>(new Set());
     const [lastGainedXP, setLastGainedXP] = useState<number | null>(null);
     const [xpNotificationKey, setXpNotificationKey] = useState(0);
+    const [showReportMenu, setShowReportMenu] = useState(false);
+    const [isReporting, setIsReporting] = useState(false);
+    const [reportStatus, setReportStatus] = useState<'idle' | 'success' | 'error' | 'duplicate'>('idle');
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
@@ -75,6 +78,7 @@ const SentencePuzzlePage: React.FC = () => {
                     .from('sentence_puzzles')
                     .select('*')
                     .eq('level', level)
+                    .eq('is_active', true)
                     .in('id', ids);
                 questionData = data || [];
             }
@@ -86,7 +90,7 @@ const SentencePuzzlePage: React.FC = () => {
                 .gt('correct_count', 0);
 
             const learnedIds = learnedProgress?.map(p => p.puzzle_id) || [];
-            let query = supabase.from('sentence_puzzles').select('*').eq('level', level);
+            let query = supabase.from('sentence_puzzles').select('*').eq('level', level).eq('is_active', true);
             if (category !== '综合') {
                 query = query.eq('category', category);
             }
@@ -245,9 +249,37 @@ const SentencePuzzlePage: React.FC = () => {
         setLastGainedXP(null);
     };
 
-    const handleReport = () => {
-        // Skip current question
-        handleNext();
+    const handleReport = async (reason: 'invalid_question' | 'incorrect_answer') => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        setIsReporting(true);
+        setReportStatus('idle');
+
+        const { error } = await supabase
+            .from('sentence_puzzle_reports')
+            .insert({
+                user_id: user.id,
+                puzzle_id: questions[currentIdx].id,
+                reason
+            });
+
+        if (error) {
+            if (error.code === '23505') { // Unique constraint violation
+                setReportStatus('duplicate');
+            } else {
+                setReportStatus('error');
+            }
+            setTimeout(() => setReportStatus('idle'), 3000);
+        } else {
+            setReportStatus('success');
+            setTimeout(() => {
+                setReportStatus('idle');
+                setShowReportMenu(false);
+                handleNext();
+            }, 1500);
+        }
+        setIsReporting(false);
     };
 
     const playAudio = () => {
@@ -327,14 +359,54 @@ const SentencePuzzlePage: React.FC = () => {
 
             <main className="flex-1 flex flex-col items-center justify-center p-6 pt-24">
                 <div className="w-full max-w-3xl space-y-12 relative">
-                    {/* Top-right Report Button */}
-                    <button
-                        onClick={handleReport}
-                        title="Report Problem"
-                        className="absolute -top-12 right-0 sm:-right-8 size-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-900 border border-black/5 dark:border-white/5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all shadow-sm active:scale-95 z-20"
-                    >
-                        <span className="material-symbols-outlined !text-2xl">report</span>
-                    </button>
+                    {/* Top-right Report Button & Menu */}
+                    <div className="absolute -top-12 right-0 sm:-right-8 z-20 flex flex-col items-end">
+                        <button
+                            onClick={() => setShowReportMenu(!showReportMenu)}
+                            title="Report Problem"
+                            className={`size-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-900 border transition-all shadow-sm active:scale-95
+                                ${showReportMenu ? 'border-primary text-primary' : 'border-black/5 dark:border-white/5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20'}`}
+                        >
+                            <span className="material-symbols-outlined !text-2xl">{showReportMenu ? 'close' : 'report'}</span>
+                        </button>
+
+                        {showReportMenu && (
+                            <div className="mt-2 w-48 bg-white dark:bg-slate-900 border border-black/5 dark:border-white/5 rounded-2xl shadow-2xl p-2 animate-in fade-in slide-in-from-top-2 flex flex-col gap-1 overflow-hidden">
+                                <button
+                                    onClick={() => handleReport('invalid_question')}
+                                    disabled={isReporting}
+                                    className="px-4 py-3 text-left text-xs font-black uppercase tracking-tight text-charcoal dark:text-white hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-colors flex items-center justify-between group"
+                                >
+                                    <span>Invalid Question</span>
+                                    <span className="material-symbols-outlined !text-sm opacity-0 group-hover:opacity-100 transition-opacity">flag</span>
+                                </button>
+                                <button
+                                    onClick={() => handleReport('incorrect_answer')}
+                                    disabled={isReporting}
+                                    className="px-4 py-3 text-left text-xs font-black uppercase tracking-tight text-charcoal dark:text-white hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-colors flex items-center justify-between group"
+                                >
+                                    <span>Incorrect Answer</span>
+                                    <span className="material-symbols-outlined !text-sm opacity-0 group-hover:opacity-100 transition-opacity">rule</span>
+                                </button>
+
+                                {reportStatus === 'success' && (
+                                    <div className="px-4 py-2 text-[10px] font-bold text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg animate-pulse">
+                                        Report submitted! Skipping...
+                                    </div>
+                                )}
+                                {reportStatus === 'duplicate' && (
+                                    <div className="px-4 py-2 text-[10px] font-bold text-amber-500 bg-amber-50 dark:bg-amber-500/10 rounded-lg">
+                                        You already reported this.
+                                    </div>
+                                )}
+                                {reportStatus === 'error' && (
+                                    <div className="px-4 py-2 text-[10px] font-bold text-rose-500 bg-rose-50 dark:bg-rose-900/20 rounded-lg">
+                                        Failed to submit.
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
 
                     <div className="text-center space-y-8">
                         <div className="flex items-center justify-center gap-4">
