@@ -24,8 +24,8 @@ const PronunciationPage: React.FC = () => {
     const [isReporting, setIsReporting] = useState(false);
     const [reportStatus, setReportStatus] = useState<'idle' | 'success' | 'error' | 'duplicate'>('idle');
     const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
-    const [selectedVoiceName, setSelectedVoiceName] = useState<string>('');
     const [recognition, setRecognition] = useState<any>(null);
+    const [voiceMode, setVoiceMode] = useState<'default' | 'sakura' | 'sakura07' | 'sakura07reading'>('default');
 
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -82,9 +82,6 @@ const PronunciationPage: React.FC = () => {
             const voices = window.speechSynthesis.getVoices();
             const jaVoices = voices.filter(v => v.lang.startsWith('ja'));
             setAvailableVoices(jaVoices);
-            if (jaVoices.length > 0 && !selectedVoiceName) {
-                setSelectedVoiceName(jaVoices[0].name);
-            }
         };
         loadVoices();
         window.speechSynthesis.onvoiceschanged = loadVoices;
@@ -269,23 +266,49 @@ const PronunciationPage: React.FC = () => {
         }
     };
 
+    const getAudioUrl = (originalUrl: string) => {
+        if (!originalUrl) return '';
+        if (voiceMode === 'default') return originalUrl;
+
+        // Match ListeningQuizPage logic for directory switching
+        if (!originalUrl.includes('/n5/')) return originalUrl;
+
+        switch (voiceMode) {
+            case 'sakura': return originalUrl.replace('/n5/', '/n5_sakura/');
+            case 'sakura07': return originalUrl.replace('/n5/', '/n5_sakura_07/');
+            case 'sakura07reading': return originalUrl.replace('/n5/', '/n5_sakura_07_reading/');
+            default: return originalUrl;
+        }
+    };
+
     const playReference = () => {
         const current = questions[currentIdx];
         if (current.audio_url) {
             if (audioRef.current) {
-                audioRef.current.src = current.audio_url;
-                audioRef.current.play();
+                const url = getAudioUrl(current.audio_url);
+                audioRef.current.src = url;
+                audioRef.current.play().catch(e => {
+                    console.error("Audio play failed, falling back to TTS:", e);
+                    fallbackToTTS(current.sentence || '');
+                });
                 return;
             }
         }
 
-        // Fallback to TTS
-        const utterance = new SpeechSynthesisUtterance(current.sentence);
+        fallbackToTTS(current.sentence || '');
+    };
+
+    const fallbackToTTS = (text: string) => {
+        if (!text) return;
+        const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'ja-JP';
-        if (selectedVoiceName) {
-            const voice = availableVoices.find(v => v.name === selectedVoiceName);
-            if (voice) utterance.voice = voice;
+
+        // Use the first available Japanese voice as default for fallback
+        if (availableVoices.length > 0) {
+            const voice = availableVoices.find(v => v.lang.startsWith('ja')) || availableVoices[0];
+            utterance.voice = voice;
         }
+
         window.speechSynthesis.speak(utterance);
     };
 
@@ -561,15 +584,18 @@ const PronunciationPage: React.FC = () => {
                                     <span className="material-symbols-outlined">volume_up</span>
                                     <span className="text-sm font-black uppercase tracking-widest">Listen Reference</span>
                                 </button>
-                                {availableVoices.length > 1 && (
+                                <div className="flex gap-2 items-center">
                                     <select
-                                        value={selectedVoiceName}
-                                        onChange={(e) => setSelectedVoiceName(e.target.value)}
-                                        className="bg-slate-50 dark:bg-slate-800 border-none rounded-full px-4 py-3 text-xs font-bold text-ghost-grey dark:text-slate-400 focus:ring-1 focus:ring-primary shadow-inner"
+                                        value={voiceMode}
+                                        onChange={(e) => setVoiceMode(e.target.value as any)}
+                                        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-4 py-3 text-xs font-bold text-charcoal dark:text-slate-200 shadow-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
                                     >
-                                        {availableVoices.map(v => <option key={v.name} value={v.name}>{v.name}</option>)}
+                                        <option value="default">Default (Google)</option>
+                                        <option value="sakura">Sakura (Normal)</option>
+                                        <option value="sakura07">Sakura (0.7x Speed)</option>
+                                        <option value="sakura07reading">Sakura (Reading, 0.7x)</option>
                                     </select>
-                                )}
+                                </div>
                             </div>
                         </div>
 
