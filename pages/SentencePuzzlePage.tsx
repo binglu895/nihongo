@@ -328,8 +328,8 @@ const SentencePuzzlePage: React.FC = () => {
             <main className="flex-1 flex flex-col items-center justify-center p-6 pt-24">
                 <div className="w-full max-w-3xl space-y-12">
                     <div className="text-center space-y-8">
-                        <div className="flex items-center justify-center gap-4">
-                            <p className="text-xl md:text-2xl text-ghost-grey dark:text-gray-400 font-bold max-w-lg">
+                        <div className="flex items-center justify-center gap-4 relative group">
+                            <p className="text-xl md:text-2xl text-ghost-grey dark:text-gray-400 font-bold max-w-[80%] leading-snug">
                                 {preferredLang === 'Chinese' ? current.meaning_zh : current.meaning}
                             </p>
                             {current.audio_url && (
@@ -337,6 +337,15 @@ const SentencePuzzlePage: React.FC = () => {
                                     <span className="material-symbols-outlined !text-xl">volume_up</span>
                                 </button>
                             )}
+
+                            {/* Floating Report Button */}
+                            <button
+                                onClick={handleReport}
+                                title="Report Problem"
+                                className="absolute -top-4 -right-4 size-8 flex items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-500 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all opacity-40 hover:opacity-100 group-hover:opacity-70 active:scale-90"
+                            >
+                                <span className="material-symbols-outlined !text-base">error</span>
+                            </button>
                         </div>
 
                         <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-4 text-3xl md:text-5xl font-black text-charcoal dark:text-white leading-relaxed">
@@ -397,14 +406,6 @@ const SentencePuzzlePage: React.FC = () => {
                         >
                             <span className="material-symbols-outlined !text-lg">restart_alt</span>
                             Clear
-                        </button>
-
-                        <button
-                            onClick={handleReport}
-                            className="flex-1 py-4 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-all border border-rose-100 dark:border-rose-900/30 shadow-sm"
-                        >
-                            <span className="material-symbols-outlined !text-lg">report</span>
-                            Report
                         </button>
 
                         {answered && (
