@@ -279,13 +279,80 @@ const PronunciationPage: React.FC = () => {
         }
     };
 
+    const normalizeText = (text: string) => {
+        return text.replace(/[、。！？\s.,!?:;"'「」]/g, '').trim();
+    };
+
+    // Helper to align sentence (Kanji) with reading (Kana)
+    const getAlignedSegments = (sentence: string, reading: string) => {
+        const segments: { k: string; r: string; isKanji: boolean }[] = [];
+        let sIdx = 0;
+        let rIdx = 0;
+
+        while (sIdx < sentence.length) {
+            const char = sentence[sIdx];
+            // Check if char is Kanji
+            const isKanji = /[\u4e00-\u9faf]/.test(char);
+
+            if (isKanji) {
+                // Find Kanji cluster
+                let kCluster = '';
+                while (sIdx < sentence.length && /[\u4e00-\u9faf]/.test(sentence[sIdx])) {
+                    kCluster += sentence[sIdx];
+                    sIdx++;
+                }
+
+                // Find matching cluster in reading
+                let anchor = '';
+                if (sIdx < sentence.length) {
+                    anchor = sentence[sIdx];
+                }
+
+                let rCluster = '';
+                if (anchor) {
+                    const nextAnchorIdx = reading.indexOf(anchor, rIdx);
+                    if (nextAnchorIdx !== -1) {
+                        rCluster = reading.substring(rIdx, nextAnchorIdx);
+                        rIdx = nextAnchorIdx;
+                    } else {
+                        rCluster = reading.substring(rIdx);
+                        rIdx = reading.length;
+                    }
+                } else {
+                    rCluster = reading.substring(rIdx);
+                    rIdx = reading.length;
+                }
+                segments.push({ k: kCluster, r: rCluster, isKanji: true });
+            } else {
+                segments.push({ k: char, r: char, isKanji: false });
+                sIdx++;
+                rIdx++;
+            }
+        }
+        return segments;
+    };
+
     const checkAnswer = () => {
         const current = questions[currentIdx];
-        const normalizedTarget = current.sentence.replace(/[、。！？\s]/g, '');
-        const normalizedReading = (current.reading || '').replace(/[、。！？\s]/g, '');
-        const normalizedUser = recognizedText.replace(/[、。！？\s]/g, '');
+        const normalizedUser = normalizeText(recognizedText);
 
-        const isCorrect = normalizedUser === normalizedTarget || normalizedUser === normalizedReading;
+        const segments = getAlignedSegments(current.sentence, current.reading || '');
+        const regexStr = segments
+            .map(seg => {
+                const k = normalizeText(seg.k);
+                const r = normalizeText(seg.r);
+                if (!k && !r) return '';
+                if (seg.isKanji) return `(${k}|${r})`;
+                return k;
+            })
+            .filter(Boolean)
+            .join('');
+
+        const flexibleRegex = new RegExp(`^${regexStr}$`);
+        const isCorrect = flexibleRegex.test(normalizedUser) ||
+            normalizedUser === normalizeText(current.sentence) ||
+            normalizedUser === normalizeText(current.reading || '');
+
         setAnswered(true);
         updateSRS(isCorrect);
 
@@ -337,18 +404,48 @@ const PronunciationPage: React.FC = () => {
     };
 
     const renderDiff = () => {
-        const target = questions[currentIdx].sentence;
+        const current = questions[currentIdx];
         if (!recognizedText) return <span className="text-ghost-grey opacity-50 italic">Waiting for recording...</span>;
 
-        return target.split('').map((char, i) => {
-            const userChar = recognizedText[i];
-            const isMatch = userChar === char;
-            return (
-                <span key={i} className={isMatch ? 'text-emerald-500' : 'text-rose-500 underline decoration-rose-300'}>
-                    {char}
-                </span>
-            );
-        });
+        const segments = getAlignedSegments(current.sentence, current.reading || '');
+        let userRemaining = normalizeText(recognizedText);
+
+        return (
+            <div className="flex flex-wrap justify-center gap-x-1">
+                {segments.map((seg, i) => {
+                    const normK = normalizeText(seg.k);
+                    const normR = normalizeText(seg.r);
+
+                    if (!normK) return null;
+
+                    let matched = false;
+                    let matchLen = 0;
+
+                    if (userRemaining.startsWith(normK)) {
+                        matched = true;
+                        matchLen = normK.length;
+                    } else if (seg.isKanji && userRemaining.startsWith(normR)) {
+                        matched = true;
+                        matchLen = normR.length;
+                    }
+
+                    if (matched) {
+                        userRemaining = userRemaining.substring(matchLen);
+                        return <span key={i} className="text-emerald-500">{seg.k}</span>;
+                    } else {
+                        // If it's punctuation in target, just show it normally
+                        if (!seg.isKanji && /[、。！？\s.,!?:;"'「」]/.test(seg.k)) {
+                            return <span key={i} className="text-charcoal/30 dark:text-white/30">{seg.k}</span>;
+                        }
+                        return (
+                            <span key={i} className="text-rose-500 underline decoration-rose-300 decoration-2 underline-offset-4">
+                                {seg.k}
+                            </span>
+                        );
+                    }
+                })}
+            </div>
+        );
     };
 
     if (loading) return <div className="min-h-screen bg-background-light dark:bg-background-dark flex items-center justify-center p-6 text-charcoal dark:text-white font-black italic animate-pulse">Initializing Sensei...</div>;
