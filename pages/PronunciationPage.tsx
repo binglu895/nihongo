@@ -30,6 +30,7 @@ const PronunciationPage: React.FC = () => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
+    const recognizedTextRef = useRef('');
 
     useEffect(() => {
         initQuiz();
@@ -55,7 +56,9 @@ const PronunciationPage: React.FC = () => {
                         interimTranscript += event.results[i][0].transcript;
                     }
                 }
-                setRecognizedText(finalTranscript || interimTranscript);
+                const text = finalTranscript || interimTranscript;
+                setRecognizedText(text);
+                recognizedTextRef.current = text;
             };
 
             recog.onend = () => {
@@ -223,6 +226,7 @@ const PronunciationPage: React.FC = () => {
 
     const startRecording = async () => {
         setRecognizedText('');
+        recognizedTextRef.current = '';
         setRecordedBlob(null);
         setIsRecording(true);
         chunksRef.current = [];
@@ -348,10 +352,11 @@ const PronunciationPage: React.FC = () => {
     };
 
     const checkAnswer = () => {
-        if (answered || !recognizedText) return;
+        const text = recognizedTextRef.current;
+        if (answered || !text) return;
 
         const current = questions[currentIdx];
-        const normalizedUser = normalizeText(recognizedText);
+        const normalizedUser = normalizeText(text);
 
         const segments = getAlignedSegments(current.sentence, current.reading || '');
         const regexStr = segments
