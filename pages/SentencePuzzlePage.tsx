@@ -118,13 +118,20 @@ const SentencePuzzlePage: React.FC = () => {
                     .filter((i: number) => i !== -1);
 
                 // Filter distractors to avoid overlapping with correct ones
-                const filteredDistractors = (q.distractors || []).filter(d => !uniqueCorrect.has(d));
+                const filteredDistractors = (q.distractors || []).filter((d: string) => !uniqueCorrect.has(d));
 
                 // Final options pool (unique strings)
-                let options = Array.from(new Set([...selectableTexts, ...filteredDistractors]));
-                options.sort(() => Math.random() - 0.5);
+                let optionsList = showDistractors
+                    ? Array.from(new Set([...selectableTexts, ...filteredDistractors]))
+                    : Array.from(new Set([...selectableTexts]));
 
-                return { ...q, puzzleSegments, placeholderIndices, options, selectableTexts };
+                // Robust Fischer-Yates Shuffle
+                for (let i = optionsList.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [optionsList[i], optionsList[j]] = [optionsList[j], optionsList[i]];
+                }
+
+                return { ...q, puzzleSegments, placeholderIndices, options: optionsList, selectableTexts };
             });
             setQuestions(processed.sort(() => Math.random() - 0.5));
         }

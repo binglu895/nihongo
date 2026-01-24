@@ -216,6 +216,24 @@ const SettingsPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
+
+                <div className="pt-6 border-t border-gray-50 dark:border-white/5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-charcoal dark:text-white text-base font-black leading-normal">Show Distractors</p>
+                      <p className="text-ghost-grey dark:text-slate-400 text-sm font-medium leading-snug">Include extra wrong options to increase difficulty.</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={showPuzzleDistractors}
+                        onChange={(e) => setShowPuzzleDistractors(e.target.checked)}
+                        className="sr-only peer"
+                      />
+                      <div className="w-14 h-8 bg-gray-100 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-200 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
