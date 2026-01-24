@@ -31,6 +31,8 @@ const PronunciationPage: React.FC = () => {
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
     const recognizedTextRef = useRef('');
+    const isRecordingRef = useRef(false);
+    const hasCheckedAnswerRef = useRef(false);
 
     useEffect(() => {
         initQuiz();
@@ -59,11 +61,19 @@ const PronunciationPage: React.FC = () => {
                 const text = finalTranscript || interimTranscript;
                 setRecognizedText(text);
                 recognizedTextRef.current = text;
+
+                // If user already released the button, check if we can verify now
+                if (!isRecordingRef.current && text && !hasCheckedAnswerRef.current) {
+                    checkAnswer();
+                }
             };
 
             recog.onend = () => {
                 // Auto-check when recognition stops
                 setIsRecording(false);
+                isRecordingRef.current = false;
+
+                // Final attempt to check
                 setTimeout(() => {
                     checkAnswer();
                 }, 100);
@@ -172,6 +182,7 @@ const PronunciationPage: React.FC = () => {
 
         setOverallProgress({ learned: learned || 0, total: total || 0 });
         setLoading(false);
+        hasCheckedAnswerRef.current = false;
     };
 
     const updateSRS = async (isCorrect: boolean) => {
@@ -227,8 +238,10 @@ const PronunciationPage: React.FC = () => {
     const startRecording = async () => {
         setRecognizedText('');
         recognizedTextRef.current = '';
+        hasCheckedAnswerRef.current = false;
         setRecordedBlob(null);
         setIsRecording(true);
+        isRecordingRef.current = true;
         chunksRef.current = [];
 
         try {
@@ -256,6 +269,7 @@ const PronunciationPage: React.FC = () => {
 
     const stopRecording = () => {
         setIsRecording(false);
+        isRecordingRef.current = false;
         if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
             mediaRecorderRef.current.stop();
         }
@@ -265,6 +279,11 @@ const PronunciationPage: React.FC = () => {
             } catch (e) {
                 console.error("Stop recognition failed:", e);
             }
+        }
+
+        // If we already have text, try checking immediately
+        if (recognizedTextRef.current) {
+            checkAnswer();
         }
     };
 
@@ -353,8 +372,9 @@ const PronunciationPage: React.FC = () => {
 
     const checkAnswer = () => {
         const text = recognizedTextRef.current;
-        if (answered || !text) return;
+        if (answered || !text || hasCheckedAnswerRef.current) return;
 
+        hasCheckedAnswerRef.current = true;
         const current = questions[currentIdx];
         const normalizedUser = normalizeText(text);
 
@@ -391,7 +411,9 @@ const PronunciationPage: React.FC = () => {
     const handleNext = () => {
         setCurrentIdx(prev => prev + 1);
         setAnswered(false);
+        hasCheckedAnswerRef.current = false;
         setRecognizedText('');
+        recognizedTextRef.current = '';
         setRecordedBlob(null);
         setLastGainedXP(null);
     };
