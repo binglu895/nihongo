@@ -110,16 +110,18 @@ const SentencePuzzlePage: React.FC = () => {
 
                 // The correct sequence for slots
                 const selectableTexts = q.correct_sequence || [];
+                const uniqueCorrect = new Set(selectableTexts);
 
                 // Find indices where text is '___'
                 const placeholderIndices = puzzleSegments
                     .map((s: any, i: number) => !s.isFixed ? i : -1)
                     .filter((i: number) => i !== -1);
 
-                let options = [...selectableTexts];
-                if (showDistractors && q.distractors && q.distractors.length > 0) {
-                    options = [...options, ...q.distractors];
-                }
+                // Filter distractors to avoid overlapping with correct ones
+                const filteredDistractors = (q.distractors || []).filter(d => !uniqueCorrect.has(d));
+
+                // Final options pool (unique strings)
+                let options = Array.from(new Set([...selectableTexts, ...filteredDistractors]));
                 options.sort(() => Math.random() - 0.5);
 
                 return { ...q, puzzleSegments, placeholderIndices, options, selectableTexts };
@@ -210,7 +212,7 @@ const SentencePuzzlePage: React.FC = () => {
             setAnswered(true);
             updateSRS(isCorrect);
             if (isCorrect) {
-                addXP('GRAMMAR', 0).then(res => {
+                addXP('GRAMMAR', 5).then(res => {
                     if (res) {
                         setLastGainedXP(res.xpGained);
                         setXpNotificationKey(prev => prev + 1);
@@ -234,6 +236,11 @@ const SentencePuzzlePage: React.FC = () => {
         setUserSelections([]);
         setAnswered(false);
         setLastGainedXP(null);
+    };
+
+    const handleReport = () => {
+        // Skip current question
+        handleNext();
     };
 
     const playAudio = () => {
@@ -379,10 +386,18 @@ const SentencePuzzlePage: React.FC = () => {
                     <div className="flex gap-4">
                         <button
                             onClick={handleReset}
-                            className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-charcoal dark:text-white rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                            className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-charcoal dark:text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all shadow-sm"
                         >
                             <span className="material-symbols-outlined !text-lg">restart_alt</span>
                             Clear
+                        </button>
+
+                        <button
+                            onClick={handleReport}
+                            className="flex-1 py-4 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-all border border-rose-100 dark:border-rose-900/30 shadow-sm"
+                        >
+                            <span className="material-symbols-outlined !text-lg">report</span>
+                            Report
                         </button>
 
                         {answered && (

@@ -41,16 +41,41 @@ def process():
             correct_sequence = item.get('correct_sequence', [])
             distractors = item.get('distractors', [])
             meaning_zh = item.get('translation_cn', '')
-            meaning_en = item.get('translation_en', '') # Might not exist in all
+            meaning_en = item.get('translation_en', '')
             
-            # Reconstruct segments for backward compatibility
+            # Reconstruct and clean: Ensure no duplicate blanks
             template_parts = template.split(' ')
-            segments = []
+            new_correct_sequence = []
+            used_in_blanks = set()
+            new_template_parts = []
+            
             cs_idx = 0
             for part in template_parts:
                 if not part: continue
                 if part == '___' and cs_idx < len(correct_sequence):
-                    segments.append(correct_sequence[cs_idx])
+                    val = correct_sequence[cs_idx]
+                    if val in used_in_blanks:
+                        # Already blanked out once, make this one fixed text
+                        new_template_parts.append(val)
+                    else:
+                        # First time seeing this as a blank
+                        new_template_parts.append('___')
+                        new_correct_sequence.append(val)
+                        used_in_blanks.add(val)
+                    cs_idx += 1
+                else:
+                    new_template_parts.append(part)
+            
+            # Reconstructed cleaned data
+            clean_template = " ".join(new_template_parts)
+            clean_correct_sequence = new_correct_sequence
+            
+            # Segments for compatibility
+            segments = []
+            cs_idx = 0
+            for part in new_template_parts:
+                if part == '___' and cs_idx < len(clean_correct_sequence):
+                    segments.append(clean_correct_sequence[cs_idx])
                     cs_idx += 1
                 else:
                     segments.append(part)
@@ -62,8 +87,8 @@ def process():
                 f"INSERT INTO sentence_puzzles (level, template, correct_sequence, distractors, meaning, meaning_zh, category, segments, audio_url) "
                 f"VALUES ("
                 f"{escape_sql(level)}, "
-                f"{escape_sql(template)}, "
-                f"{escape_sql(correct_sequence)}, "
+                f"{escape_sql(clean_template)}, "
+                f"{escape_sql(clean_correct_sequence)}, "
                 f"{escape_sql(distractors)}, "
                 f"{escape_sql(meaning_en)}, "
                 f"{escape_sql(meaning_zh)}, "
