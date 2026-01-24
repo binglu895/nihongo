@@ -10,6 +10,7 @@ import KanjiPage from './pages/KanjiPage';
 import PublicProfilePage from './pages/PublicProfilePage';
 import ListeningQuizPage from './pages/ListeningQuizPage';
 import SentencePuzzlePage from './pages/SentencePuzzlePage';
+import PronunciationPage from './pages/PronunciationPage';
 import { supabase } from './services/supabaseClient';
 
 const App: React.FC = () => {
@@ -88,6 +89,7 @@ const App: React.FC = () => {
           <Route path="/listening-quiz" element={<ListeningQuizPage />} />
           <Route path="/kanji" element={<KanjiPage />} />
           <Route path="/sentence-puzzle" element={<SentencePuzzlePage />} />
+          <Route path="/pronunciation" element={<PronunciationPage />} />
           <Route path="/profile/:referralCode" element={<PublicProfilePage />} />
         </Routes>
       </div>

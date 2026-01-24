@@ -17,7 +17,8 @@ const DashboardPage: React.FC = () => {
     vocabulary: { learned: 0, total: 0, due: 0, globalDue: 0 },
     grammar: { learned: 0, total: 0, due: 0, globalDue: 0 },
     listening: { learned: 0, total: 0, due: 0, globalDue: 0 },
-    puzzle: { learned: 0, total: 0, due: 0, globalDue: 0 }
+    puzzle: { learned: 0, total: 0, due: 0, globalDue: 0 },
+    pronunciation: { learned: 0, total: 0, due: 0, globalDue: 0 }
   });
 
   useEffect(() => {
@@ -43,15 +44,16 @@ const DashboardPage: React.FC = () => {
 
       // Fetch due items count from all categories
       const now = new Date(Date.now() + 5000).toISOString();
-      const [vocabDue, grammarDue, kanjiDue, listeningDue, puzzleDue] = await Promise.all([
+      const [vocabDue, grammarDue, kanjiDue, listeningDue, puzzleDue, pronunciationDue] = await Promise.all([
         supabase.from('user_vocabulary_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
         supabase.from('user_grammar_example_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
         supabase.from('user_kanji_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
         supabase.from('user_listening_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
-        supabase.from('user_sentence_puzzle_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now)
+        supabase.from('user_sentence_puzzle_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now),
+        supabase.from('user_pronunciation_progress').select('*', { count: 'exact', head: true }).eq('user_id', user.id).lte('next_review_at', now)
       ]);
 
-      const totalDue = (vocabDue.count || 0) + (grammarDue.count || 0) + (kanjiDue.count || 0) + (listeningDue.count || 0) + (puzzleDue.count || 0);
+      const totalDue = (vocabDue.count || 0) + (grammarDue.count || 0) + (kanjiDue.count || 0) + (listeningDue.count || 0) + (puzzleDue.count || 0) + (pronunciationDue.count || 0);
       // We will override this after fetchGlobalStats to be level-specific
       setDueCount(totalDue);
 
@@ -61,7 +63,8 @@ const DashboardPage: React.FC = () => {
         g: grammarDue.count || 0,
         k: kanjiDue.count || 0,
         l: listeningDue.count || 0,
-        p: puzzleDue.count || 0
+        p: puzzleDue.count || 0,
+        pr: pronunciationDue.count || 0
       });
 
     } catch (error) {
@@ -86,14 +89,16 @@ const DashboardPage: React.FC = () => {
     const gExampleIds = gLevelExamples.map(ex => ex.id);
     const lLevelIds = (await supabase.from('listening_questions').select('id').eq('difficulty', listeningDifficulty)).data?.map(l => l.id) || [];
     const pLevelIds = (await supabase.from('sentence_puzzles').select('id').eq('level', currentLevel)).data?.map(p => p.id) || [];
+    const prLevelIds = (await supabase.from('pronunciation_questions').select('id').eq('difficulty', listeningDifficulty)).data?.map(pr => pr.id) || [];
 
     // 2. Fetch Learned and Due counts
-    const [vProg, gProg, kProg, lProg, pProg] = await Promise.all([
+    const [vProg, gProg, kProg, lProg, pProg, prProg] = await Promise.all([
       supabase.from('user_vocabulary_progress').select('vocabulary_id, next_review_at, correct_count').eq('user_id', userId).in('vocabulary_id', vLevelIds),
       supabase.from('user_grammar_example_progress').select('grammar_example_id, next_review_at, correct_count').eq('user_id', userId).in('grammar_example_id', gExampleIds),
       supabase.from('user_kanji_progress').select('vocabulary_id, next_review_at, correct_count').eq('user_id', userId).in('vocabulary_id', vLevelIds),
       supabase.from('user_listening_progress').select('listening_question_id, next_review_at, correct_count').eq('user_id', userId).in('listening_question_id', lLevelIds),
-      supabase.from('user_sentence_puzzle_progress').select('puzzle_id, next_review_at, correct_count').eq('user_id', userId).in('puzzle_id', pLevelIds)
+      supabase.from('user_sentence_puzzle_progress').select('puzzle_id, next_review_at, correct_count').eq('user_id', userId).in('puzzle_id', pLevelIds),
+      supabase.from('user_pronunciation_progress').select('question_id, next_review_at, correct_count').eq('user_id', userId).in('question_id', prLevelIds)
     ]);
 
     const getStats = (progData: any[] | null, total: number | null, globalDue: number) => {
@@ -108,7 +113,8 @@ const DashboardPage: React.FC = () => {
       vocabulary: getStats(vProg.data, vLevelIds.length, globalDues.v),
       grammar: getStats(gProg.data, gExampleIds.length, globalDues.g),
       listening: getStats(lProg.data, lLevelIds.length, globalDues.l),
-      puzzle: getStats(pProg.data, pLevelIds.length, globalDues.p)
+      puzzle: getStats(pProg.data, pLevelIds.length, globalDues.p),
+      pronunciation: getStats(prProg.data, prLevelIds.length, globalDues.pr)
     });
 
     // Update dueCount to be level-specific
@@ -117,7 +123,8 @@ const DashboardPage: React.FC = () => {
       getStats(gProg.data, gExampleIds.length, globalDues.g).due +
       getStats(kProg.data, vLevelIds.length, globalDues.k).due +
       getStats(lProg.data, lLevelIds.length, globalDues.l).due +
-      getStats(pProg.data, pLevelIds.length, globalDues.p).due;
+      getStats(pProg.data, pLevelIds.length, globalDues.p).due +
+      getStats(prProg.data, prLevelIds.length, globalDues.pr).due;
     setDueCount(levelDue);
   };
 
@@ -146,7 +153,8 @@ const DashboardPage: React.FC = () => {
     { title: "Vocabulary", icon: "menu_book", desc: "Build your lexicon.", btn: "Start Practice", path: "/vocab-quiz", stats: stats.vocabulary },
     { title: "Grammar", icon: "architecture", desc: "Understand particles.", btn: "Start Practice", path: "/grammar-quiz", stats: stats.grammar },
     { title: "Listening", icon: "hearing", desc: "Native audio.", btn: "Start Practice", path: "/listening-quiz", stats: stats.listening },
-    { title: "Puzzle", icon: "extension", desc: "Sentence puzzle.", btn: "Start Practice", path: "/sentence-puzzle", stats: stats.puzzle }
+    { title: "Puzzle", icon: "extension", desc: "Sentence puzzle.", btn: "Start Practice", path: "/sentence-puzzle", stats: stats.puzzle },
+    { title: "Speak", icon: "mic", desc: "Pronunciation.", btn: "Start Practice", path: "/pronunciation", stats: stats.pronunciation }
   ];
 
   return (
@@ -191,6 +199,7 @@ const DashboardPage: React.FC = () => {
                   else if (stats.grammar.due > 0) navigate('/grammar-quiz?mode=review');
                   else if (stats.listening.due > 0) navigate('/listening-quiz?mode=review');
                   else if (stats.puzzle.due > 0) navigate('/sentence-puzzle?mode=review');
+                  else if (stats.pronunciation.due > 0) navigate('/pronunciation?mode=review');
                   else navigate('/vocab-quiz?mode=review');
                 }}
                 className="group relative flex items-center justify-center gap-3 bg-primary text-white font-black py-4 px-10 rounded-2xl text-lg shadow-xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-300"
@@ -219,7 +228,7 @@ const DashboardPage: React.FC = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 w-full max-w-[1400px] px-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full max-w-[1200px] px-2">
           {categories.map((card, i) => {
             const isCompleted = card.stats.learned >= card.stats.total && card.stats.total > 0;
             const hasReviews = card.stats.due > 0;
