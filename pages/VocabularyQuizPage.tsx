@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getExplanation } from '../services/geminiService';
 import { supabase } from '../services/supabaseClient';
 import { addXP, XP_VALUES } from '../services/gamificationService';
+import ReportButton from '../components/ReportButton';
 
 const VocabularyQuizPage: React.FC = () => {
     const navigate = useNavigate();
@@ -165,7 +166,11 @@ const VocabularyQuizPage: React.FC = () => {
                 query = query.not('id', 'in', `(${exclusionList.join(',')})`);
             }
 
-            const { data, error } = await query.limit(goal);
+            // Fetch reporting threshold
+            const { data: config } = await supabase.from('system_config').select('value').eq('key', 'report_hide_threshold').single();
+            const threshold = parseInt(config?.value as string) || 50;
+
+            const { data, error } = await query.lt('report_count', threshold).limit(goal);
             if (error) {
                 console.error('Supabase Vocab Query Error:', error);
             }
@@ -354,7 +359,12 @@ const VocabularyQuizPage: React.FC = () => {
             </header>
 
             <main className="flex-1 flex flex-col items-center justify-center p-6 pt-24">
-                <div className="w-full max-w-lg space-y-8">
+                <div className="w-full max-w-lg space-y-8 relative">
+                    <ReportButton
+                        itemType="vocabulary"
+                        itemId={currentQuestion.id}
+                        className="absolute -top-12 right-0 size-10 z-20"
+                    />
                     <div className="text-center space-y-6">
                         <h1 className="text-4xl md:text-5xl font-black text-charcoal dark:text-white leading-tight">
                             {currentQuestion.sentence || currentQuestion.word}

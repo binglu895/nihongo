@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { addXP } from '../services/gamificationService';
+import ReportButton from '../components/ReportButton';
 
 const smartShuffle = (list: any[]) => {
     if (list.length <= 1) return list;
@@ -145,10 +146,15 @@ const GrammarQuizPage: React.FC = () => {
             if (dueProgress && dueProgress.length > 0) {
                 const ids = dueProgress.map(p => p.grammar_example_id);
                 // Filter examples by current level's grammar points
+                // Fetch reporting threshold
+                const { data: config } = await supabase.from('system_config').select('value').eq('key', 'report_hide_threshold').single();
+                const threshold = parseInt(config?.value as string) || 50;
+
                 const { data: examples } = await supabase
                     .from('grammar_examples')
                     .select('*, grammar_points(title)')
                     .in('grammar_point_id', pointIds) // Limit to current level
+                    .lt('report_count', threshold)
                     .in('id', ids);
 
                 if (examples) {
@@ -194,7 +200,11 @@ const GrammarQuizPage: React.FC = () => {
                 query = query.not('id', 'in', `(${exclusionList.join(',')})`);
             }
 
-            const { data: examples, error } = await query.limit(goal);
+            // Fetch reporting threshold
+            const { data: config } = await supabase.from('system_config').select('value').eq('key', 'report_hide_threshold').single();
+            const threshold = parseInt(config?.value as string) || 50;
+
+            const { data: examples, error } = await query.lt('report_count', threshold).limit(goal);
             if (error) console.error('Supabase Grammar Query Error:', error);
 
             if (examples && examples.length > 0) {
@@ -408,7 +418,12 @@ const GrammarQuizPage: React.FC = () => {
             </header>
 
             <main className="flex-1 flex flex-col items-center justify-center p-6 pt-24">
-                <div className="w-full max-w-2xl space-y-8">
+                <div className="w-full max-w-2xl space-y-8 relative">
+                    <ReportButton
+                        itemType="grammar"
+                        itemId={currentQuestion.id}
+                        className="absolute -top-12 right-0 size-8 z-20"
+                    />
                     <div className="text-center space-y-6">
                         <h1 className="text-4xl md:text-5xl font-black text-charcoal dark:text-white leading-tight">
                             {displaySentence}

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { addXP } from '../services/gamificationService';
+import ReportButton from '../components/ReportButton';
 
 const ListeningQuizPage: React.FC = () => {
     const navigate = useNavigate();
@@ -96,7 +97,12 @@ const ListeningQuizPage: React.FC = () => {
             if (learnedIds.length > 0) {
                 query = query.not('id', 'in', `(${learnedIds.join(',')})`);
             }
-            const { data } = await query.limit(goal);
+
+            // Fetch reporting threshold
+            const { data: config } = await supabase.from('system_config').select('value').eq('key', 'report_hide_threshold').single();
+            const threshold = parseInt(config?.value as string) || 50;
+
+            const { data } = await query.lt('report_count', threshold).limit(goal);
             questionData = data || [];
         }
 
@@ -322,10 +328,17 @@ const ListeningQuizPage: React.FC = () => {
                     ></div>
                 </div>
                 <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-                    <button onClick={() => navigate('/dashboard')} className="flex items-center gap-2 text-ghost-grey hover:text-primary transition-colors font-bold text-sm">
-                        <span className="material-symbols-outlined !text-xl">arrow_back</span>
-                        <span>Exit</span>
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <button onClick={() => navigate('/dashboard')} className="flex items-center gap-2 text-ghost-grey hover:text-primary transition-colors font-bold text-sm">
+                            <span className="material-symbols-outlined !text-xl">arrow_back</span>
+                            <span>Exit</span>
+                        </button>
+                        <ReportButton
+                            itemType="listening"
+                            itemId={questions[currentIdx]?.id}
+                            className="size-8"
+                        />
+                    </div>
                     <div className="flex flex-col items-center">
                         <div className="text-[10px] font-black uppercase tracking-[0.2em] text-ghost-grey">
                             {isReviewMode ? 'Listening Review' : 'Listening Practice'}
