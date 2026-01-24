@@ -1,0 +1,2838 @@
+[
+  {
+    "id": "M1-1",
+    "translation_cn": "我在房间里学习。",
+    "template": "私は ___ で ___ をします。",
+    "correct_sequence": [
+      "部屋",
+      "勉強"
+    ],
+    "distractors": [
+      "学校",
+      "仕事",
+      "に"
+    ],
+    "grammar_point": "场所名词与动作名词"
+  },
+  {
+    "id": "M1-2",
+    "translation_cn": "每天早上喝咖啡。",
+    "template": "毎朝 ___ ___ 飲みます。",
+    "correct_sequence": [
+      "コーヒー",
+      "を"
+    ],
+    "distractors": [
+      "お茶",
+      "が",
+      "は"
+    ],
+    "grammar_point": "宾格助词的基本用法"
+  },
+  {
+    "id": "M1-3",
+    "translation_cn": "星期天去百货商店。",
+    "template": "日曜日 ___ ___ へ行きます。",
+    "correct_sequence": [
+      "に",
+      "デパート"
+    ],
+    "distractors": [
+      "は",
+      "駅",
+      "を"
+    ],
+    "grammar_point": "具体时间点与移动目的地"
+  },
+  {
+    "id": "M1-4",
+    "translation_cn": "请给我那个苹果。",
+    "template": "その ___ ___ ください。",
+    "correct_sequence": [
+      "りんご",
+      "を"
+    ],
+    "distractors": [
+      "みかん",
+      "が",
+      "に"
+    ],
+    "grammar_point": "物品请求"
+  },
+  {
+    "id": "M1-5",
+    "translation_cn": "昨晚十二点睡觉了。",
+    "template": "昨夜十二時 ___ ___ 。",
+    "correct_sequence": [
+      "に",
+      "寝ました"
+    ],
+    "distractors": [
+      "まで",
+      "寝ます",
+      "を"
+    ],
+    "grammar_point": "过去时态与时间点"
+  },
+  {
+    "id": "M1-6",
+    "translation_cn": "我不吃肉。",
+    "template": "私は ___ ___ 食べません。",
+    "correct_sequence": [
+      "肉",
+      "は"
+    ],
+    "distractors": [
+      "魚",
+      "を",
+      "が"
+    ],
+    "grammar_point": "否定句中的对比/强调"
+  },
+  {
+    "id": "M1-7",
+    "translation_cn": "和朋友一起看电影。",
+    "template": "友達 ___ ___ 映画を見ます。",
+    "correct_sequence": [
+      "と",
+      "一緒に"
+    ],
+    "distractors": [
+      "に",
+      "一人で",
+      "は"
+    ],
+    "grammar_point": "伴随状态副词"
+  },
+  {
+    "id": "M1-8",
+    "translation_cn": "请在这个房间里等一下。",
+    "template": "この ___ で ___ ください。",
+    "correct_sequence": [
+      "部屋",
+      "待って"
+    ],
+    "distractors": [
+      "窓",
+      "待ち",
+      "て"
+    ],
+    "grammar_point": "场所名词与祈使连用"
+  },
+  {
+    "id": "M1-9",
+    "translation_cn": "天气很热呢。",
+    "template": "今日 ___ とても ___ ですね。",
+    "correct_sequence": [
+      "は",
+      "暑い"
+    ],
+    "distractors": [
+      "が",
+      "寒い",
+      "に"
+    ],
+    "grammar_point": "提示助词与一类形容词"
+  },
+  {
+    "id": "M1-10",
+    "translation_cn": "用日语写信。",
+    "template": "日本語 ___ ___ を书きます。",
+    "correct_sequence": [
+      "で",
+      "手纸"
+    ],
+    "distractors": [
+      "に",
+      "本",
+      "は"
+    ],
+    "grammar_point": "工具手段与宾语名词"
+  },
+  {
+    "id": "M1-11",
+    "translation_cn": "桌子上有一本书。",
+    "template": "机の ___ に ___ があります。",
+    "correct_sequence": [
+      "上",
+      "本"
+    ],
+    "distractors": [
+      "下",
+      "ペン",
+      "は"
+    ],
+    "grammar_point": "方位词与存在主体"
+  },
+  {
+    "id": "M1-12",
+    "translation_cn": "从九点到五点工作。",
+    "template": "九時 ___ 五時 ___ 働きます。",
+    "correct_sequence": [
+      "から",
+      "まで"
+    ],
+    "distractors": [
+      "に",
+      "は",
+      "で"
+    ],
+    "grammar_point": "时间起点与终点"
+  },
+  {
+    "id": "M1-13",
+    "translation_cn": "那个包很贵。",
+    "template": "あの ___ ___ 高いです。",
+    "correct_sequence": [
+      "カバン",
+      "は"
+    ],
+    "distractors": [
+      "靴",
+      "が",
+      "を"
+    ],
+    "grammar_point": "主述关系"
+  },
+  {
+    "id": "M1-14",
+    "translation_cn": "我想喝水。",
+    "template": "水 ___ ___ です。",
+    "correct_sequence": [
+      "が",
+      "飲みたい"
+    ],
+    "distractors": [
+      "を",
+      "飲みます",
+      "は"
+    ],
+    "grammar_point": "愿望对象的格助词"
+  },
+  {
+    "id": "M1-15",
+    "translation_cn": "这是谁的书？",
+    "template": "これ ___ ___ の本ですか。",
+    "correct_sequence": [
+      "は",
+      "だれ"
+    ],
+    "distractors": [
+      "が",
+      "なに",
+      "の"
+    ],
+    "grammar_point": "疑问词及其格助词"
+  },
+  {
+    "id": "M1-16",
+    "translation_cn": "昨天哪里也没去。",
+    "template": "昨日 ___ へも ___ 。",
+    "correct_sequence": [
+      "どこ",
+      "行きませんでした"
+    ],
+    "distractors": [
+      "どこか",
+      "行きました",
+      "なに"
+    ],
+    "grammar_point": "全面否定句式"
+  },
+  {
+    "id": "M1-17",
+    "translation_cn": "请教我名字的写法。",
+    "template": "名前の ___ ___ 教えてください。",
+    "correct_sequence": [
+      "書き",
+      "方"
+    ],
+    "distractors": [
+      "読み",
+      "型",
+      "は"
+    ],
+    "grammar_point": "复合名词(方式)"
+  },
+  {
+    "id": "M1-18",
+    "translation_cn": "正在下雨呢。",
+    "template": "雨 ___ ___ いますね。",
+    "correct_sequence": [
+      "が",
+      "降って"
+    ],
+    "distractors": [
+      "は",
+      "降る",
+      "て"
+    ],
+    "grammar_point": "现象主语与进行态"
+  },
+  {
+    "id": "M1-19",
+    "translation_cn": "在这个公园里散步。",
+    "template": "この ___ を ___ します。",
+    "correct_sequence": [
+      "公园",
+      "散歩"
+    ],
+    "distractors": [
+      "庭",
+      "掃除",
+      "は"
+    ],
+    "grammar_point": "移动场所助词"
+  },
+  {
+    "id": "M1-20",
+    "translation_cn": "我有三台相机。",
+    "template": "カメラ ___ 三台 ___ 。",
+    "correct_sequence": [
+      "が",
+      "あります"
+    ],
+    "distractors": [
+      "は",
+      "います",
+      "を"
+    ],
+    "grammar_point": "物品存在与量词位置"
+  },
+  {
+    "id": "M1-21",
+    "translation_cn": "我想学日语。",
+    "template": "日本語 ___ ___ したいです。",
+    "correct_sequence": [
+      "の",
+      "勉強"
+    ],
+    "distractors": [
+      "を",
+      "仕事",
+      "が"
+    ],
+    "grammar_point": "名词所有格连接"
+  },
+  {
+    "id": "M1-22",
+    "translation_cn": "那是我的伞。",
+    "template": "あれ ___ 私 ___ 伞です。",
+    "correct_sequence": [
+      "は",
+      "の"
+    ],
+    "distractors": [
+      "が",
+      "を",
+      "に"
+    ],
+    "grammar_point": "所有格助词"
+  },
+  {
+    "id": "M1-23",
+    "translation_cn": "请给我三张明信片。",
+    "template": "はがき ___ ___ 枚ください。",
+    "correct_sequence": [
+      "を",
+      "三"
+    ],
+    "distractors": [
+      "が",
+      "三つ",
+      "は"
+    ],
+    "grammar_point": "薄平物品量词"
+  },
+  {
+    "id": "M1-24",
+    "translation_cn": "在这个餐厅吃饭。",
+    "template": "この ___ ___ 食べます。",
+    "correct_sequence": [
+      "レストラン",
+      "で"
+    ],
+    "distractors": [
+      "家",
+      "に",
+      "を"
+    ],
+    "grammar_point": "动作场所格助词"
+  },
+  {
+    "id": "M1-25",
+    "translation_cn": "你是医生吗？",
+    "template": "あなた ___ ___ ですか。",
+    "correct_sequence": [
+      "は",
+      "医者"
+    ],
+    "distractors": [
+      "が",
+      "学生",
+      "を"
+    ],
+    "grammar_point": "判断句基础"
+  },
+  {
+    "id": "M1-26",
+    "translation_cn": "现在几点？",
+    "template": "___ ___ 何時ですか。",
+    "correct_sequence": [
+      "いま",
+      "は"
+    ],
+    "distractors": [
+      "今日",
+      "が",
+      "に"
+    ],
+    "grammar_point": "时间询问"
+  },
+  {
+    "id": "M1-27",
+    "translation_cn": "我有两个哥哥。",
+    "template": "兄 ___ 二人 ___ 。",
+    "correct_sequence": [
+      "が",
+      "います"
+    ],
+    "distractors": [
+      "は",
+      "あります",
+      "を"
+    ],
+    "grammar_point": "人物存在句"
+  },
+  {
+    "id": "M1-28",
+    "translation_cn": "请坐在这里。",
+    "template": "ここ ___ ___ ください。",
+    "correct_sequence": [
+      "に",
+      "座って"
+    ],
+    "distractors": [
+      "で",
+      "座り",
+      "を"
+    ],
+    "grammar_point": "附着点格助词"
+  },
+  {
+    "id": "M1-29",
+    "translation_cn": "昨天冷吗？",
+    "template": "昨日 ___ ___ ですか。",
+    "correct_sequence": [
+      "は",
+      "寒かった"
+    ],
+    "distractors": [
+      "が",
+      "寒い",
+      "でした"
+    ],
+    "grammar_point": "形容词过去式询问"
+  },
+  {
+    "id": "M1-30",
+    "translation_cn": "虽然想买，但是没钱。",
+    "template": "買い ___ です ___ 、お金がありません。",
+    "correct_sequence": [
+      "たい",
+      "が"
+    ],
+    "distractors": [
+      "たく",
+      "から",
+      "は"
+    ],
+    "grammar_point": "愿望与转折接续"
+  },
+  {
+    "id": "M1-31",
+    "translation_cn": "去商场买衣服。",
+    "template": "デパート ___ 服 ___ 買いに行きます。",
+    "correct_sequence": [
+      "へ",
+      "を"
+    ],
+    "distractors": [
+      "に",
+      "が",
+      "は"
+    ],
+    "grammar_point": "移动方向与宾格"
+  },
+  {
+    "id": "M1-32",
+    "translation_cn": "这个比那个便宜。",
+    "template": "これ ___ あれ ___ 安いです。",
+    "correct_sequence": [
+      "は",
+      "より"
+    ],
+    "distractors": [
+      "が",
+      "ほど",
+      "に"
+    ],
+    "grammar_point": "比较句式"
+  },
+  {
+    "id": "M1-33",
+    "translation_cn": "家里有一只猫。",
+    "template": "うち ___ 猫 ___ います。",
+    "correct_sequence": [
+      "に",
+      "が"
+    ],
+    "distractors": [
+      "で",
+      "は",
+      "を"
+    ],
+    "grammar_point": "存在句位置与主体"
+  },
+  {
+    "id": "M1-34",
+    "translation_cn": "我不喝酒。",
+    "template": "お酒 ___ ___ 。",
+    "correct_sequence": [
+      "は",
+      "飲みません"
+    ],
+    "distractors": [
+      "を",
+      "飲みます",
+      "が"
+    ],
+    "grammar_point": "否定强调"
+  },
+  {
+    "id": "M1-35",
+    "translation_cn": "请喝杯热茶。",
+    "template": "熱い ___ ___ 飲んでください。",
+    "correct_sequence": [
+      "お茶",
+      "を"
+    ],
+    "distractors": [
+      "水",
+      "が",
+      "に"
+    ],
+    "grammar_point": "物品请求"
+  },
+  {
+    "id": "M1-36",
+    "translation_cn": "昨天去学校了吗？",
+    "template": "昨日 ___ ___ へ行きましたか。",
+    "correct_sequence": [
+      "は",
+      "学校"
+    ],
+    "distractors": [
+      "が",
+      "駅",
+      "に"
+    ],
+    "grammar_point": "时间提示与目的地"
+  },
+  {
+    "id": "M1-37",
+    "translation_cn": "正在和朋友聊天。",
+    "template": "友達 ___ ___ しています。",
+    "correct_sequence": [
+      "と",
+      "话"
+    ],
+    "distractors": [
+      "に",
+      "电话",
+      "を"
+    ],
+    "grammar_point": "伴随对象与动作名词"
+  },
+  {
+    "id": "M1-38",
+    "translation_cn": "坐公交车去机场。",
+    "template": "バス ___ 空港 ___ 行きます。",
+    "correct_sequence": [
+      "で",
+      "へ"
+    ],
+    "distractors": [
+      "に",
+      "を",
+      "から"
+    ],
+    "grammar_point": "交通手段与方向"
+  },
+  {
+    "id": "M1-39",
+    "translation_cn": "想在图书馆看书。",
+    "template": "図書館 ___ 本 ___ 読みたいです。",
+    "correct_sequence": [
+      "で",
+      "を"
+    ],
+    "distractors": [
+      "に",
+      "が",
+      "は"
+    ],
+    "grammar_point": "动作场所与愿望对象"
+  },
+  {
+    "id": "M1-40",
+    "translation_cn": "请教我这个词的意思。",
+    "template": "この言葉 ___ ___ を教えてください。",
+    "correct_sequence": [
+      "の",
+      "意味"
+    ],
+    "distractors": [
+      "は",
+      "読み方",
+      "が"
+    ],
+    "grammar_point": "所有格与名词"
+  },
+  {
+    "id": "M1-41",
+    "translation_cn": "每天练习一个小时左右。",
+    "template": "毎日一時間 ___ ___ 練習します。",
+    "correct_sequence": [
+      "くらい",
+      "を"
+    ],
+    "distractors": [
+      "ごろ",
+      "が",
+      "に"
+    ],
+    "grammar_point": "数量词概数"
+  },
+  {
+    "id": "M1-42",
+    "translation_cn": "生日那天得到了花。",
+    "template": "誕生日 ___ 花 ___ もらいました。",
+    "correct_sequence": [
+      "に",
+      "を"
+    ],
+    "distractors": [
+      "は",
+      "が",
+      "で"
+    ],
+    "grammar_point": "时间点与授受宾格"
+  },
+  {
+    "id": "M1-43",
+    "translation_cn": "那个人是谁？",
+    "template": "あの人 ___ ___ ですか。",
+    "correct_sequence": [
+      "は",
+      "だれ"
+    ],
+    "distractors": [
+      "が",
+      "どこ",
+      "なに"
+    ],
+    "grammar_point": "人物疑问词"
+  },
+  {
+    "id": "M1-44",
+    "translation_cn": "房间里没有人。",
+    "template": "部屋に ___ ___ いません。",
+    "correct_sequence": [
+      "だれ",
+      "も"
+    ],
+    "distractors": [
+      "なに",
+      "は",
+      "が"
+    ],
+    "grammar_point": "全面否定(人物)"
+  },
+  {
+    "id": "M1-45",
+    "translation_cn": "箱子里有三张照片。",
+    "template": "箱の中に ___ ___ 三枚あります。",
+    "correct_sequence": [
+      "写真",
+      "が"
+    ],
+    "distractors": [
+      "本",
+      "は",
+      "を"
+    ],
+    "grammar_point": "存在主体与量词"
+  },
+  {
+    "id": "M1-46",
+    "translation_cn": "用铅笔写名字。",
+    "template": "鉛筆 ___ 名前 ___ 書いてください。",
+    "correct_sequence": [
+      "で",
+      "を"
+    ],
+    "distractors": [
+      "に",
+      "が",
+      "は"
+    ],
+    "grammar_point": "工具格与宾格"
+  },
+  {
+    "id": "M1-47",
+    "translation_cn": "昨天的天气很好。",
+    "template": "昨日の ___ ___ よかったです。",
+    "correct_sequence": [
+      "天気",
+      "は"
+    ],
+    "distractors": [
+      "空",
+      "が",
+      "に"
+    ],
+    "grammar_point": "名词与过去时"
+  },
+  {
+    "id": "M1-48",
+    "translation_cn": "我不擅长运动。",
+    "template": "私は ___ ___ 下手です。",
+    "correct_sequence": [
+      "スポーツ",
+      "が"
+    ],
+    "distractors": [
+      "料理",
+      "は",
+      "を"
+    ],
+    "grammar_point": "能力对象格"
+  },
+  {
+    "id": "M1-49",
+    "translation_cn": "在那儿停下。",
+    "template": "あそこ ___ ___ ください。",
+    "correct_sequence": [
+      "で",
+      "止まって"
+    ],
+    "distractors": [
+      "に",
+      "止まり",
+      "を"
+    ],
+    "grammar_point": "动作停止场所"
+  },
+  {
+    "id": "M1-50",
+    "translation_cn": "日语很难但是很有趣。",
+    "template": "日本語は ___ ですが、 ___ です。",
+    "correct_sequence": [
+      "難しい",
+      "面白い"
+    ],
+    "distractors": [
+      "简单",
+      "楽しい",
+      "くて"
+    ],
+    "grammar_point": "一类形容词并列转折"
+  },
+  {
+    "id": "M1-51",
+    "translation_cn": "请关上窗户。",
+    "template": "___ ___ 閉めてください。",
+    "correct_sequence": [
+      "窓",
+      "を"
+    ],
+    "distractors": [
+      "ドア",
+      "が",
+      "に"
+    ],
+    "grammar_point": "动作对象"
+  },
+  {
+    "id": "M1-52",
+    "translation_cn": "打算在暑假去海边。",
+    "template": "夏休み ___ 海へ ___ つもりです。",
+    "correct_sequence": [
+      "に",
+      "行く"
+    ],
+    "distractors": [
+      "は",
+      "行った",
+      "を"
+    ],
+    "grammar_point": "时间与意志打算"
+  },
+  {
+    "id": "M1-53",
+    "translation_cn": "稍微喝点水吧。",
+    "template": "少し ___ ___ 飲みましょう。",
+    "correct_sequence": [
+      "水",
+      "を"
+    ],
+    "distractors": [
+      "お茶",
+      "が",
+      "は"
+    ],
+    "grammar_point": "提议句式"
+  },
+  {
+    "id": "M1-54",
+    "translation_cn": "那家店很有名。",
+    "template": "あの ___ ___ 有名です。",
+    "correct_sequence": [
+      "店",
+      "は"
+    ],
+    "distractors": [
+      "人",
+      "が",
+      "に"
+    ],
+    "grammar_point": "主述关系(形容动词)"
+  },
+  {
+    "id": "M1-55",
+    "translation_cn": "和谁一起去？",
+    "template": "___ ___ 一緒に行きますか。",
+    "correct_sequence": [
+      "だれ",
+      "と"
+    ],
+    "distractors": [
+      "どこ",
+      "に",
+      "は"
+    ],
+    "grammar_point": "伴随对象疑问"
+  },
+  {
+    "id": "M1-56",
+    "translation_cn": "这个电影不可怕。",
+    "template": "この映画は ___ ___ 。",
+    "correct_sequence": [
+      "怖く",
+      "ないです"
+    ],
+    "distractors": [
+      "怖い",
+      "なかった",
+      "に"
+    ],
+    "grammar_point": "一类形容词否定"
+  },
+  {
+    "id": "M1-57",
+    "translation_cn": "从日本寄出的信。",
+    "template": "日本 ___ ___ 手纸です。",
+    "correct_sequence": [
+      "からの",
+      "出した"
+    ],
+    "distractors": [
+      "まで",
+      "书いた",
+      "に"
+    ],
+    "grammar_point": "复合助词与修饰"
+  },
+  {
+    "id": "M1-58",
+    "translation_cn": "请把这个借给我。",
+    "template": "これ ___ ___ 貸してください。",
+    "correct_sequence": [
+      "を",
+      "私に"
+    ],
+    "distractors": [
+      "が",
+      "私を",
+      "は"
+    ],
+    "grammar_point": "宾格与授受对象"
+  },
+  {
+    "id": "M1-59",
+    "translation_cn": "在公园散步后回家。",
+    "template": "公园を散歩 ___ ___ 帰ります。",
+    "correct_sequence": [
+      "して",
+      "から"
+    ],
+    "distractors": [
+      "した",
+      "ので",
+      "し"
+    ],
+    "grammar_point": "动作先后顺序"
+  },
+  {
+    "id": "M1-60",
+    "translation_cn": "不会说英语。",
+    "template": "英语 ___ ___ 。",
+    "correct_sequence": [
+      "が",
+      "话せません"
+    ],
+    "distractors": [
+      "を",
+      "话しません",
+      "は"
+    ],
+    "grammar_point": "可能形否定"
+  },
+  {
+    "id": "M1-61",
+    "translation_cn": "请慢一点说。",
+    "template": "___ ___ 話してください。",
+    "correct_sequence": [
+      "ゆっくり",
+      "と"
+    ],
+    "distractors": [
+      "早く",
+      "に",
+      "を"
+    ],
+    "grammar_point": "状态副词"
+  },
+  {
+    "id": "M1-62",
+    "translation_cn": "那本书在桌子下面。",
+    "template": "あの本は ___ ___ 下にあります。",
+    "correct_sequence": [
+      "机",
+      "の"
+    ],
+    "distractors": [
+      "椅子",
+      "は",
+      "に"
+    ],
+    "grammar_point": "位置所有格"
+  },
+  {
+    "id": "M1-63",
+    "translation_cn": "我想学做菜。",
+    "template": "料理を ___ ___ です。",
+    "correct_sequence": [
+      "習いたい",
+      "の"
+    ],
+    "distractors": [
+      "習う",
+      "たい",
+      "は"
+    ],
+    "grammar_point": "愿望句式"
+  },
+  {
+    "id": "M1-64",
+    "translation_cn": "今天必须早点回家。",
+    "template": "今日は早く ___ ___ なりません。",
+    "correct_sequence": [
+      "帰ら",
+      "なければ"
+    ],
+    "distractors": [
+      "帰り",
+      "なくては",
+      "を"
+    ],
+    "grammar_point": "义务表达"
+  },
+  {
+    "id": "M1-65",
+    "translation_cn": "请不要在这里游泳。",
+    "template": "ここで ___ ___ ください。",
+    "correct_sequence": [
+      "泳が",
+      "ないで"
+    ],
+    "distractors": [
+      "泳ぎ",
+      "なくて",
+      "を"
+    ],
+    "grammar_point": "否定请求"
+  },
+  {
+    "id": "M1-66",
+    "translation_cn": "你是哪国人？",
+    "template": "___ ___ 国の人ですか。",
+    "correct_sequence": [
+      "どちら",
+      "の"
+    ],
+    "distractors": [
+      "どこ",
+      "は",
+      "に"
+    ],
+    "grammar_point": "礼貌疑问词"
+  },
+  {
+    "id": "M1-67",
+    "translation_cn": "虽然头痛，但没关系。",
+    "template": "頭が ___ ですが、 ___ です。",
+    "correct_sequence": [
+      "痛い",
+      "大丈夫"
+    ],
+    "distractors": [
+      "悪い",
+      "元気",
+      "は"
+    ],
+    "grammar_point": "形容词与形容动词转折"
+  },
+  {
+    "id": "M1-68",
+    "translation_cn": "九点在图书馆见。",
+    "template": "九時に ___ ___ 会いましょう。",
+    "correct_sequence": [
+      "図書館",
+      "で"
+    ],
+    "distractors": [
+      "公園",
+      "に",
+      "を"
+    ],
+    "grammar_point": "会面场所"
+  },
+  {
+    "id": "M1-69",
+    "translation_cn": "正在下雪。",
+    "template": "雪 ___ ___ います。",
+    "correct_sequence": [
+      "が",
+      "降って"
+    ],
+    "distractors": [
+      "は",
+      "降る",
+      "て"
+    ],
+    "grammar_point": "自然现象状态"
+  },
+  {
+    "id": "M1-70",
+    "translation_cn": "请给我三张纸。",
+    "template": "紙 ___ ___ 枚ください。",
+    "correct_sequence": [
+      "を",
+      "三"
+    ],
+    "distractors": [
+      "が",
+      "三つ",
+      "は"
+    ],
+    "grammar_point": "薄平物品量词"
+  },
+  {
+    "id": "M1-71",
+    "translation_cn": "那个孩子很聪明。",
+    "template": "あの子は ___ ___ です。",
+    "correct_sequence": [
+      "頭",
+      "がいい"
+    ],
+    "distractors": [
+      "目",
+      "は",
+      "強い"
+    ],
+    "grammar_point": "固定搭配(聪明)"
+  },
+  {
+    "id": "M1-72",
+    "translation_cn": "在便利店买了面包和牛奶。",
+    "template": "コンビニでパン ___ 牛乳 ___ 買いました。",
+    "correct_sequence": [
+      "と",
+      "を"
+    ],
+    "distractors": [
+      "や",
+      "が",
+      "に"
+    ],
+    "grammar_point": "并列与宾格"
+  },
+  {
+    "id": "M1-73",
+    "translation_cn": "明天去看电影吧。",
+    "template": "明日、映画を ___ ___ 。",
+    "correct_sequence": [
+      "見に",
+      "行きましょう"
+    ],
+    "distractors": [
+      "見て",
+      "行きます",
+      "に"
+    ],
+    "grammar_point": "移动目的与劝诱"
+  },
+  {
+    "id": "M1-74",
+    "translation_cn": "请等五分钟。",
+    "template": "五分 ___ ___ ください。",
+    "correct_sequence": [
+      "くらい",
+      "待って"
+    ],
+    "distractors": [
+      "ごろ",
+      "待ち",
+      "を"
+    ],
+    "grammar_point": "概数时间"
+  },
+  {
+    "id": "M1-75",
+    "translation_cn": "这个包比那个重。",
+    "template": "このカバン ___ あれより ___ です。",
+    "correct_sequence": [
+      "は",
+      "重い"
+    ],
+    "distractors": [
+      "が",
+      "軽い",
+      "に"
+    ],
+    "grammar_point": "比较句式主语"
+  },
+  {
+    "id": "M1-76",
+    "translation_cn": "家里没有人。",
+    "template": "うちに ___ ___ いません。",
+    "correct_sequence": [
+      "だれ",
+      "も"
+    ],
+    "distractors": [
+      "なに",
+      "は",
+      "が"
+    ],
+    "grammar_point": "全面否定"
+  },
+  {
+    "id": "M1-77",
+    "translation_cn": "洗完澡后就睡觉。",
+    "template": "お風呂に ___ ___ 寝ます。",
+    "correct_sequence": [
+      "入って",
+      "から"
+    ],
+    "distractors": [
+      "入る",
+      "ので",
+      "を"
+    ],
+    "grammar_point": "动作先后顺序"
+  },
+  {
+    "id": "M1-78",
+    "translation_cn": "用日语说什么？",
+    "template": "日本語 ___ ___ 言いますか。",
+    "correct_sequence": [
+      "で",
+      "何と"
+    ],
+    "distractors": [
+      "に",
+      "何に",
+      "を"
+    ],
+    "grammar_point": "内容引用"
+  },
+  {
+    "id": "M1-79",
+    "translation_cn": "打算明天不去学校。",
+    "template": "明日、学校へ ___ ___ つもりです。",
+    "correct_sequence": [
+      "行かない",
+      "つもり"
+    ],
+    "distractors": [
+      "行く",
+      "こと",
+      "を"
+    ],
+    "grammar_point": "否定意志打算"
+  },
+  {
+    "id": "M1-80",
+    "translation_cn": "那个饭店好吃又便宜。",
+    "template": "あの店は ___ ___ 安いです。",
+    "correct_sequence": [
+      "美味しくて",
+      "は"
+    ],
+    "distractors": [
+      "美味しい",
+      "に",
+      "を"
+    ],
+    "grammar_point": "形容词中顿"
+  },
+  {
+    "id": "M1-81",
+    "translation_cn": "请教我怎么去机场。",
+    "template": "空港への ___ ___ を教えてください。",
+    "correct_sequence": [
+      "行き",
+      "方"
+    ],
+    "distractors": [
+      "来",
+      "型",
+      "に"
+    ],
+    "grammar_point": "复合名词(方式)"
+  },
+  {
+    "id": "M1-82",
+    "translation_cn": "因为很忙，不看电视。",
+    "template": "忙しい ___ ___ テレビを見ません。",
+    "correct_sequence": [
+      "から",
+      "は"
+    ],
+    "distractors": [
+      "ので",
+      "を",
+      "に"
+    ],
+    "grammar_point": "原因与否定"
+  },
+  {
+    "id": "M1-83",
+    "translation_cn": "想要大一点的鞋。",
+    "template": "もう少し ___ ___ 靴がほしいです。",
+    "correct_sequence": [
+      "大きい",
+      "の"
+    ],
+    "distractors": [
+      "大きく",
+      "は",
+      "を"
+    ],
+    "grammar_point": "名词化或修饰"
+  },
+  {
+    "id": "M1-84",
+    "translation_cn": "昨天见了医生。",
+    "template": "昨日 ___ ___ 会いました。",
+    "correct_sequence": [
+      "医者",
+      "に"
+    ],
+    "distractors": [
+      "先生",
+      "を",
+      "が"
+    ],
+    "grammar_point": "对象格助词"
+  },
+  {
+    "id": "M1-85",
+    "translation_cn": "一年中夏天最热。",
+    "template": "一年で ___ ___ 一番暑いです。",
+    "correct_sequence": [
+      "夏",
+      "が"
+    ],
+    "distractors": [
+      "冬",
+      "は",
+      "に"
+    ],
+    "grammar_point": "最高级主体"
+  },
+  {
+    "id": "M1-86",
+    "translation_cn": "请在这个房间里等一等。",
+    "template": "この ___ ___ 待っていてください。",
+    "correct_sequence": [
+      "部屋",
+      "で"
+    ],
+    "distractors": [
+      "外",
+      "に",
+      "を"
+    ],
+    "grammar_point": "场所格助词"
+  },
+  {
+    "id": "M1-87",
+    "translation_cn": "把这个给朋友。",
+    "template": "これ ___ 友達 ___ あげます。",
+    "correct_sequence": [
+      "を",
+      "に"
+    ],
+    "distractors": [
+      "が",
+      "は",
+      "で"
+    ],
+    "grammar_point": "授受关系格助词"
+  },
+  {
+    "id": "M1-88",
+    "translation_cn": "星期六不去哪里。",
+    "template": "土曜日 ___ ___ へも行きません。",
+    "correct_sequence": [
+      "は",
+      "どこ"
+    ],
+    "distractors": [
+      "に",
+      "なに",
+      "が"
+    ],
+    "grammar_point": "全面否定(场所)"
+  },
+  {
+    "id": "M1-89",
+    "translation_cn": "正在给母亲写信。",
+    "template": "母 ___ 手紙 ___ 書いています。",
+    "correct_sequence": [
+      "に",
+      "を"
+    ],
+    "distractors": [
+      "は",
+      "が",
+      "で"
+    ],
+    "grammar_point": "对象与宾格"
+  },
+  {
+    "id": "M1-90",
+    "translation_cn": "请给我三支笔。",
+    "template": "ペン ___ ___ 本ください。",
+    "correct_sequence": [
+      "を",
+      "三"
+    ],
+    "distractors": [
+      "が",
+      "三つ",
+      "は"
+    ],
+    "grammar_point": "细长物品量词"
+  },
+  {
+    "id": "M1-91",
+    "translation_cn": "在百货商店买了漂亮的包。",
+    "template": "デパートで ___ ___ カバンを買いました。",
+    "correct_sequence": [
+      "きれいな",
+      "を"
+    ],
+    "distractors": [
+      "きれい",
+      "に",
+      "が"
+    ],
+    "grammar_point": "二类形容词修饰"
+  },
+  {
+    "id": "M1-92",
+    "translation_cn": "明天天气会变好吧。",
+    "template": "明日、天気は ___ ___ 。",
+    "correct_sequence": [
+      "よく",
+      "なるでしょう"
+    ],
+    "distractors": [
+      "いい",
+      "なります",
+      "に"
+    ],
+    "grammar_point": "状态变化与推测"
+  },
+  {
+    "id": "M1-93",
+    "translation_cn": "请把手机借给我。",
+    "template": "スマホ ___ ___ 貸してください。",
+    "correct_sequence": [
+      "を",
+      "私に"
+    ],
+    "distractors": [
+      "が",
+      "私を",
+      "は"
+    ],
+    "grammar_point": "授受关系格助词"
+  },
+  {
+    "id": "M1-94",
+    "translation_cn": "打算在明年去日本。",
+    "template": "来年、日本へ ___ ___ です。",
+    "correct_sequence": [
+      "行く",
+      "つもり"
+    ],
+    "distractors": [
+      "行って",
+      "こと",
+      "を"
+    ],
+    "grammar_point": "意志打算"
+  },
+  {
+    "id": "M1-95",
+    "translation_cn": "我不擅长做饭。",
+    "template": "私は料理 ___ ___ 下手です。",
+    "correct_sequence": [
+      "を",
+      "するのが"
+    ],
+    "distractors": [
+      "が",
+      "するは",
+      "に"
+    ],
+    "grammar_point": "动作名词化与对象"
+  },
+  {
+    "id": "M1-96",
+    "translation_cn": "虽然想学，但是很忙。",
+    "template": "習い ___ です ___ 、忙しいです。",
+    "correct_sequence": [
+      "たい",
+      "が"
+    ],
+    "distractors": [
+      "たく",
+      "から",
+      "は"
+    ],
+    "grammar_point": "愿望与转折"
+  },
+  {
+    "id": "M1-97",
+    "translation_cn": "和谁一起看电影？",
+    "template": "___ ___ 映画を見ますか。",
+    "correct_sequence": [
+      "だれ",
+      "と"
+    ],
+    "distractors": [
+      "どこ",
+      "に",
+      "は"
+    ],
+    "grammar_point": "伴随对象疑问"
+  },
+  {
+    "id": "M1-98",
+    "translation_cn": "请坐在那张椅子上。",
+    "template": "あの ___ ___ 座ってください。",
+    "correct_sequence": [
+      "椅子",
+      "に"
+    ],
+    "distractors": [
+      "机",
+      "で",
+      "を"
+    ],
+    "grammar_point": "附着点格助词"
+  },
+  {
+    "id": "M1-99",
+    "translation_cn": "正在下雨，所以请带上伞。",
+    "template": "雨が ___ ___ 、傘を持ってください。",
+    "correct_sequence": [
+      "降っている",
+      "から"
+    ],
+    "distractors": [
+      "降る",
+      "ので",
+      "を"
+    ],
+    "grammar_point": "状态原因与请求"
+  },
+  {
+    "id": "M1-100",
+    "translation_cn": "想要红色的笔。",
+    "template": "赤い ___ ___ ほしいです。",
+    "correct_sequence": [
+      "ペン",
+      "が"
+    ],
+    "distractors": [
+      "靴",
+      "を",
+      "は"
+    ],
+    "grammar_point": "欲望对象格"
+  },
+  {
+    "id": "M1-101",
+    "translation_cn": "那个孩子不会游泳。",
+    "template": "あの子は ___ ___ 。",
+    "correct_sequence": [
+      "泳げ",
+      "ません"
+    ],
+    "distractors": [
+      "泳ぎ",
+      "ない",
+      "を"
+    ],
+    "grammar_point": "可能形否定"
+  },
+  {
+    "id": "M1-102",
+    "translation_cn": "洗完澡后再看电视。",
+    "template": "お風呂に ___ ___ テレビを見ます。",
+    "correct_sequence": [
+      "入って",
+      "から"
+    ],
+    "distractors": [
+      "入る",
+      "ので",
+      "を"
+    ],
+    "grammar_point": "动作先后顺序"
+  },
+  {
+    "id": "M1-103",
+    "translation_cn": "箱子里面什么也没有。",
+    "template": "箱の中に ___ ___ ありません。",
+    "correct_sequence": [
+      "なに",
+      "も"
+    ],
+    "distractors": [
+      "だれ",
+      "は",
+      "が"
+    ],
+    "grammar_point": "全面否定(物品)"
+  },
+  {
+    "id": "M1-104",
+    "translation_cn": "星期天去百货商店。",
+    "template": "日曜日 ___ ___ へ行きます。",
+    "correct_sequence": [
+      "に",
+      "デパート"
+    ],
+    "distractors": [
+      "は",
+      "駅",
+      "を"
+    ],
+    "grammar_point": "时间与目的地"
+  },
+  {
+    "id": "M1-105",
+    "translation_cn": "请关上灯。",
+    "template": "___ ___ 消してください。",
+    "correct_sequence": [
+      "電気",
+      "を"
+    ],
+    "distractors": [
+      "テレビ",
+      "が",
+      "に"
+    ],
+    "grammar_point": "动作对象"
+  },
+  {
+    "id": "M1-106",
+    "translation_cn": "日语说得很好呢。",
+    "template": "日本語 ___ ___ お上手ですね。",
+    "correct_sequence": [
+      "が",
+      "とても"
+    ],
+    "distractors": [
+      "を",
+      "あまり",
+      "は"
+    ],
+    "grammar_point": "能力格与副词"
+  },
+  {
+    "id": "M1-107",
+    "translation_cn": "从九点工作到五点。",
+    "template": "九時 ___ 五時 ___ 働きます。",
+    "correct_sequence": [
+      "から",
+      "まで"
+    ],
+    "distractors": [
+      "に",
+      "は",
+      "を"
+    ],
+    "grammar_point": "起讫助词"
+  },
+  {
+    "id": "M1-108",
+    "translation_cn": "请给我三本那本书。",
+    "template": "あの本 ___ ___ 冊ください。",
+    "correct_sequence": [
+      "を",
+      "三"
+    ],
+    "distractors": [
+      "が",
+      "三枚",
+      "は"
+    ],
+    "grammar_point": "书籍量词"
+  },
+  {
+    "id": "M1-109",
+    "translation_cn": "和朋友一起吃午饭。",
+    "template": "友達 ___ ___ 昼ご飯を食べます。",
+    "correct_sequence": [
+      "と",
+      "一緒に"
+    ],
+    "distractors": [
+      "に",
+      "一人で",
+      "は"
+    ],
+    "grammar_point": "伴随状态"
+  },
+  {
+    "id": "M1-110",
+    "translation_cn": "那个孩子很有名。",
+    "template": "あの子は ___ ___ 有名です。",
+    "correct_sequence": [
+      "とても",
+      "は"
+    ],
+    "distractors": [
+      "あまり",
+      "に",
+      "を"
+    ],
+    "grammar_point": "副词与形容动词"
+  },
+  {
+    "id": "M1-111",
+    "translation_cn": "请不要在这里拍照。",
+    "template": "ここで ___ ___ ないでください。",
+    "correct_sequence": [
+      "写真",
+      "を"
+    ],
+    "distractors": [
+      "動画",
+      "が",
+      "に"
+    ],
+    "grammar_point": "宾格与否定请求"
+  },
+  {
+    "id": "M1-112",
+    "translation_cn": "在这个餐厅吃饭好吗？",
+    "template": "この ___ ___ 食べませんか。",
+    "correct_sequence": [
+      "レストラン",
+      "で"
+    ],
+    "distractors": [
+      "家",
+      "に",
+      "を"
+    ],
+    "grammar_point": "提议场所"
+  },
+  {
+    "id": "M1-113",
+    "translation_cn": "虽然头痛，但是没关系。",
+    "template": "頭が ___ ですが、 ___ です。",
+    "correct_sequence": [
+      "痛い",
+      "大丈夫"
+    ],
+    "distractors": [
+      "悪い",
+      "元気",
+      "は"
+    ],
+    "grammar_point": "状态表达"
+  },
+  {
+    "id": "M1-114",
+    "translation_cn": "那是谁的书？",
+    "template": "あれ ___ ___ の本ですか。",
+    "correct_sequence": [
+      "は",
+      "だれ"
+    ],
+    "distractors": [
+      "が",
+      "なに",
+      "の"
+    ],
+    "grammar_point": "疑问词所有格"
+  },
+  {
+    "id": "M1-115",
+    "translation_cn": "请等一下。",
+    "template": "ちょっと ___ ___ ください。",
+    "correct_sequence": [
+      "待って",
+      "は"
+    ],
+    "distractors": [
+      "待ち",
+      "て",
+      "を"
+    ],
+    "grammar_point": "短促请求"
+  },
+  {
+    "id": "M1-116",
+    "translation_cn": "打算在明年买车。",
+    "template": "来年、車を ___ ___ です。",
+    "correct_sequence": [
+      "買う",
+      "つもり"
+    ],
+    "distractors": [
+      "買いたい",
+      "こと",
+      "を"
+    ],
+    "grammar_point": "意志打算"
+  },
+  {
+    "id": "M1-117",
+    "translation_cn": "想要冷的水。",
+    "template": "冷たい ___ ___ ほしいです。",
+    "correct_sequence": [
+      "水",
+      "が"
+    ],
+    "distractors": [
+      "お茶",
+      "を",
+      "は"
+    ],
+    "grammar_point": "欲望对象格"
+  },
+  {
+    "id": "M1-118",
+    "translation_cn": "那个饭店好吃又便宜。",
+    "template": "あの店は ___ ___ 安いです。",
+    "correct_sequence": [
+      "美味しくて",
+      "は"
+    ],
+    "distractors": [
+      "美味しい",
+      "に",
+      "を"
+    ],
+    "grammar_point": "形容词中顿"
+  },
+  {
+    "id": "M1-119",
+    "translation_cn": "正在给朋友写信。",
+    "template": "友達 ___ 手紙 ___ 書いています。",
+    "correct_sequence": [
+      "に",
+      "を"
+    ],
+    "distractors": [
+      "は",
+      "が",
+      "で"
+    ],
+    "grammar_point": "对象与宾格"
+  },
+  {
+    "id": "M1-120",
+    "translation_cn": "在图书馆学习。",
+    "template": "図書館 ___ ___ しています。",
+    "correct_sequence": [
+      "で",
+      "勉強"
+    ],
+    "distractors": [
+      "に",
+      "練習",
+      "を"
+    ],
+    "grammar_point": "场所格与动作名词"
+  },
+  {
+    "id": "M1-121",
+    "translation_cn": "我想在家里一个人慢慢喝咖啡。",
+    "template": "うち ___ ___ で ___ コーヒーを ___ です。",
+    "correct_sequence": [
+      "に",
+      "一人",
+      "ゆっくり",
+      "飲みたい"
+    ],
+    "distractors": [
+      "で",
+      "二人",
+      "速く",
+      "飲みます"
+    ],
+    "grammar_point": "状态副词与愿望活用"
+  },
+  {
+    "id": "M1-122",
+    "translation_cn": "虽然头有点痛，但没关系。",
+    "template": "___ が ___ 痛い ___ 、 ___ です。",
+    "correct_sequence": [
+      "頭",
+      "少し",
+      "ですが",
+      "大丈夫"
+    ],
+    "distractors": [
+      "足",
+      "とても",
+      "から",
+      "元気"
+    ],
+    "grammar_point": "转折接续与程度副词"
+  },
+  {
+    "id": "M1-123",
+    "translation_cn": "请不要在这个教室里吃东西。",
+    "template": "この ___ ___ 食べ物を ___ ___ ください。",
+    "correct_sequence": [
+      "教室",
+      "で",
+      "食べ",
+      "ないで"
+    ],
+    "distractors": [
+      "部屋",
+      "に",
+      "食べ物",
+      "て"
+    ],
+    "grammar_point": "禁止请求的组合"
+  },
+  {
+    "id": "M1-124",
+    "translation_cn": "从九点到五点一直都在写信。",
+    "template": "九時 ___ 五時 ___ ずっと ___ を ___ いました。",
+    "correct_sequence": [
+      "から",
+      "まで",
+      "手紙",
+      "書いて"
+    ],
+    "distractors": [
+      "に",
+      "は",
+      "本",
+      "書く"
+    ],
+    "grammar_point": "起止点与持续态过去式"
+  },
+  {
+    "id": "M1-125",
+    "translation_cn": "请给我三个红色的苹果和两个橘子。",
+    "template": "赤いりんご ___ ___ つと、みかんを ___ つ ___ 。",
+    "correct_sequence": [
+      "を",
+      "三",
+      "二",
+      "ください"
+    ],
+    "distractors": [
+      "が",
+      "三枚",
+      "二枚",
+      "あります"
+    ],
+    "grammar_point": "多个量词的并列请求"
+  },
+  {
+    "id": "M1-126",
+    "translation_cn": "昨天哪里也没去，在家里看电影了。",
+    "template": "昨日 ___ へも ___ 、 ___ で映画を ___ 。",
+    "correct_sequence": [
+      "どこ",
+      "行きませんでした",
+      "うち",
+      "见ました"
+    ],
+    "distractors": [
+      "哪里か",
+      "行きました",
+      "学校",
+      "见ます"
+    ],
+    "grammar_point": "全面否定与动作发生场所"
+  },
+  {
+    "id": "M1-127",
+    "translation_cn": "这个汉字怎么写？请教教我。",
+    "template": "この漢字 ___ ___ ___ か。 ___ ください。",
+    "correct_sequence": [
+      "は",
+      "どう",
+      "書きます",
+      "教えて"
+    ],
+    "distractors": [
+      "が",
+      "何",
+      "書く",
+      "教え"
+    ],
+    "grammar_point": "询问方式与请求"
+  },
+  {
+    "id": "M1-128",
+    "translation_cn": "打算下周和朋友一起去京都。",
+    "template": "来週 ___ 友達 ___ ___ 京都へ ___ つもりです。",
+    "correct_sequence": [
+      "に",
+      "と",
+      "一緒に",
+      "行く"
+    ],
+    "distractors": [
+      "は",
+      "に",
+      "一人で",
+      "行って"
+    ],
+    "grammar_point": "意志打算与伴随对象"
+  },
+  {
+    "id": "M1-129",
+    "translation_cn": "桌子上有一本书和两支笔。",
+    "template": "机の ___ に ___ が一冊と、ペンが ___ ___ あります。",
+    "correct_sequence": [
+      "上",
+      "本",
+      "二",
+      "本"
+    ],
+    "distractors": [
+      "下",
+      "雑誌",
+      "二枚",
+      "本"
+    ],
+    "grammar_point": "方位词与多种量词应用"
+  },
+  {
+    "id": "M1-130",
+    "translation_cn": "因为已经很晚了，请快点休息。",
+    "template": "もう ___ です ___ 、 ___ ___ ください。",
+    "correct_sequence": [
+      "遅い",
+      "から",
+      "早く",
+      "休んで"
+    ],
+    "distractors": [
+      "早い",
+      "ので",
+      "ゆっくり",
+      "休み"
+    ],
+    "grammar_point": "因果与副词修饰"
+  },
+  {
+    "id": "M1-131",
+    "translation_cn": "我想喝冷的水或果汁。",
+    "template": "冷たい ___ ___ ジュース ___ ___ です。",
+    "correct_sequence": [
+      "水",
+      "か",
+      "が",
+      "飲みたい"
+    ],
+    "distractors": [
+      "お茶",
+      "と",
+      "を",
+      "飲みます"
+    ],
+    "grammar_point": "选择并列与愿望对象"
+  },
+  {
+    "id": "M1-132",
+    "translation_cn": "那个人是谁？请告诉我名字。",
+    "template": "あの ___ ___ だれですか。 ___ を ___ ください。",
+    "correct_sequence": [
+      "人",
+      "は",
+      "名前",
+      "教えて"
+    ],
+    "distractors": [
+      "方",
+      "が",
+      "電話",
+      "教え"
+    ],
+    "grammar_point": "指示词与请求"
+  },
+  {
+    "id": "M1-133",
+    "translation_cn": "洗完手后再吃饭比较好哦。",
+    "template": "手 ___ ___ から、ご飯を ___ ほうが ___ ですよ。",
+    "correct_sequence": [
+      "を",
+      "洗って",
+      "食べた",
+      "いい"
+    ],
+    "distractors": [
+      "が",
+      "洗う",
+      "食べる",
+      "よい"
+    ],
+    "grammar_point": "动作顺序与建议句型"
+  },
+  {
+    "id": "M1-134",
+    "translation_cn": "请不要在这里拍照和打电话。",
+    "template": "这里 ___ 写真を ___ たり、電話を ___ ___ ください。",
+    "correct_sequence": [
+      "で",
+      "撮っ",
+      "し",
+      "ないで"
+    ],
+    "distractors": [
+      "に",
+      "撮り",
+      "する",
+      "て"
+    ],
+    "grammar_point": "列举与否定请求"
+  },
+  {
+    "id": "M1-135",
+    "translation_cn": "我每天早上六点起床，洗脸，然后吃早餐。",
+    "template": "毎朝六時に ___ 、顔を ___ 、 ___ 食べます。",
+    "correct_sequence": [
+      "起きて",
+      "洗って",
+      "朝ごはんを"
+    ],
+    "distractors": [
+      "起きる",
+      "洗う",
+      "昼ごはんを"
+    ],
+    "grammar_point": "动作的中顿连接"
+  },
+  {
+    "id": "M1-136",
+    "translation_cn": "虽然想买这台电脑，但因为太贵了买不起。",
+    "template": "このパソコン ___ 買い ___ ですが、 ___ すぎて ___ 。",
+    "correct_sequence": [
+      "を",
+      "たい",
+      "高",
+      "買えません"
+    ],
+    "distractors": [
+      "は",
+      "たく",
+      "安く",
+      "買いません"
+    ],
+    "grammar_point": "愿望、程度过限与可能形否定"
+  },
+  {
+    "id": "M1-137",
+    "translation_cn": "请不要在这里拍照，请去那边。",
+    "template": "这里で写真を ___ ___ ください。 ___ へ ___ 。",
+    "correct_sequence": [
+      "撮ら",
+      "ないで",
+      "あちら",
+      "行ってください"
+    ],
+    "distractors": [
+      "撮り",
+      "なくて",
+      "どこ",
+      "行きます"
+    ],
+    "grammar_point": "禁止请求与移动指示"
+  },
+  {
+    "id": "M1-138",
+    "translation_cn": "打算明天和妹妹一起去图书馆借书。",
+    "template": "明日 ___ 妹 ___ 一緒に ___ へ本を ___ に行くつもりです。",
+    "correct_sequence": [
+      "に",
+      "と",
+      "図書館",
+      "借り"
+    ],
+    "distractors": [
+      "は",
+      "に",
+      "学校",
+      "貸し"
+    ],
+    "grammar_point": "伴随、目的地与移动目的"
+  },
+  {
+    "id": "M1-139",
+    "translation_cn": "这个汤有点淡，请再加点盐。",
+    "template": "このスープは ___ 薄い ___ 、 ___ 塩を ___ ください。",
+    "correct_sequence": [
+      "少し",
+      "ので",
+      "もっと",
+      "入れて"
+    ],
+    "distractors": [
+      "とても",
+      "から",
+      "あまり",
+      "入れ"
+    ],
+    "grammar_point": "程度副词、因果与动作请求"
+  },
+  {
+    "id": "M1-140",
+    "translation_cn": "昨晚十二点才睡觉，所以今天很困。",
+    "template": "昨夜十二時 ___ ___ ので、今日 ___ とても ___ です。",
+    "correct_sequence": [
+      "に",
+      "寝た",
+      "は",
+      "眠い"
+    ],
+    "distractors": [
+      "まで",
+      "寝る",
+      "が",
+      "眠くない"
+    ],
+    "grammar_point": "时间点、过去式原因与形容词"
+  },
+  {
+    "id": "M1-141",
+    "translation_cn": "请教教我怎么去那个有名的餐厅。",
+    "template": "あの ___ なレストラン ___ の ___ 方を ___ ください。",
+    "correct_sequence": [
+      "有名",
+      "へ",
+      "行き",
+      "教えて"
+    ],
+    "distractors": [
+      "静か",
+      "に",
+      "行っ",
+      "教え"
+    ],
+    "grammar_point": "二类形容词、复合名词与请求"
+  },
+  {
+    "id": "M1-142",
+    "translation_cn": "在那个小房间里有两张椅子和一张桌子。",
+    "template": "あの ___ 部屋 ___ 椅子が ___ 脚と机が一枚 ___ 。",
+    "correct_sequence": [
+      "小さな",
+      "に",
+      "二",
+      "あります"
+    ],
+    "distractors": [
+      "小さいな",
+      "で",
+      "二つ",
+      "います"
+    ],
+    "grammar_point": "连体词、存在句与量词"
+  },
+  {
+    "id": "M1-143",
+    "translation_cn": "因为天气变热了，想喝点凉的东西。",
+    "template": "暑く ___ ___ から、冷たい ___ が ___ です。",
+    "correct_sequence": [
+      "なり",
+      "ました",
+      "もの",
+      "飲みたい"
+    ],
+    "distractors": [
+      "なる",
+      "ので",
+      "こと",
+      "飲みます"
+    ],
+    "grammar_point": "状态变化、名词化与愿望"
+  },
+  {
+    "id": "M1-144",
+    "translation_cn": "这本杂志比那本书更有趣哦。",
+    "template": "この雑誌 ___ あの本 ___ ___ 面白い ___ 。",
+    "correct_sequence": [
+      "は",
+      "より",
+      "ずっと",
+      "ですよ"
+    ],
+    "distractors": [
+      "が",
+      "ほど",
+      "とても",
+      "ですね"
+    ],
+    "grammar_point": "比较级强调与终助词"
+  },
+  {
+    "id": "M1-145",
+    "translation_cn": "洗完澡后，打算喝点热牛奶。 ",
+    "template": "お風呂に ___ ___ 、熱いミルクを ___ ___ です。",
+    "correct_sequence": [
+      "入った",
+      "あとで",
+      "飲む",
+      "つもり"
+    ],
+    "distractors": [
+      "入って",
+      "から",
+      "飲み",
+      "こと"
+    ],
+    "grammar_point": "动作先后与意志"
+  },
+  {
+    "id": "M1-146",
+    "translation_cn": "请把那本红色的字典借给我五天左右。",
+    "template": "その赤い ___ ___ 五日 ___ 私に ___ ください。",
+    "correct_sequence": [
+      "辞書",
+      "を",
+      "くらい",
+      "貸して"
+    ],
+    "distractors": [
+      "本",
+      "が",
+      "ごろ",
+      "借りて"
+    ],
+    "grammar_point": "物品宾格、概数与授受请求"
+  },
+  {
+    "id": "M1-147",
+    "translation_cn": "星期天哪里也不去，打算慢慢休息。",
+    "template": "日曜日 ___ どこ ___ ___ 、ゆっくり ___ つもりです。",
+    "correct_sequence": [
+      "は",
+      "へも",
+      "行かず",
+      "休む"
+    ],
+    "distractors": [
+      "に",
+      "にも",
+      "行かないで",
+      "休み"
+    ],
+    "grammar_point": "全面否定、中顿与意志打算"
+  },
+  {
+    "id": "M1-148",
+    "translation_cn": "那个孩子头脑聪明，而且很亲切。",
+    "template": "あの子は ___ が ___ 、 ___ 親切です。",
+    "correct_sequence": [
+      "頭",
+      "よくて",
+      "そして"
+    ],
+    "distractors": [
+      "目",
+      "いい",
+      "から"
+    ],
+    "grammar_point": "词组连用形与并列连词"
+  },
+  {
+    "id": "M1-149",
+    "translation_cn": "下雨了，请关上窗户并打伞。",
+    "template": "雨が ___ います ___ 、窓を ___ 傘を ___ ください。",
+    "correct_sequence": [
+      "降って",
+      "から",
+      "閉めて",
+      "さして"
+    ],
+    "distractors": [
+      "降る",
+      "ので",
+      "闭め",
+      "持って"
+    ],
+    "grammar_point": "进行态原因与连续动作请求"
+  },
+  {
+    "id": "M1-150",
+    "translation_cn": "想在那个安静的咖啡馆一个人看书。",
+    "template": "あの ___ カフェ ___ 一人で ___ 本を ___ です。",
+    "correct_sequence": [
+      "静かな",
+      "で",
+      "ゆっくり",
+      "読みたい"
+    ],
+    "distractors": [
+      "静か",
+      "に",
+      "早く",
+      "读みます"
+    ],
+    "grammar_point": "二类形容词、副词与愿望"
+  },
+  {
+    "id": "M1-151",
+    "translation_cn": "想在那个凉爽的房间里稍微休息一下。",
+    "template": "あの ___ 部屋 ___ 少し ___ です。",
+    "correct_sequence": [
+      "涼しい",
+      "で",
+      "休みたい"
+    ],
+    "distractors": [
+      "寒い",
+      "に",
+      "休みます"
+    ],
+    "grammar_point": "形容词修饰与场所格"
+  },
+  {
+    "id": "M1-152",
+    "translation_cn": "虽然不会说英语，但日语说得很好呢。",
+    "template": "英语 ___ ___ が、日本語 ___ とても ___ ですね。",
+    "correct_sequence": [
+      "は",
+      "话せません",
+      "が",
+      "上手"
+    ],
+    "distractors": [
+      "を",
+      "话します",
+      "は",
+      "下手"
+    ],
+    "grammar_point": "能力对象格与转折"
+  },
+  {
+    "id": "M1-153",
+    "translation_cn": "请把那本厚书和三支笔借给我。",
+    "template": "その厚い ___ ___ 、ペンを ___ ___ 貸してください。",
+    "correct_sequence": [
+      "本",
+      "と",
+      "三",
+      "本"
+    ],
+    "distractors": [
+      "辞書",
+      "を",
+      "三枚",
+      "冊"
+    ],
+    "grammar_point": "并列助词与量词组合"
+  },
+  {
+    "id": "M1-154",
+    "translation_cn": "因为太忙了，哪里也没去成。",
+    "template": "___ すぎた ___ 、 ___ へも ___ 。",
+    "correct_sequence": [
+      "忙し",
+      "ので",
+      "どこ",
+      "行けませんでした"
+    ],
+    "distractors": [
+      "忙しい",
+      "から",
+      "哪里か",
+      "行きませんでした"
+    ],
+    "grammar_point": "程度过限与全面否定"
+  },
+  {
+    "id": "M1-155",
+    "translation_cn": "打算明年和家人一起回国。",
+    "template": "来年 ___ 家族 ___ 一緒に ___ ___ つもりです。",
+    "correct_sequence": [
+      "に",
+      "と",
+      "国へ",
+      "帰る"
+    ],
+    "distractors": [
+      "は",
+      "に",
+      "国を",
+      "帰って"
+    ],
+    "grammar_point": "意志打算与伴随对象"
+  },
+  {
+    "id": "M1-156",
+    "translation_cn": "请不要在这个公园里踢足球。",
+    "template": "この ___ ___ サッカーを ___ ___ ください。",
+    "correct_sequence": [
+      "公园",
+      "で",
+      "し",
+      "ないで"
+    ],
+    "distractors": [
+      "庭",
+      "に",
+      "する",
+      "て"
+    ],
+    "grammar_point": "禁止请求"
+  },
+  {
+    "id": "M1-157",
+    "translation_cn": "我想学日语的读法和写法。",
+    "template": "日本語の ___ 方 ___ ___ 方を ___ です。",
+    "correct_sequence": [
+      "読み",
+      "と",
+      "書き",
+      "習いたい"
+    ],
+    "distractors": [
+      "読む",
+      "は",
+      "书く",
+      "習います"
+    ],
+    "grammar_point": "复合名词与愿望并列"
+  },
+  {
+    "id": "M1-158",
+    "translation_cn": "那双鞋又漂亮又便宜哦。",
+    "template": "あの靴は ___ ___ ___ ですよ。",
+    "correct_sequence": [
+      "きれいで",
+      "とても",
+      "安い"
+    ],
+    "distractors": [
+      "きれいに",
+      "あまり",
+      "安くない"
+    ],
+    "grammar_point": "形容动词中顿与程度副词"
+  },
+  {
+    "id": "M1-159",
+    "translation_cn": "请告诉我你的名字和电话号码。",
+    "template": "あなた ___ 名前 ___ 電話番号 ___ ___ ください。",
+    "correct_sequence": [
+      "の",
+      "と",
+      "を",
+      "教えて"
+    ],
+    "distractors": [
+      "は",
+      "が",
+      "に",
+      "教え"
+    ],
+    "grammar_point": "所有格、并列与宾格"
+  },
+  {
+    "id": "M1-160",
+    "translation_cn": "虽然下雨了，但打算去百货商店。",
+    "template": "雨が ___ います ___ 、デパートへ ___ つもりです。",
+    "correct_sequence": [
+      "降って",
+      "が",
+      "行く"
+    ],
+    "distractors": [
+      "降る",
+      "から",
+      "行って"
+    ],
+    "grammar_point": "逆接与意志打算"
+  },
+  {
+    "id": "M1-161",
+    "translation_cn": "冰箱里有五个鸡蛋和两瓶牛奶。",
+    "template": "冷蔵庫に卵 ___ ___ つ ___ 牛乳が二本あります。",
+    "correct_sequence": [
+      "が",
+      "五",
+      "と"
+    ],
+    "distractors": [
+      "を",
+      "五枚",
+      "は"
+    ],
+    "grammar_point": "存在句与多个量词"
+  },
+  {
+    "id": "M1-162",
+    "translation_cn": "每天练习一个小时左右日语。",
+    "template": "毎日一時間 ___ 日本語 ___ ___ します。",
+    "correct_sequence": [
+      "くらい",
+      "の",
+      "練習"
+    ],
+    "distractors": [
+      "ごろ",
+      "を",
+      "勉強"
+    ],
+    "grammar_point": "概数与动作名词"
+  },
+  {
+    "id": "M1-163",
+    "translation_cn": "请喝杯热茶后再走吧。",
+    "template": "熱いお茶を ___ ___ 、 ___ ください。",
+    "correct_sequence": [
+      "飲んで",
+      "から",
+      "行って"
+    ],
+    "distractors": [
+      "飲み",
+      "ので",
+      "行き"
+    ],
+    "grammar_point": "先后顺序与请求"
+  },
+  {
+    "id": "M1-164",
+    "translation_cn": "昨天冷得不得了。",
+    "template": "昨日 ___ とても ___ ___ 。",
+    "correct_sequence": [
+      "は",
+      "寒かっ",
+      "たです"
+    ],
+    "distractors": [
+      "が",
+      "寒い",
+      "でした"
+    ],
+    "grammar_point": "形容词过去式"
+  },
+  {
+    "id": "M1-165",
+    "translation_cn": "请把手机借给我五分钟左右。",
+    "template": "スマホ ___ 五分 ___ ___ 貸してください。",
+    "correct_sequence": [
+      "を",
+      "ほど",
+      "私に"
+    ],
+    "distractors": [
+      "が",
+      "まえ",
+      "私を"
+    ],
+    "grammar_point": "时间限度与授受对象"
+  },
+  {
+    "id": "M1-166",
+    "translation_cn": "那个孩子想成为医生。",
+    "template": "あの子は ___ ___ なり ___ です。",
+    "correct_sequence": [
+      "医者",
+      "に",
+      "たがって"
+    ],
+    "distractors": [
+      "先生",
+      "を",
+      "たい"
+    ],
+    "grammar_point": "第三人称愿望"
+  },
+  {
+    "id": "M1-167",
+    "translation_cn": "请教我怎么做这道菜。",
+    "template": "この料理 ___ ___ 方 ___ 教えてください。",
+    "correct_sequence": [
+      "の",
+      "作り",
+      "を"
+    ],
+    "distractors": [
+      "を",
+      "作っ",
+      "が"
+    ],
+    "grammar_point": "方式表达"
+  },
+  {
+    "id": "M1-168",
+    "translation_cn": "星期六不去哪里，在家里看书。",
+    "template": "土曜日 ___ どこ ___ 行きません。 ___ で本を読みます。",
+    "correct_sequence": [
+      "は",
+      "へも",
+      "うち"
+    ],
+    "distractors": [
+      "に",
+      "にも",
+      "学校"
+    ],
+    "grammar_point": "全面否定与场所"
+  },
+  {
+    "id": "M1-169",
+    "translation_cn": "因为太辣了，一点也没吃。",
+    "template": "___ すぎた ___ 、 ___ 食べませんでした。",
+    "correct_sequence": [
+      "辛",
+      "ので",
+      "全然"
+    ],
+    "distractors": [
+      "辛い",
+      "から",
+      "あまり"
+    ],
+    "grammar_point": "程度过限与程度副词"
+  },
+  {
+    "id": "M1-170",
+    "translation_cn": "我想买一个红色的包。",
+    "template": "赤い ___ ___ 一つ ___ です。",
+    "correct_sequence": [
+      "カバン",
+      "が",
+      "ほしい"
+    ],
+    "distractors": [
+      "靴",
+      "を",
+      "たい"
+    ],
+    "grammar_point": "欲望对象格"
+  },
+  {
+    "id": "M1-171",
+    "translation_cn": "请教教我怎么去机场。",
+    "template": "空港 ___ ___ 方 ___ 教えてください。",
+    "correct_sequence": [
+      "への",
+      "行き",
+      "を"
+    ],
+    "distractors": [
+      "に",
+      "行く",
+      "が"
+    ],
+    "grammar_point": "方向修饰与复合名词"
+  },
+  {
+    "id": "M1-172",
+    "translation_cn": "正在下雪，所以请慢点开车。",
+    "template": "雪が ___ ___ 、 ___ 運転してください。",
+    "correct_sequence": [
+      "降っている",
+      "から",
+      "ゆっくり"
+    ],
+    "distractors": [
+      "降る",
+      "ので",
+      "早く"
+    ],
+    "grammar_point": "进行态原因与副词"
+  },
+  {
+    "id": "M1-173",
+    "translation_cn": "我想喝冷的水或果汁。",
+    "template": "冷たい水 ___ ジュース ___ ___ です。",
+    "correct_sequence": [
+      "か",
+      "が",
+      "飲みたい"
+    ],
+    "distractors": [
+      "と",
+      "を",
+      "飲みます"
+    ],
+    "grammar_point": "并列选择与愿望"
+  },
+  {
+    "id": "M1-174",
+    "translation_cn": "那个孩子不会游泳。",
+    "template": "あの子は ___ ___ 泳ぐ ___ ___ 。",
+    "correct_sequence": [
+      "まだ",
+      "こと",
+      "ができません"
+    ],
+    "distractors": [
+      "もう",
+      "を",
+      "ができます"
+    ],
+    "grammar_point": "可能句式（名词化）"
+  },
+  {
+    "id": "M1-175",
+    "translation_cn": "请不要在这里拍照。",
+    "template": "这里 ___ 写真 ___ ___ ___ ください。",
+    "correct_sequence": [
+      "で",
+      "を",
+      "撮ら",
+      "ないで"
+    ],
+    "distractors": [
+      "に",
+      "が",
+      "撮り",
+      "て"
+    ],
+    "grammar_point": "场所格与否定请求"
+  },
+  {
+    "id": "M1-176",
+    "translation_cn": "昨天比前天冷得多呢。",
+    "template": "昨日 ___ おととい ___ ___ 寒かったですね。",
+    "correct_sequence": [
+      "は",
+      "より",
+      "ずっと"
+    ],
+    "distractors": [
+      "が",
+      "ほど",
+      "とても"
+    ],
+    "grammar_point": "比较级强调"
+  },
+  {
+    "id": "M1-177",
+    "translation_cn": "打算在暑假去京都旅行。",
+    "template": "夏休み ___ 京都 ___ 旅行 ___ ___ つもりです。",
+    "correct_sequence": [
+      "に",
+      "へ",
+      "に",
+      "行く"
+    ],
+    "distractors": [
+      "は",
+      "を",
+      "を",
+      "行って"
+    ],
+    "grammar_point": "时间、方向与目的"
+  },
+  {
+    "id": "M1-178",
+    "translation_cn": "虽然头痛，但吃了药后已经没关系了。",
+    "template": "頭が痛かった ___ 、薬を ___ ___ 大丈夫です。",
+    "correct_sequence": [
+      "ですが",
+      "飲んで",
+      "から"
+    ],
+    "distractors": [
+      "から",
+      "飲み",
+      "ので"
+    ],
+    "grammar_point": "逆接与先后顺序"
+  },
+  {
+    "id": "M1-179",
+    "translation_cn": "在这个餐厅吃饭好吗？",
+    "template": "この ___ ___ 一緒に ___ ___ 。",
+    "correct_sequence": [
+      "レストラン",
+      "で",
+      "食べ",
+      "ませんか"
+    ],
+    "distractors": [
+      "店",
+      "に",
+      "食べる",
+      "ましょう"
+    ],
+    "grammar_point": "场所格与劝诱"
+  },
+  {
+    "id": "M1-180",
+    "translation_cn": "请关上窗户，然后睡觉。",
+    "template": "窓を ___ ___ 、 ___ なさい。",
+    "correct_sequence": [
+      "閉めて",
+      "から",
+      "おやすみ"
+    ],
+    "distractors": [
+      "閉め",
+      "ので",
+      "寝"
+    ],
+    "grammar_point": "动作顺序与祈使"
+  }
+]

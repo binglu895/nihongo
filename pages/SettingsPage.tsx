@@ -28,6 +28,7 @@ const SettingsPage: React.FC = () => {
   const [dailyGrammarGoal, setDailyGrammarGoal] = useState(10);
   const [dailyPuzzleGoal, setDailyPuzzleGoal] = useState(10);
   const [showPuzzleDistractors, setShowPuzzleDistractors] = useState(true);
+  const [puzzleCategory, setPuzzleCategory] = useState('综合');
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -43,7 +44,7 @@ const SettingsPage: React.FC = () => {
   const fetchProfile = async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('preferred_font, preferred_color, preferred_language, daily_goal, daily_grammar_goal, daily_puzzle_goal, show_puzzle_distractors')
+      .select('preferred_font, preferred_color, preferred_language, daily_goal, daily_grammar_goal, daily_puzzle_goal, show_puzzle_distractors, puzzle_category')
       .eq('id', userId)
       .single();
 
@@ -55,6 +56,7 @@ const SettingsPage: React.FC = () => {
       if (data.daily_grammar_goal) setDailyGrammarGoal(data.daily_grammar_goal);
       if (data.daily_puzzle_goal) setDailyPuzzleGoal(data.daily_puzzle_goal);
       if (data.show_puzzle_distractors !== undefined) setShowPuzzleDistractors(data.show_puzzle_distractors);
+      if (data.puzzle_category) setPuzzleCategory(data.puzzle_category);
     }
   };
 
@@ -74,6 +76,7 @@ const SettingsPage: React.FC = () => {
         daily_grammar_goal: dailyGrammarGoal,
         daily_puzzle_goal: dailyPuzzleGoal,
         show_puzzle_distractors: showPuzzleDistractors,
+        puzzle_category: puzzleCategory,
         updated_at: new Date().toISOString(),
       })
       .eq('id', session.user.id);
@@ -192,25 +195,25 @@ const SettingsPage: React.FC = () => {
                 </div>
 
                 <div className="pt-6 border-t border-gray-50 dark:border-white/5">
-                  <div className="flex items-center justify-between group">
-                    <div className="flex items-center gap-5">
-                      <div className="text-primary flex items-center justify-center rounded-2xl bg-primary/10 shrink-0 size-14 shadow-sm group-hover:scale-110 transition-transform">
-                        <span className="material-symbols-outlined !text-3xl">extension</span>
-                      </div>
-                      <div className="flex flex-col justify-center">
-                        <p className="text-charcoal dark:text-white text-base font-black leading-normal">Show Distractors</p>
-                        <p className="text-ghost-grey dark:text-slate-400 text-sm font-medium leading-snug">Add incorrect options to increase difficulty.</p>
-                      </div>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-charcoal dark:text-white text-base font-black leading-normal">Practice Category</p>
+                      <p className="text-ghost-grey dark:text-slate-400 text-sm font-medium leading-snug">Choose what to focus on in sentence puzzles.</p>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={showPuzzleDistractors}
-                        onChange={(e) => setShowPuzzleDistractors(e.target.checked)}
-                        className="sr-only peer"
-                      />
-                      <div className="w-14 h-8 bg-gray-100 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-200 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-                    </label>
+                    <div className="grid grid-cols-3 gap-3">
+                      {['格助词', '格助词以外', '综合'].map((cat) => (
+                        <button
+                          key={cat}
+                          onClick={() => setPuzzleCategory(cat)}
+                          className={`py-3 rounded-xl border-2 font-bold text-sm transition-all
+                            ${puzzleCategory === cat
+                              ? 'border-primary bg-primary/5 text-primary'
+                              : 'border-slate-50 dark:border-slate-800 text-ghost-grey dark:text-slate-500 hover:border-slate-200 dark:hover:border-slate-700'}`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -357,23 +360,27 @@ const SettingsPage: React.FC = () => {
             </button>
           </div>
 
-          {saveStatus === 'success' && (
-            <div className="fixed bottom-10 right-10 bg-emerald-500 text-white px-8 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-right duration-500 font-black flex items-center gap-3">
-              <span className="material-symbols-outlined">check_circle</span>
-              Settings saved successfully!
-            </div>
-          )}
+          {
+            saveStatus === 'success' && (
+              <div className="fixed bottom-10 right-10 bg-emerald-500 text-white px-8 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-right duration-500 font-black flex items-center gap-3">
+                <span className="material-symbols-outlined">check_circle</span>
+                Settings saved successfully!
+              </div>
+            )
+          }
 
-          {saveStatus === 'error' && (
-            <div className="fixed bottom-10 right-10 bg-error-red text-white px-8 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-right duration-500 font-black flex items-center gap-3">
-              <span className="material-symbols-outlined">error</span>
-              Failed to save settings.
-            </div>
-          )}
-        </div>
-      </main>
+          {
+            saveStatus === 'error' && (
+              <div className="fixed bottom-10 right-10 bg-error-red text-white px-8 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-right duration-500 font-black flex items-center gap-3">
+                <span className="material-symbols-outlined">error</span>
+                Failed to save settings.
+              </div>
+            )
+          }
+        </div >
+      </main >
       <Footer />
-    </div>
+    </div >
   );
 };
 

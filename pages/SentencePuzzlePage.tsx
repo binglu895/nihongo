@@ -37,10 +37,11 @@ const SentencePuzzlePage: React.FC = () => {
             return;
         }
 
-        const { data: profile } = await supabase.from('profiles').select('current_level, preferred_language, daily_puzzle_goal, show_puzzle_distractors').eq('id', user.id).single();
+        const { data: profile } = await supabase.from('profiles').select('current_level, preferred_language, daily_puzzle_goal, show_puzzle_distractors, puzzle_category').eq('id', user.id).single();
         const level = profile?.current_level || 'N5';
         const goal = profile?.daily_puzzle_goal || 10;
         const showDistractors = profile?.show_puzzle_distractors !== false;
+        const category = profile?.puzzle_category || '综合';
 
         setCurrentLevel(level);
         setPreferredLang(profile?.preferred_language || 'English');
@@ -86,6 +87,9 @@ const SentencePuzzlePage: React.FC = () => {
 
             const learnedIds = learnedProgress?.map(p => p.puzzle_id) || [];
             let query = supabase.from('sentence_puzzles').select('*').eq('level', level);
+            if (category !== '综合') {
+                query = query.eq('category', category);
+            }
             if (learnedIds.length > 0) {
                 query = query.not('id', 'in', `(${learnedIds.join(',')})`);
             }
@@ -95,25 +99,22 @@ const SentencePuzzlePage: React.FC = () => {
 
         if (questionData.length > 0) {
             const processed = questionData.map(q => {
-                // Fixed elements: は, を, and punctuation (usually ends with 。 or ?)
-                // Others are placeholders.
-                const fixedElements = ['は', 'を', '。', '？', '?', '.', '，', '、', '！', '!', '；', ';', '：', ':'];
-                const puzzleSegments = q.segments
-                    .filter((seg: string) => seg !== '___') // Remove unfilled placeholders from seed mistakes
-                    .map((seg: string) => ({
-                        text: seg,
-                        isFixed: fixedElements.includes(seg)
+                // Parse template: split by spaces, handle ___
+                const templateParts = (q.template || '').split(' ');
+                const puzzleSegments = templateParts
+                    .filter((p: string) => p.trim().length > 0)
+                    .map((part: string) => ({
+                        text: part === '___' ? '___' : part,
+                        isFixed: part !== '___'
                     }));
 
-                // Construct the placeholder indices (where users need to fill)
+                // The correct sequence for slots
+                const selectableTexts = q.correct_sequence || [];
+
+                // Find indices where text is '___'
                 const placeholderIndices = puzzleSegments
                     .map((s: any, i: number) => !s.isFixed ? i : -1)
                     .filter((i: number) => i !== -1);
-
-                // Options: All selectable segments + distractors
-                const selectableTexts = puzzleSegments
-                    .filter((s: any) => !s.isFixed)
-                    .map((s: any) => s.text);
 
                 let options = [...selectableTexts];
                 if (showDistractors && q.distractors && q.distractors.length > 0) {
