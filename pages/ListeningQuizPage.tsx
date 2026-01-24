@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { addXP } from '../services/gamificationService';
-import ReportButton from '../components/ReportButton';
 
 const ListeningQuizPage: React.FC = () => {
     const navigate = useNavigate();
@@ -97,12 +96,7 @@ const ListeningQuizPage: React.FC = () => {
             if (learnedIds.length > 0) {
                 query = query.not('id', 'in', `(${learnedIds.join(',')})`);
             }
-
-            // Fetch reporting threshold
-            const { data: config } = await supabase.from('system_config').select('value').eq('key', 'report_hide_threshold').single();
-            const threshold = parseInt(config?.value as string) || 50;
-
-            const { data } = await query.lt('report_count', threshold).limit(goal);
+            const { data } = await query.limit(goal);
             questionData = data || [];
         }
 
@@ -357,12 +351,7 @@ const ListeningQuizPage: React.FC = () => {
                 <div className="w-full max-w-2xl">
 
 
-                    <div className="flex flex-col items-center mb-16 relative group">
-                        <ReportButton
-                            itemType="listening"
-                            itemId={questions[currentIdx]?.id}
-                            className="absolute -top-2 -right-4 size-8 opacity-40 hover:opacity-100 group-hover:opacity-70 transition-all z-20"
-                        />
+                    <div className="flex flex-col items-center mb-16">
                         <div className="mb-6 flex gap-2 items-center">
                             <label className="text-xs font-bold uppercase tracking-widest text-ghost-grey dark:text-slate-400">Voice:</label>
                             <select

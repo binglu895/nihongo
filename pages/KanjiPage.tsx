@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { addXP } from '../services/gamificationService';
-import ReportButton from '../components/ReportButton';
 
 const KanjiPage: React.FC = () => {
     const navigate = useNavigate();
@@ -106,11 +105,7 @@ const KanjiPage: React.FC = () => {
                 query = query.not('id', 'in', `(${learnedIds.slice(0, 500).join(',')})`);
             }
 
-            // Fetch reporting threshold
-            const { data: config } = await supabase.from('system_config').select('value').eq('key', 'report_hide_threshold').single();
-            const threshold = parseInt(config?.value as string) || 50;
-
-            const { data, error } = await query.lt('report_count', threshold).limit(goal);
+            const { data, error } = await query.limit(goal);
             if (error) {
                 console.error('Supabase Query Error:', error);
             }
@@ -392,146 +387,139 @@ const KanjiPage: React.FC = () => {
             </header>
 
             <main className="flex-grow flex flex-col items-center justify-center px-6 pt-24 pb-12 w-full">
-                {/* question card container */}
-                <div className="w-full max-w-3xl">
-                    {/* Question Area */}
-                    <div className="w-full text-center mb-10 animate-in fade-in zoom-in-95 duration-500 relative group">
-                        <ReportButton
-                            itemType="vocabulary"
-                            itemId={currentQuestion.id}
-                            className="absolute -top-2 -right-4 size-8 opacity-40 hover:opacity-100 group-hover:opacity-70 transition-all z-20"
-                        />
-                        <h1 className="text-4xl md:text-6xl font-black leading-[1.4] mb-3 text-charcoal dark:text-white tracking-tight">
-                            {(currentQuestion?.sentence || '').split('（　　）').map((part: string, i: number, arr: any[]) => (
-                                <React.Fragment key={i}>
-                                    {part}
-                                    {i < arr.length - 1 && (
-                                        <span className={`transition-colors duration-500 ${showAnswer ? 'text-emerald-500 underline decoration-emerald-500/30' : 'text-primary underline decoration-primary/30'} mx-2`}>
-                                            {showAnswer ? currentQuestion?.word : (currentQuestion?.word || '').split('').map(() => '　').join('')}
-                                        </span>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                        </h1>
-                        <p className="text-ghost-grey dark:text-slate-500 text-base md:text-lg font-medium italic">
-                            "{preferredLang === 'Chinese' ? (currentQuestion.sentence_translation_zh || currentQuestion.sentence_translation) : currentQuestion.sentence_translation}"
-                        </p>
-                    </div>
 
-                    {/* Dynamic Multi-Kanji Grid */}
-                    <div className="w-full flex flex-col items-center">
-                        <div className="max-w-full overflow-x-auto pb-6 px-4 no-scrollbar scroll-smooth">
-                            <div className="inline-block">
-                                <div className="relative p-10 md:p-14 bg-white dark:bg-slate-900 rounded-[48px] shadow-2xl border border-slate-100 dark:border-slate-800 transition-all">
-                                    {/* Grid Label inside card flow */}
-                                    <div className="mb-10 pl-1">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-600">Writing Area</span>
+                {/* Question Area */}
+                <div className="w-full text-center mb-10 animate-in fade-in zoom-in-95 duration-500">
+                    <h1 className="text-4xl md:text-6xl font-black leading-[1.4] mb-3 text-charcoal dark:text-white tracking-tight">
+                        {(currentQuestion?.sentence || '').split('（　　）').map((part: string, i: number, arr: any[]) => (
+                            <React.Fragment key={i}>
+                                {part}
+                                {i < arr.length - 1 && (
+                                    <span className={`transition-colors duration-500 ${showAnswer ? 'text-emerald-500 underline decoration-emerald-500/30' : 'text-primary underline decoration-primary/30'} mx-2`}>
+                                        {showAnswer ? currentQuestion?.word : (currentQuestion?.word || '').split('').map(() => '　').join('')}
+                                    </span>
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </h1>
+                    <p className="text-ghost-grey dark:text-slate-500 text-base md:text-lg font-medium italic">
+                        "{preferredLang === 'Chinese' ? (currentQuestion.sentence_translation_zh || currentQuestion.sentence_translation) : currentQuestion.sentence_translation}"
+                    </p>
+                </div>
+
+                {/* Dynamic Multi-Kanji Grid */}
+                <div className="w-full flex flex-col items-center">
+                    <div className="max-w-full overflow-x-auto pb-6 px-4 no-scrollbar scroll-smooth">
+                        <div className="inline-block">
+                            <div className="relative p-10 md:p-14 bg-white dark:bg-slate-900 rounded-[48px] shadow-2xl border border-slate-100 dark:border-slate-800 transition-all">
+                                {/* Grid Label inside card flow */}
+                                <div className="mb-10 pl-1">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-600">Writing Area</span>
+                                </div>
+
+                                <div
+                                    className="relative flex"
+                                    style={{ width: `${canvasWidth}px`, height: `${squareSize}px` }}
+                                >
+                                    {/* Background Grid Layer (Traditional Red Genkouyoushi) */}
+                                    <div className="absolute inset-0 flex">
+                                        {(currentQuestion?.word || '').split('').map((char: string, idx: number) => (
+                                            <div
+                                                key={idx}
+                                                className={`relative flex-shrink-0 border-2 border-red-500/60 dark:border-red-600/40 ${idx !== 0 ? 'border-l-0' : 'rounded-l-2xl'} ${idx === kanjiCount - 1 ? 'rounded-r-2xl' : ''}`}
+                                                style={{ width: `${squareSize}px`, height: `${squareSize}px` }}
+                                            >
+                                                {/* Correct Kanji Hint Layer (Shown on Check) */}
+                                                {showAnswer && (
+                                                    <div className="absolute inset-0 flex items-center justify-center animate-in fade-in duration-700">
+                                                        <span
+                                                            className="text-[170px] text-emerald-500/15 dark:text-emerald-500/10 font-display select-none pointer-events-none"
+                                                            style={{ fontFamily: 'var(--preferred-font)' }}
+                                                        >
+                                                            {char}
+                                                        </span>
+                                                    </div>
+                                                )}
+
+                                                {/* Rice Grid Helper Lines (Red Dashed) */}
+                                                <div className="absolute top-1/2 left-0 w-full h-[1px] border-t border-dashed border-red-400/40 dark:border-red-800/30"></div>
+                                                <div className="absolute top-0 left-1/2 w-[1px] h-full border-l border-dashed border-red-400/40 dark:border-red-800/30"></div>
+                                                <svg className="absolute inset-0 w-full h-full text-red-300/30 dark:text-red-900/20" viewBox="0 0 100 100">
+                                                    <line x1="0" y1="0" x2="100" y2="100" stroke="currentColor" strokeWidth="0.8" strokeDasharray="4" />
+                                                    <line x1="100" y1="0" x2="0" y2="100" stroke="currentColor" strokeWidth="0.8" strokeDasharray="4" />
+                                                </svg>
+                                            </div>
+                                        ))}
                                     </div>
 
-                                    <div
-                                        className="relative flex"
-                                        style={{ width: `${canvasWidth}px`, height: `${squareSize}px` }}
-                                    >
-                                        {/* Background Grid Layer (Traditional Red Genkouyoushi) */}
-                                        <div className="absolute inset-0 flex">
-                                            {(currentQuestion?.word || '').split('').map((char: string, idx: number) => (
-                                                <div
-                                                    key={idx}
-                                                    className={`relative flex-shrink-0 border-2 border-red-500/60 dark:border-red-600/40 ${idx !== 0 ? 'border-l-0' : 'rounded-l-2xl'} ${idx === kanjiCount - 1 ? 'rounded-r-2xl' : ''}`}
-                                                    style={{ width: `${squareSize}px`, height: `${squareSize}px` }}
-                                                >
-                                                    {/* Correct Kanji Hint Layer (Shown on Check) */}
-                                                    {showAnswer && (
-                                                        <div className="absolute inset-0 flex items-center justify-center animate-in fade-in duration-700">
-                                                            <span
-                                                                className="text-[170px] text-emerald-500/15 dark:text-emerald-500/10 font-display select-none pointer-events-none"
-                                                                style={{ fontFamily: 'var(--preferred-font)' }}
-                                                            >
-                                                                {char}
-                                                            </span>
-                                                        </div>
-                                                    )}
-
-                                                    {/* Rice Grid Helper Lines (Red Dashed) */}
-                                                    <div className="absolute top-1/2 left-0 w-full h-[1px] border-t border-dashed border-red-400/40 dark:border-red-800/30"></div>
-                                                    <div className="absolute top-0 left-1/2 w-[1px] h-full border-l border-dashed border-red-400/40 dark:border-red-800/30"></div>
-                                                    <svg className="absolute inset-0 w-full h-full text-red-300/30 dark:text-red-900/20" viewBox="0 0 100 100">
-                                                        <line x1="0" y1="0" x2="100" y2="100" stroke="currentColor" strokeWidth="0.8" strokeDasharray="4" />
-                                                        <line x1="100" y1="0" x2="0" y2="100" stroke="currentColor" strokeWidth="0.8" strokeDasharray="4" />
-                                                    </svg>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <canvas
-                                            ref={canvasRef}
-                                            width={canvasWidth}
-                                            height={squareSize}
-                                            className="relative z-20 cursor-crosshair touch-none"
-                                            onMouseDown={startDrawing}
-                                            onMouseMove={draw}
-                                            onMouseUp={stopDrawing}
-                                            onMouseLeave={stopDrawing}
-                                            onTouchStart={startDrawing}
-                                            onTouchMove={draw}
-                                            onTouchEnd={stopDrawing}
-                                        />
-                                    </div>
+                                    <canvas
+                                        ref={canvasRef}
+                                        width={canvasWidth}
+                                        height={squareSize}
+                                        className="relative z-20 cursor-crosshair touch-none"
+                                        onMouseDown={startDrawing}
+                                        onMouseMove={draw}
+                                        onMouseUp={stopDrawing}
+                                        onMouseLeave={stopDrawing}
+                                        onTouchStart={startDrawing}
+                                        onTouchMove={draw}
+                                        onTouchEnd={stopDrawing}
+                                    />
                                 </div>
                             </div>
                         </div>
-
-                        <div className="mt-8 flex flex-col gap-4 w-full max-w-lg px-4">
-                            {!showAnswer ? (
-                                <div className="flex gap-4 w-full">
-                                    <button
-                                        onClick={clearCanvas}
-                                        className="px-8 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-ghost-grey hover:bg-slate-50 dark:hover:bg-slate-800/50 font-black text-sm transition-all flex items-center justify-center gap-2"
-                                    >
-                                        <span className="material-symbols-outlined">restart_alt</span>
-                                        {preferredLang === 'Chinese' ? '清除' : 'Clear'}
-                                    </button>
-                                    <button
-                                        onClick={handleCheckAnswer}
-                                        className="flex-1 py-4 bg-primary hover:bg-primary-hover text-white rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/30"
-                                    >
-                                        <span>{preferredLang === 'Chinese' ? '检查答案' : 'Check Answer'}</span>
-                                        <span className="material-symbols-outlined">verified</span>
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col gap-6 w-full animate-in slide-in-from-bottom duration-500">
-                                    <div className="flex gap-4 w-full">
-                                        <button
-                                            onClick={() => handleSrsResponse(false)}
-                                            className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-ghost-grey dark:text-slate-400 rounded-2xl font-black text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border-2 border-slate-200 dark:border-slate-700"
-                                        >
-                                            {preferredLang === 'Chinese' ? '没记住' : 'Forgot It'}
-                                        </button>
-                                        <button
-                                            onClick={() => handleSrsResponse(true)}
-                                            className="flex-1 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-sm transition-all shadow-xl shadow-emerald-500/20"
-                                        >
-                                            {preferredLang === 'Chinese' ? '记住了' : 'Got It Right'}
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
                     </div>
 
-                    <div className="mt-12 flex flex-wrap justify-center gap-6 md:gap-12 text-ghost-grey dark:text-slate-500 italic px-4">
-                        <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined !text-base">info</span>
-                            <span className="text-xs md:text-sm font-medium">
-                                {preferredLang === 'Chinese' ? '书写:' : 'Draw:'}
-                                <span className="font-black text-charcoal dark:text-white not-italic text-lg ml-1">{currentQuestion.word}</span>
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined !text-base">lightbulb</span>
-                            <span className="text-xs md:text-sm font-medium">{preferredLang === 'Chinese' ? '含义:' : 'Meaning:'} {preferredLang === 'Chinese' ? (currentQuestion.meaning_zh || currentQuestion.meaning) : currentQuestion.meaning}</span>
-                        </div>
+                    <div className="mt-8 flex flex-col gap-4 w-full max-w-lg px-4">
+                        {!showAnswer ? (
+                            <div className="flex gap-4 w-full">
+                                <button
+                                    onClick={clearCanvas}
+                                    className="px-8 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-ghost-grey hover:bg-slate-50 dark:hover:bg-slate-800/50 font-black text-sm transition-all flex items-center justify-center gap-2"
+                                >
+                                    <span className="material-symbols-outlined">restart_alt</span>
+                                    {preferredLang === 'Chinese' ? '清除' : 'Clear'}
+                                </button>
+                                <button
+                                    onClick={handleCheckAnswer}
+                                    className="flex-1 py-4 bg-primary hover:bg-primary-hover text-white rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/30"
+                                >
+                                    <span>{preferredLang === 'Chinese' ? '检查答案' : 'Check Answer'}</span>
+                                    <span className="material-symbols-outlined">verified</span>
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col gap-6 w-full animate-in slide-in-from-bottom duration-500">
+                                <div className="flex gap-4 w-full">
+                                    <button
+                                        onClick={() => handleSrsResponse(false)}
+                                        className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-ghost-grey dark:text-slate-400 rounded-2xl font-black text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border-2 border-slate-200 dark:border-slate-700"
+                                    >
+                                        {preferredLang === 'Chinese' ? '没记住' : 'Forgot It'}
+                                    </button>
+                                    <button
+                                        onClick={() => handleSrsResponse(true)}
+                                        className="flex-1 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-sm transition-all shadow-xl shadow-emerald-500/20"
+                                    >
+                                        {preferredLang === 'Chinese' ? '记住了' : 'Got It Right'}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="mt-12 flex flex-wrap justify-center gap-6 md:gap-12 text-ghost-grey dark:text-slate-500 italic px-4">
+                    <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined !text-base">info</span>
+                        <span className="text-xs md:text-sm font-medium">
+                            {preferredLang === 'Chinese' ? '书写:' : 'Draw:'}
+                            <span className="font-black text-charcoal dark:text-white not-italic text-lg ml-1">{currentQuestion.word}</span>
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined !text-base">lightbulb</span>
+                        <span className="text-xs md:text-sm font-medium">{preferredLang === 'Chinese' ? '含义:' : 'Meaning:'} {preferredLang === 'Chinese' ? (currentQuestion.meaning_zh || currentQuestion.meaning) : currentQuestion.meaning}</span>
                     </div>
                 </div>
             </main>
