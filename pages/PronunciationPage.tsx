@@ -60,6 +60,11 @@ const PronunciationPage: React.FC = () => {
 
             recog.onend = () => {
                 setIsRecording(false);
+                // Auto-check when recognition stops
+                // Use a slight timeout to ensure state has updated from final result
+                setTimeout(() => {
+                    checkAnswer();
+                }, 100);
             };
 
             setRecognition(recog);
@@ -333,6 +338,8 @@ const PronunciationPage: React.FC = () => {
     };
 
     const checkAnswer = () => {
+        if (answered || !recognizedText) return;
+
         const current = questions[currentIdx];
         const normalizedUser = normalizeText(recognizedText);
 
@@ -556,22 +563,25 @@ const PronunciationPage: React.FC = () => {
                     <div className="bg-white dark:bg-slate-900 rounded-[32px] p-8 border border-black/5 dark:border-white/5 shadow-2xl space-y-8">
                         <div className="flex flex-col items-center gap-6">
                             <button
-                                onMouseDown={startRecording}
-                                onMouseUp={stopRecording}
-                                onTouchStart={startRecording}
-                                onTouchEnd={stopRecording}
+                                onMouseDown={!answered ? startRecording : undefined}
+                                onMouseUp={!answered ? stopRecording : undefined}
+                                onTouchStart={!answered ? startRecording : undefined}
+                                onTouchEnd={!answered ? stopRecording : undefined}
+                                onClick={answered ? playMyRecording : undefined}
                                 className={`size-24 rounded-full flex items-center justify-center transition-all shadow-2xl relative
                                     ${isRecording
                                         ? 'bg-rose-500 text-white scale-110 ring-8 ring-rose-500/20'
-                                        : 'bg-primary text-white hover:scale-105 active:scale-95'}`}
+                                        : answered
+                                            ? 'bg-emerald-500 text-white hover:scale-105 active:scale-95'
+                                            : 'bg-primary text-white hover:scale-105 active:scale-95'}`}
                             >
                                 {isRecording && <div className="absolute inset-0 rounded-full animate-ping bg-rose-500/30"></div>}
                                 <span className="material-symbols-outlined !text-4xl">
-                                    {isRecording ? 'graphic_eq' : 'mic'}
+                                    {isRecording ? 'graphic_eq' : answered ? 'play_arrow' : 'mic'}
                                 </span>
                             </button>
                             <p className="text-sm font-black text-ghost-grey dark:text-slate-400 uppercase tracking-[0.2em]">
-                                {isRecording ? 'Recording Now...' : 'Hold to record your voice'}
+                                {isRecording ? 'Recording Now...' : answered ? 'Listen to yourself' : 'Hold to record your voice'}
                             </p>
                         </div>
 
@@ -592,17 +602,10 @@ const PronunciationPage: React.FC = () => {
                     </div>
 
                     <div className="flex gap-4">
-                        <button
-                            disabled={!recognizedText || answered}
-                            onClick={checkAnswer}
-                            className="flex-[2] py-5 bg-primary text-white rounded-3xl font-black text-xl shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30 disabled:grayscale"
-                        >
-                            Verify Pronunciation
-                        </button>
                         {answered && (
                             <button
                                 onClick={handleNext}
-                                className="flex-1 py-5 bg-emerald-500 text-white rounded-3xl font-black text-xl shadow-xl shadow-emerald-500/30 hover:scale-[1.02] active:scale-95 transition-all animate-in slide-in-from-right-4"
+                                className="w-full py-5 bg-primary text-white rounded-3xl font-black text-xl shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all animate-in slide-in-from-right-4"
                             >
                                 Next
                             </button>
