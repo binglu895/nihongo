@@ -201,16 +201,20 @@ const SettingsPage: React.FC = () => {
                       <p className="text-ghost-grey dark:text-slate-400 text-sm font-medium leading-snug">Choose what to focus on in sentence puzzles.</p>
                     </div>
                     <div className="grid grid-cols-3 gap-3">
-                      {['格助词', '格助词以外', '综合'].map((cat) => (
+                      {[
+                        { id: '格助词', label: 'Particles' },
+                        { id: '格助词以外', label: 'Others' },
+                        { id: '综合', label: 'Mixed' }
+                      ].map((cat) => (
                         <button
-                          key={cat}
-                          onClick={() => setPuzzleCategory(cat)}
+                          key={cat.id}
+                          onClick={() => setPuzzleCategory(cat.id)}
                           className={`py-3 rounded-xl border-2 font-bold text-sm transition-all
-                            ${puzzleCategory === cat
+                            ${puzzleCategory === cat.id
                               ? 'border-primary bg-primary/5 text-primary'
                               : 'border-slate-50 dark:border-slate-800 text-ghost-grey dark:text-slate-500 hover:border-slate-200 dark:hover:border-slate-700'}`}
                         >
-                          {cat}
+                          {cat.label}
                         </button>
                       ))}
                     </div>
