@@ -221,10 +221,7 @@ const PronunciationPage: React.FC = () => {
         }
     };
 
-    const startRecording = async (e?: React.MouseEvent | React.TouchEvent) => {
-        if (e && 'touches' in e) {
-            e.preventDefault();
-        }
+    const startRecording = async () => {
         setRecognizedText('');
         recognizedTextRef.current = '';
         setAnswered(false);
@@ -255,10 +252,7 @@ const PronunciationPage: React.FC = () => {
         }
     };
 
-    const stopRecording = (e?: React.MouseEvent | React.TouchEvent) => {
-        if (e && 'touches' in e) {
-            e.preventDefault();
-        }
+    const stopRecording = () => {
         setIsRecording(false);
         if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
             mediaRecorderRef.current.stop();
@@ -529,6 +523,7 @@ const PronunciationPage: React.FC = () => {
     }
 
     const current = questions[currentIdx];
+    const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-slate-100 min-h-screen flex flex-col font-display transition-colors duration-300">
@@ -617,17 +612,20 @@ const PronunciationPage: React.FC = () => {
                         <div className="flex flex-col items-center gap-6">
                             <div className="flex items-center gap-8">
                                 <button
-                                    onMouseDown={startRecording}
-                                    onMouseUp={stopRecording}
-                                    onTouchStart={startRecording}
-                                    onTouchEnd={stopRecording}
-                                    onTouchCancel={stopRecording}
+                                    onMouseDown={!isTouchDevice ? startRecording : undefined}
+                                    onMouseUp={!isTouchDevice ? stopRecording : undefined}
+                                    onMouseLeave={!isTouchDevice && isRecording ? stopRecording : undefined}
+                                    onClick={() => {
+                                        if (isTouchDevice) {
+                                            isRecording ? stopRecording() : startRecording();
+                                        }
+                                    }}
                                     onContextMenu={(e) => e.preventDefault()}
-                                    style={{ WebkitTouchCallout: 'none' }}
-                                    className={`size-24 rounded-full flex items-center justify-center transition-all shadow-2xl relative select-none touch-none
+                                    className={`size-24 rounded-full flex items-center justify-center transition-all shadow-2xl relative select-none
                                         ${isRecording
                                             ? 'bg-rose-500 text-white scale-110 ring-8 ring-rose-500/20'
                                             : 'bg-primary text-white hover:scale-105 active:scale-95'}`}
+                                    style={{ touchAction: 'manipulation', WebkitTouchCallout: 'none' } as React.CSSProperties}
                                 >
                                     {isRecording && <div className="absolute inset-0 rounded-full animate-ping bg-rose-500/30"></div>}
                                     <span className="material-symbols-outlined !text-4xl">
