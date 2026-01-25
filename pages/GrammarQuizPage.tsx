@@ -463,7 +463,7 @@ const GrammarQuizPage: React.FC = () => {
                                 onClick={handleNext}
                                 className="w-full py-5 bg-charcoal dark:bg-white text-white dark:text-charcoal rounded-3xl font-black text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
                             >
-                                Next Step
+                                Next
                             </button>
                         </div>
                     )}
