@@ -27,7 +27,7 @@ const PronunciationPage: React.FC = () => {
     const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
     const [recognition, setRecognition] = useState<any>(null);
     const [voiceMode, setVoiceMode] = useState<'default' | 'sakura' | 'sakura07' | 'sakura07reading'>('default');
-    const [isTranscriptionOnly, setIsTranscriptionOnly] = useState(() => {
+    const [isTranscriptionOnly] = useState(() => {
         return localStorage.getItem('pronunciation_transcription_only') === 'true';
     });
 
@@ -648,34 +648,16 @@ const PronunciationPage: React.FC = () => {
                                     <span className="material-symbols-outlined">volume_up</span>
                                     <span className="text-sm font-black uppercase tracking-widest">Listen Reference</span>
                                 </button>
-                                <div className="flex gap-2 items-center">
-                                    <select
-                                        value={voiceMode}
-                                        onChange={(e) => setVoiceMode(e.target.value as any)}
-                                        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-4 py-3 text-xs font-bold text-charcoal dark:text-slate-200 shadow-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
-                                    >
-                                        <option value="default">Default (Google)</option>
-                                        <option value="sakura">Sakura (Normal)</option>
-                                        <option value="sakura07">Sakura (0.7x Speed)</option>
-                                        <option value="sakura07reading">Sakura (Reading, 0.7x)</option>
-                                    </select>
-                                    <button
-                                        onClick={() => {
-                                            const newVal = !isTranscriptionOnly;
-                                            setIsTranscriptionOnly(newVal);
-                                            localStorage.setItem('pronunciation_transcription_only', String(newVal));
-                                        }}
-                                        className={`px-4 py-2 rounded-full text-[10px] font-black uppercase transition-all flex items-center gap-2
-                                            ${isTranscriptionOnly
-                                                ? 'bg-amber-500 text-white shadow-lg'
-                                                : 'bg-slate-100 dark:bg-slate-800 text-ghost-grey dark:text-slate-400 border border-black/5 dark:border-white/5'}`}
-                                    >
-                                        <span className="material-symbols-outlined !text-xs">
-                                            {isTranscriptionOnly ? 'bolt' : 'record_voice_over'}
-                                        </span>
-                                        {isTranscriptionOnly ? 'Stable Mode (Transcribe Only)' : 'Full Mode (Rec + Trans)'}
-                                    </button>
-                                </div>
+                                <select
+                                    value={voiceMode}
+                                    onChange={(e) => setVoiceMode(e.target.value as any)}
+                                    className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-4 py-3 text-xs font-bold text-charcoal dark:text-slate-200 shadow-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
+                                >
+                                    <option value="default">Default (Google)</option>
+                                    <option value="sakura">Sakura (Normal)</option>
+                                    <option value="sakura07">Sakura (0.7x Speed)</option>
+                                    <option value="sakura07reading">Sakura (Reading, 0.7x)</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -766,13 +748,13 @@ const PronunciationPage: React.FC = () => {
                     )}
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex gap-4 w-full pt-4">
                     {answered && (
                         <button
                             onClick={handleNext}
                             className="w-full py-5 bg-primary text-white rounded-3xl font-black text-xl shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all animate-in slide-in-from-right-4"
                         >
-                            Next
+                            Next Challenge
                         </button>
                     )}
                 </div>
