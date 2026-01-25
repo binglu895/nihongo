@@ -554,7 +554,7 @@ const PronunciationPage: React.FC = () => {
                 </div>
             </header>
 
-            <main className="flex-1 flex flex-col items-center justify-center p-6 pt-24">
+            <main className="flex-1 flex flex-col items-center justify-start p-6 pt-32">
                 <div className="w-full max-w-2xl space-y-12 relative">
                     {/* Report Button & Menu */}
                     <div className="absolute -top-12 right-0 z-20 flex flex-col items-end">
