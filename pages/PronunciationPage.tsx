@@ -31,6 +31,8 @@ const PronunciationPage: React.FC = () => {
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
     const recognizedTextRef = useRef('');
+    const pressStartTimeRef = useRef<number>(0);
+    const mimeTypeRef = useRef<string>('audio/webm');
 
     useEffect(() => {
         initQuiz();
@@ -231,7 +233,19 @@ const PronunciationPage: React.FC = () => {
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const mediaRecorder = new MediaRecorder(stream);
+
+            // Detect supported MIME types (iOS fallback)
+            const types = ['audio/webm', 'audio/mp4', 'audio/ogg', 'audio/wav'];
+            let selectedType = 'audio/webm';
+            for (const type of types) {
+                if (MediaRecorder.isTypeSupported(type)) {
+                    selectedType = type;
+                    break;
+                }
+            }
+            mimeTypeRef.current = selectedType;
+
+            const mediaRecorder = new MediaRecorder(stream, { mimeType: selectedType });
             mediaRecorderRef.current = mediaRecorder;
 
             mediaRecorder.ondataavailable = (e) => {
@@ -239,13 +253,19 @@ const PronunciationPage: React.FC = () => {
             };
 
             mediaRecorder.onstop = () => {
-                const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+                const blob = new Blob(chunksRef.current, { type: mimeTypeRef.current });
                 setRecordedBlob(blob);
                 stream.getTracks().forEach(track => track.stop());
             };
 
             mediaRecorder.start();
-            if (recognition) recognition.start();
+            if (recognition) {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.error("Recognition start failed (already running?):", e);
+                }
+            }
         } catch (err) {
             console.error('Error accessing microphone:', err);
             setIsRecording(false);
@@ -523,7 +543,6 @@ const PronunciationPage: React.FC = () => {
     }
 
     const current = questions[currentIdx];
-    const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-slate-100 min-h-screen flex flex-col font-display transition-colors duration-300">
@@ -612,12 +631,28 @@ const PronunciationPage: React.FC = () => {
                         <div className="flex flex-col items-center gap-6">
                             <div className="flex items-center gap-8">
                                 <button
-                                    onMouseDown={!isTouchDevice ? startRecording : undefined}
-                                    onMouseUp={!isTouchDevice ? stopRecording : undefined}
-                                    onMouseLeave={!isTouchDevice && isRecording ? stopRecording : undefined}
+                                    onPointerDown={(e) => {
+                                        // Prevents default touch moves/zooms during long press
+                                        const target = e.currentTarget;
+                                        target.releasePointerCapture(e.pointerId);
+
+                                        pressStartTimeRef.current = Date.now();
+                                        if (!isRecording) {
+                                            startRecording();
+                                        }
+                                    }}
+                                    onPointerUp={() => {
+                                        const duration = Date.now() - pressStartTimeRef.current;
+                                        // If held for more than 400ms, stop on release (PC logic)
+                                        if (duration > 400 && isRecording) {
+                                            stopRecording();
+                                        }
+                                    }}
                                     onClick={() => {
-                                        if (isTouchDevice) {
-                                            isRecording ? stopRecording() : startRecording();
+                                        const duration = Date.now() - pressStartTimeRef.current;
+                                        // If it was a short click (<400ms), it's a toggle
+                                        if (duration <= 400 && isRecording) {
+                                            stopRecording();
                                         }
                                     }}
                                     onContextMenu={(e) => e.preventDefault()}
@@ -625,7 +660,7 @@ const PronunciationPage: React.FC = () => {
                                         ${isRecording
                                             ? 'bg-rose-500 text-white scale-110 ring-8 ring-rose-500/20'
                                             : 'bg-primary text-white hover:scale-105 active:scale-95'}`}
-                                    style={{ touchAction: 'manipulation', WebkitTouchCallout: 'none' } as React.CSSProperties}
+                                    style={{ touchAction: 'none', WebkitTouchCallout: 'none' } as React.CSSProperties}
                                 >
                                     {isRecording && <div className="absolute inset-0 rounded-full animate-ping bg-rose-500/30"></div>}
                                     <span className="material-symbols-outlined !text-4xl">
