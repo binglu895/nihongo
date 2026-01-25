@@ -110,38 +110,6 @@ const SettingsPage: React.FC = () => {
             <p className="text-ghost-grey dark:text-slate-400 text-lg font-medium">Personalize your JLPT learning experience.</p>
           </div>
 
-          {/* Pronunciation Practice Settings */}
-          <section className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl transition-all">
-            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Pronunciation Settings</h2>
-            <div className="p-8">
-              <div className="flex flex-col gap-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col gap-1">
-                    <p className="text-charcoal dark:text-white text-base font-black leading-normal">Mobile Stable Mode (Transcription Only)</p>
-                    <p className="text-ghost-grey dark:text-slate-400 text-sm font-medium max-w-[320px] leading-snug">
-                      Enable this if you experience issues with voice recognition on Android/Chrome. Disables recording to ensure stable transcription.
-                    </p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={localStorage.getItem('pronunciation_transcription_only') === 'true'}
-                      onChange={(e) => {
-                        localStorage.setItem('pronunciation_transcription_only', String(e.target.checked));
-                        window.dispatchEvent(new Event('storage')); // Trigger update if other pages are open
-                        // Force re-render of this checkbox
-                        const checkbox = e.target;
-                        checkbox.checked = e.target.checked;
-                        window.location.reload(); // Simple way to force refresh the state in this case
-                      }}
-                      className="sr-only peer"
-                    />
-                    <div className="w-14 h-8 bg-gray-100 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-200 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </section>
           <section className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl transition-all">
             <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Vocabulary Study Goal</h2>
             <div className="p-8">
@@ -201,9 +169,9 @@ const SettingsPage: React.FC = () => {
             </div>
           </section>
 
-          {/* Pronunciation Daily Goal */}
+          {/* Pronunciation Settings */}
           <section className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl transition-all">
-            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Pronunciation Study Goal</h2>
+            <h2 className="text-charcoal dark:text-white text-xs font-black p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 uppercase tracking-widest">Pronunciation Settings</h2>
             <div className="p-8">
               <div className="flex flex-col gap-6">
                 <div className="flex justify-between items-end">
@@ -226,6 +194,30 @@ const SettingsPage: React.FC = () => {
                       {goal}
                     </button>
                   ))}
+                </div>
+
+                <div className="pt-6 border-t border-gray-50 dark:border-white/5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-charcoal dark:text-white text-base font-black leading-normal">Mobile Stable Mode (Transcription Only)</p>
+                      <p className="text-ghost-grey dark:text-slate-400 text-sm font-medium max-w-[320px] leading-snug">
+                        Enable this if you experience issues on Android/Chrome. Disables local recording for stability.
+                      </p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={localStorage.getItem('pronunciation_transcription_only') === 'true'}
+                        onChange={(e) => {
+                          localStorage.setItem('pronunciation_transcription_only', String(e.target.checked));
+                          window.dispatchEvent(new Event('storage'));
+                          window.location.reload();
+                        }}
+                        className="sr-only peer"
+                      />
+                      <div className="w-14 h-8 bg-gray-100 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-200 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
