@@ -24,6 +24,7 @@ const PronunciationPage: React.FC = () => {
     const [showReportMenu, setShowReportMenu] = useState(false);
     const [isReporting, setIsReporting] = useState(false);
     const [reportStatus, setReportStatus] = useState<'idle' | 'success' | 'error' | 'duplicate'>('idle');
+    const [failedIdsInSession] = useState<Set<string>>(new Set());
     const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
     const [recognition, setRecognition] = useState<any>(null);
     const [voiceMode, setVoiceMode] = useState<'default' | 'sakura' | 'sakura07' | 'sakura07reading'>('default');
@@ -212,8 +213,12 @@ const PronunciationPage: React.FC = () => {
             else interval = Math.round(interval * ease_factor);
             srs_stage++;
             ease_factor = Math.min(2.5, ease_factor + 0.1);
-            if (isReviewMode) setReviewedTodayCount(prev => prev + 1);
+            if (isReviewMode && !failedIdsInSession.has(currentQuestion.id)) {
+                setReviewedTodayCount(prev => prev + 1);
+            }
         } else {
+            failedIdsInSession.add(currentQuestion.id);
+            setQuestions(prev => [...prev, currentQuestion]);
             srs_stage = 1;
             interval = 0;
             ease_factor = Math.max(1.3, ease_factor - 0.2);
@@ -471,7 +476,7 @@ const PronunciationPage: React.FC = () => {
         setAnswered(true);
         updateSRS(isCorrect);
 
-        if (isCorrect) {
+        if (isCorrect && !failedIdsInSession.has(current.id)) {
             addXP('LISTENING', 5).then(res => {
                 if (res) {
                     setLastGainedXP(res.xpGained);
@@ -482,12 +487,16 @@ const PronunciationPage: React.FC = () => {
     };
 
     const handleNext = () => {
-        setCurrentIdx(prev => prev + 1);
-        setAnswered(false);
-        setRecognizedText('');
-        recognizedTextRef.current = '';
-        setRecordedBlob(null);
-        setLastGainedXP(null);
+        if (currentIdx < questions.length - 1) {
+            setCurrentIdx(prev => prev + 1);
+            setAnswered(false);
+            setRecognizedText('');
+            recognizedTextRef.current = '';
+            setRecordedBlob(null);
+            setLastGainedXP(null);
+        } else {
+            navigate('/dashboard');
+        }
     };
 
     const handleReport = async (reason: 'invalid_question' | 'incorrect_answer') => {
