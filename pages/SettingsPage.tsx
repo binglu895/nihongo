@@ -62,39 +62,61 @@ const SettingsPage: React.FC = () => {
     }
   };
 
+  const applyStyles = (font: string, color: string) => {
+    document.documentElement.style.setProperty('--preferred-font', `'${font}'`);
+    document.documentElement.style.setProperty('--primary-color', color);
+    document.documentElement.style.setProperty('--primary-hover', color + 'ee');
+    document.documentElement.style.setProperty('--primary-active', color + 'dd');
+  };
+
   const handleSave = async () => {
     if (!session?.user) return;
 
     setIsSaving(true);
     setSaveStatus('idle');
 
+    const updateData: any = {
+      preferred_font: selectedFont,
+      preferred_color: selectedColor,
+      preferred_language: selectedLanguage,
+      daily_goal: dailyGoal,
+      daily_grammar_goal: dailyGrammarGoal,
+      daily_puzzle_goal: dailyPuzzleGoal,
+      daily_pronunciation_goal: dailyPronunciationGoal,
+      show_puzzle_distractors: showPuzzleDistractors,
+      puzzle_category: puzzleCategory,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Attempt 1: Full Save
     const { error } = await supabase
       .from('profiles')
-      .update({
-        preferred_font: selectedFont,
-        preferred_color: selectedColor,
-        preferred_language: selectedLanguage,
-        daily_goal: dailyGoal,
-        daily_grammar_goal: dailyGrammarGoal,
-        daily_puzzle_goal: dailyPuzzleGoal,
-        daily_pronunciation_goal: dailyPronunciationGoal,
-        show_puzzle_distractors: showPuzzleDistractors,
-        puzzle_category: puzzleCategory,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('id', session.user.id);
 
     if (error) {
-      console.error('Error saving settings:', error);
-      setSaveStatus('error');
+      console.warn('Full save failed (possibly missing column), attempting safe save:', error.message);
+
+      // Attempt 2: Safe Save (Excluding the new pronunciation goal column)
+      const safeData = { ...updateData };
+      delete safeData.daily_pronunciation_goal;
+
+      const { error: safeError } = await supabase
+        .from('profiles')
+        .update(safeData)
+        .eq('id', session.user.id);
+
+      if (safeError) {
+        console.error('Safe save failed:', safeError);
+        setSaveStatus('error');
+      } else {
+        setSaveStatus('success');
+        applyStyles(selectedFont, selectedColor);
+        setTimeout(() => setSaveStatus('idle'), 3000);
+      }
     } else {
       setSaveStatus('success');
-      // Apply immediately
-      document.documentElement.style.setProperty('--preferred-font', `'${selectedFont}'`);
-      document.documentElement.style.setProperty('--primary-color', selectedColor);
-      document.documentElement.style.setProperty('--primary-hover', selectedColor + 'ee');
-      document.documentElement.style.setProperty('--primary-active', selectedColor + 'dd');
-
+      applyStyles(selectedFont, selectedColor);
       setTimeout(() => setSaveStatus('idle'), 3000);
     }
     setIsSaving(false);
@@ -449,9 +471,12 @@ const SettingsPage: React.FC = () => {
 
           {
             saveStatus === 'error' && (
-              <div className="fixed bottom-10 right-10 bg-error-red text-white px-8 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-right duration-500 font-black flex items-center gap-3">
-                <span className="material-symbols-outlined">error</span>
-                Failed to save settings.
+              <div className="fixed bottom-10 right-10 bg-rose-500 text-white px-8 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-right duration-500 font-black flex flex-col gap-1 items-start">
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined">error</span>
+                  Failed to save settings.
+                </div>
+                <p className="text-[10px] opacity-80 font-medium pl-9">Please ensure all database migrations are applied.</p>
               </div>
             )
           }
