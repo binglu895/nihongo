@@ -803,10 +803,9 @@ const PronunciationPage: React.FC = () => {
                         </button>
                     )}
                 </div>
+            </main>
+            <audio ref={audioRef} className="hidden" />
         </div>
-            </main >
-    <audio ref={audioRef} className="hidden" />
-        </div >
     );
 };
 
