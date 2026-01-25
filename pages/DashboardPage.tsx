@@ -154,7 +154,7 @@ const DashboardPage: React.FC = () => {
     { title: "Grammar", icon: "architecture", desc: "Understand particles.", btn: "Start Practice", path: "/grammar-quiz", stats: stats.grammar },
     { title: "Listening", icon: "hearing", desc: "Native audio.", btn: "Start Practice", path: "/listening-quiz", stats: stats.listening },
     { title: "Puzzle", icon: "extension", desc: "Sentence puzzle.", btn: "Start Practice", path: "/sentence-puzzle", stats: stats.puzzle },
-    { title: "Speak", icon: "mic", desc: "Pronunciation.", btn: "Start Practice", path: "/pronunciation", stats: stats.pronunciation }
+    { title: "Pronunciation", icon: "mic", desc: "Native audio.", btn: "Start Practice", path: "/pronunciation", stats: stats.pronunciation }
   ];
 
   return (

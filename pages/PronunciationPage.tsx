@@ -115,9 +115,9 @@ const PronunciationPage: React.FC = () => {
             return;
         }
 
-        const { data: profile } = await supabase.from('profiles').select('current_level, preferred_language, daily_goal').eq('id', user.id).single();
+        const { data: profile } = await supabase.from('profiles').select('current_level, preferred_language, daily_goal, daily_pronunciation_goal').eq('id', user.id).single();
         const currentLevel = profile?.current_level || 'N5';
-        const goal = profile?.daily_goal || 10;
+        const goal = profile?.daily_pronunciation_goal || profile?.daily_goal || 10;
         const levelNumber = parseInt(currentLevel.replace('N', '')) || 5;
         const difficulty = 6 - levelNumber;
 
