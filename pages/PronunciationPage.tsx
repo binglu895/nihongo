@@ -27,6 +27,12 @@ const PronunciationPage: React.FC = () => {
     const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
     const [recognition, setRecognition] = useState<any>(null);
     const [voiceMode, setVoiceMode] = useState<'default' | 'sakura' | 'sakura07' | 'sakura07reading'>('default');
+    const [debugLogs, setDebugLogs] = useState<string[]>([]);
+
+    const addLog = (msg: string) => {
+        setDebugLogs(prev => [msg, ...prev].slice(0, 5));
+        console.log(`[Pronunciation] ${msg}`);
+    };
 
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -51,6 +57,11 @@ const PronunciationPage: React.FC = () => {
             recog.interimResults = true;
             recog.continuous = true;
 
+            recog.onstart = () => addLog("Engine Start");
+            recog.onaudiostart = () => addLog("Mic Active");
+            recog.onsoundstart = () => addLog("Sound Detected");
+            recog.onspeechend = () => addLog("Speech Stop");
+
             recog.onresult = (event: any) => {
                 let interimTranscript = '';
                 let finalTranscript = '';
@@ -71,13 +82,16 @@ const PronunciationPage: React.FC = () => {
                 if (!isRecordingRef.current) {
                     setIsRecording(false);
                     setTimeout(() => {
+                        addLog("End -> Auto Check");
                         checkAnswer();
                     }, 100);
                 }
             };
 
             recog.onerror = (event: any) => {
-                console.error('Speech recognition error:', event.error);
+                const err = event.error;
+                addLog(`Error: ${err}`);
+                console.error('Speech recognition error:', err);
                 // ONLY reset if we aren't manually recording (handles SpeechRec crashes)
                 if (!isRecordingRef.current) {
                     setIsRecording(false);
@@ -271,13 +285,16 @@ const PronunciationPage: React.FC = () => {
             };
 
             mediaRecorder.start();
+            addLog("Recorder Start");
 
             // Small delay for SpeechRec on Android to avoid mic conflict
             setTimeout(() => {
                 if (recognition && isRecordingRef.current) {
                     try {
+                        addLog("Start Engine...");
                         recognition.start();
                     } catch (e) {
+                        addLog("Start Failed");
                         console.error("Recognition start failed (already running?):", e);
                     }
                 }
@@ -703,9 +720,23 @@ const PronunciationPage: React.FC = () => {
                                     <span className="material-symbols-outlined !text-3xl">play_arrow</span>
                                 </button>
                             </div>
-                            <p className="text-sm font-black text-ghost-grey dark:text-slate-400 uppercase tracking-[0.2em]">
-                                {isRecording ? 'Recording Now...' : 'Hold to record your voice'}
-                            </p>
+                            <div className="flex flex-col items-center gap-2">
+                                <p className="text-sm font-black text-ghost-grey dark:text-slate-400 uppercase tracking-[0.2em]">
+                                    {isRecording ? 'Recording Now...' : 'Hold to record your voice'}
+                                </p>
+                                {debugLogs.length > 0 && (
+                                    <div className="flex flex-col gap-1 w-full max-w-[200px]">
+                                        {debugLogs.map((log, i) => (
+                                            <div key={i} className="flex justify-between items-center text-[9px] font-mono border-l-2 border-primary/20 pl-2 py-0.5">
+                                                <span className={`font-bold ${log.includes('Error') ? 'text-rose-500' : 'text-ghost-grey dark:text-slate-400'}`}>
+                                                    {log.split(': ')[0]}
+                                                </span>
+                                                <span className="text-primary/70">{log.split(': ')[1] || ''}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {recognizedText && (
