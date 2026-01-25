@@ -33,6 +33,8 @@ const PronunciationPage: React.FC = () => {
     const recognizedTextRef = useRef('');
     const pressStartTimeRef = useRef<number>(0);
     const mimeTypeRef = useRef<string>('audio/webm');
+    const isStartingRef = useRef<boolean>(false);
+    const isRecordingRef = useRef<boolean>(false);
 
     useEffect(() => {
         initQuiz();
@@ -64,11 +66,13 @@ const PronunciationPage: React.FC = () => {
             };
 
             recog.onend = () => {
-                // Auto-check when recognition stops
-                setIsRecording(false);
-                setTimeout(() => {
-                    checkAnswer();
-                }, 100);
+                // ONLY reset if we aren't manually recording (handles SpeechRec crashes)
+                if (!isRecordingRef.current) {
+                    setIsRecording(false);
+                    setTimeout(() => {
+                        checkAnswer();
+                    }, 100);
+                }
             };
 
             recog.onerror = (event: any) => {
@@ -224,6 +228,10 @@ const PronunciationPage: React.FC = () => {
     };
 
     const startRecording = async () => {
+        if (isStartingRef.current || isRecording) return;
+        isStartingRef.current = true;
+        isRecordingRef.current = true;
+
         setRecognizedText('');
         recognizedTextRef.current = '';
         setAnswered(false);
@@ -259,20 +267,29 @@ const PronunciationPage: React.FC = () => {
             };
 
             mediaRecorder.start();
-            if (recognition) {
-                try {
-                    recognition.start();
-                } catch (e) {
-                    console.error("Recognition start failed (already running?):", e);
+
+            // Small delay for SpeechRec on Android to avoid mic conflict
+            setTimeout(() => {
+                if (recognition && isRecordingRef.current) {
+                    try {
+                        recognition.start();
+                    } catch (e) {
+                        console.error("Recognition start failed (already running?):", e);
+                    }
                 }
-            }
+            }, 200);
+
         } catch (err) {
             console.error('Error accessing microphone:', err);
             setIsRecording(false);
+            isRecordingRef.current = false;
+        } finally {
+            isStartingRef.current = false;
         }
     };
 
     const stopRecording = () => {
+        isRecordingRef.current = false;
         setIsRecording(false);
         if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
             mediaRecorderRef.current.stop();
@@ -632,9 +649,8 @@ const PronunciationPage: React.FC = () => {
                             <div className="flex items-center gap-8">
                                 <button
                                     onPointerDown={(e) => {
-                                        // Prevents default touch moves/zooms during long press
                                         const target = e.currentTarget;
-                                        target.releasePointerCapture(e.pointerId);
+                                        target.setPointerCapture(e.pointerId);
 
                                         pressStartTimeRef.current = Date.now();
                                         if (!isRecording) {
