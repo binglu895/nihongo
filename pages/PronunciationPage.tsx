@@ -626,14 +626,16 @@ const PronunciationPage: React.FC = () => {
                                     </span>
                                 </button>
 
-                                {recordedBlob && !isRecording && (
-                                    <button
-                                        onClick={playMyRecording}
-                                        className="size-16 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all animate-in zoom-in"
-                                    >
-                                        <span className="material-symbols-outlined !text-3xl">play_arrow</span>
-                                    </button>
-                                )}
+                                <button
+                                    onClick={playMyRecording}
+                                    disabled={!recordedBlob || isRecording}
+                                    className={`size-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300
+                                        ${(!recordedBlob || isRecording)
+                                            ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed opacity-50'
+                                            : 'bg-emerald-500 text-white hover:scale-105 active:scale-95 bubble-in'}`}
+                                >
+                                    <span className="material-symbols-outlined !text-3xl">play_arrow</span>
+                                </button>
                             </div>
                             <p className="text-sm font-black text-ghost-grey dark:text-slate-400 uppercase tracking-[0.2em]">
                                 {isRecording ? 'Recording Now...' : 'Hold to record your voice'}
