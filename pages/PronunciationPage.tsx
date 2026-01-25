@@ -35,6 +35,7 @@ const PronunciationPage: React.FC = () => {
     const mimeTypeRef = useRef<string>('audio/webm');
     const isStartingRef = useRef<boolean>(false);
     const isRecordingRef = useRef<boolean>(false);
+    const hasAnsweredRef = useRef<boolean>(false);
 
     useEffect(() => {
         initQuiz();
@@ -63,6 +64,10 @@ const PronunciationPage: React.FC = () => {
                 const text = finalTranscript || interimTranscript;
                 setRecognizedText(text);
                 recognizedTextRef.current = text;
+            };
+
+            recog.onstart = () => {
+                hasAnsweredRef.current = false;
             };
 
             recog.onend = () => {
@@ -234,6 +239,7 @@ const PronunciationPage: React.FC = () => {
         if (isStartingRef.current || isRecording) return;
         isStartingRef.current = true;
         isRecordingRef.current = true;
+        hasAnsweredRef.current = false;
 
         setRecognizedText('');
         recognizedTextRef.current = '';
@@ -304,6 +310,14 @@ const PronunciationPage: React.FC = () => {
                 console.error("Stop recognition failed:", e);
             }
         }
+
+        // Fallback: manually trigger checkAnswer if it hasn't happened yet
+        // Give it 300ms for natural onend to fire, otherwise force it
+        setTimeout(() => {
+            if (!hasAnsweredRef.current) {
+                checkAnswer();
+            }
+        }, 300);
     };
 
     const getAudioUrl = (originalUrl: string) => {
@@ -416,7 +430,9 @@ const PronunciationPage: React.FC = () => {
     };
 
     const checkAnswer = () => {
-        if (answered) return;
+        if (hasAnsweredRef.current) return;
+        hasAnsweredRef.current = true;
+
         const text = recognizedTextRef.current;
 
         // Force answered state to true so Next button shows up
