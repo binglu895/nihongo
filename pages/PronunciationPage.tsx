@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { addXP } from '../services/gamificationService';
 
+// Heartbeat: Triggering Vercel rebuild for rollback stability
 const PronunciationPage: React.FC = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
