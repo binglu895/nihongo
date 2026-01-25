@@ -29,6 +29,7 @@ const PronunciationPage: React.FC = () => {
     const [voiceMode, setVoiceMode] = useState<'default' | 'sakura' | 'sakura07' | 'sakura07reading'>('default');
     const [debugLogs, setDebugLogs] = useState<string[]>([]);
     const [isCompatibilityMode, setIsCompatibilityMode] = useState(false);
+    const [testLang, setTestLang] = useState<'ja-JP' | 'en-US'>('ja-JP');
 
     const addLog = (msg: string) => {
         setDebugLogs(prev => [msg, ...prev].slice(0, 5));
@@ -54,9 +55,9 @@ const PronunciationPage: React.FC = () => {
         const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
         if (SpeechRecognition) {
             const recog = new SpeechRecognition();
-            recog.lang = 'ja-JP';
+            recog.lang = testLang;
             recog.interimResults = true;
-            recog.continuous = !isCompatibilityMode; // Some Android engines prefer false for single sentences
+            recog.continuous = !isCompatibilityMode;
 
             recog.onstart = () => addLog("Engine Start");
             recog.onaudiostart = () => addLog("Mic Active");
@@ -257,6 +258,20 @@ const PronunciationPage: React.FC = () => {
         setRecordedBlob(null);
         setIsRecording(true);
         chunksRef.current = [];
+
+        if (isCompatibilityMode) {
+            addLog(`CompMode: Skip GUM (${testLang})`);
+            if (recognition) {
+                try {
+                    recognition.start();
+                    addLog("Engine Started Solo");
+                } catch (e) {
+                    addLog("Solo Start Fail");
+                }
+            }
+            isStartingRef.current = false;
+            return;
+        }
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -667,122 +682,131 @@ const PronunciationPage: React.FC = () => {
                                     >
                                         {isCompatibilityMode ? 'Compatibility Mode: ON' : 'Compatibility Mode: OFF'}
                                     </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="text-5xl md:text-7xl font-black text-charcoal dark:text-white leading-tight tracking-tight">
-                                {(isRecording || recognizedText || answered) ? renderDiff() : current.sentence}
-                            </div>
-                            <p className="text-lg font-bold text-ghost-grey dark:text-slate-500 opacity-60">{current.reading}</p>
-                        </div>
-                    </div>
-
-                    <div className="bg-white dark:bg-slate-900 rounded-[32px] p-8 border border-black/5 dark:border-white/5 shadow-2xl space-y-8">
-                        <div className="flex flex-col items-center gap-6">
-                            <div className="flex items-center gap-8">
-                                <button
-                                    onPointerDown={(e) => {
-                                        const target = e.currentTarget;
-                                        target.setPointerCapture(e.pointerId);
-
-                                        pressStartTimeRef.current = Date.now();
-                                        if (!isRecording) {
-                                            startRecording();
-                                        }
-                                    }}
-                                    onPointerUp={() => {
-                                        const duration = Date.now() - pressStartTimeRef.current;
-                                        // If held for more than 400ms, stop on release (PC logic)
-                                        if (duration > 400 && isRecording) {
-                                            stopRecording();
-                                        }
-                                    }}
-                                    onPointerCancel={() => {
-                                        if (isRecording) stopRecording();
-                                    }}
-                                    onClick={() => {
-                                        const duration = Date.now() - pressStartTimeRef.current;
-                                        // Prevents the same tap from starting and stopping the recording
-                                        // If duration is too short (< 50ms), it's likely the same gesture that started it
-                                        if (duration > 50 && duration <= 400 && isRecording) {
-                                            stopRecording();
-                                        }
-                                    }}
-                                    onContextMenu={(e) => e.preventDefault()}
-                                    className={`size-24 rounded-full flex items-center justify-center transition-all shadow-2xl relative select-none
-                                        ${isRecording
-                                            ? 'bg-rose-500 text-white scale-110 ring-8 ring-rose-500/20'
-                                            : 'bg-primary text-white hover:scale-105 active:scale-95'}`}
-                                    style={{ touchAction: 'none', WebkitTouchCallout: 'none' } as React.CSSProperties}
-                                >
-                                    {isRecording && <div className="absolute inset-0 rounded-full animate-ping bg-rose-500/30"></div>}
-                                    <span className="material-symbols-outlined !text-4xl">
-                                        {isRecording ? 'graphic_eq' : 'mic'}
-                                    </span>
-                                </button>
-
-                                <button
-                                    onClick={playMyRecording}
-                                    disabled={!recordedBlob || isRecording}
-                                    className={`size-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300
-                                        ${(!recordedBlob || isRecording)
-                                            ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed opacity-50'
-                                            : 'bg-emerald-500 text-white hover:scale-105 active:scale-95 bubble-in'}`}
-                                >
-                                    <span className="material-symbols-outlined !text-3xl">play_arrow</span>
-                                </button>
-                            </div>
-                            <div className="flex flex-col items-center gap-2">
-                                <p className="text-sm font-black text-ghost-grey dark:text-slate-400 uppercase tracking-[0.2em]">
-                                    {isRecording ? 'Recording Now...' : 'Hold to record your voice'}
-                                </p>
-                                {debugLogs.length > 0 && (
-                                    <div className="flex flex-col gap-1 w-full max-w-[200px]">
-                                        {debugLogs.map((log, i) => (
-                                            <div key={i} className="flex justify-between items-center text-[9px] font-mono border-l-2 border-primary/20 pl-2 py-0.5">
-                                                <span className={`font-bold ${log.includes('Error') ? 'text-rose-500' : 'text-ghost-grey dark:text-slate-400'}`}>
-                                                    {log.split(': ')[0]}
-                                                </span>
-                                                <span className="text-primary/70">{log.split(': ')[1] || ''}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {recognizedText && (
-                            <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-black/5 dark:border-white/5 space-y-4 animate-in fade-in slide-in-from-bottom-4">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-black uppercase text-ghost-grey tracking-widest">Recognized Transcription</span>
-                                    {recordedBlob && (
-                                        <button onClick={playMyRecording} className="text-primary flex items-center gap-1.5 text-xs font-black">
-                                            <span className="material-symbols-outlined !text-sm">play_circle</span>
-                                            Playback
+                                    {isCompatibilityMode && (
+                                        <button
+                                            onClick={() => setTestLang(testLang === 'ja-JP' ? 'en-US' : 'ja-JP')}
+                                            className="px-4 py-2 rounded-full text-[10px] font-black uppercase bg-slate-800 text-white shadow-lg animate-pulse"
+                                        >
+                                            Language: {testLang}
                                         </button>
                                     )}
                                 </div>
-                                <p className="text-2xl font-black text-charcoal dark:text-white leading-relaxed">{recognizedText}</p>
                             </div>
-                        )}
+                        </div>
                     </div>
 
-                    <div className="flex gap-4">
-                        {answered && (
-                            <button
-                                onClick={handleNext}
-                                className="w-full py-5 bg-primary text-white rounded-3xl font-black text-xl shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all animate-in slide-in-from-right-4"
-                            >
-                                Next
-                            </button>
-                        )}
+                    <div className="space-y-2">
+                        <div className="text-5xl md:text-7xl font-black text-charcoal dark:text-white leading-tight tracking-tight">
+                            {(isRecording || recognizedText || answered) ? renderDiff() : current.sentence}
+                        </div>
+                        <p className="text-lg font-bold text-ghost-grey dark:text-slate-500 opacity-60">{current.reading}</p>
                     </div>
                 </div>
-            </main>
-            <audio ref={audioRef} className="hidden" />
+
+                <div className="bg-white dark:bg-slate-900 rounded-[32px] p-8 border border-black/5 dark:border-white/5 shadow-2xl space-y-8">
+                    <div className="flex flex-col items-center gap-6">
+                        <div className="flex items-center gap-8">
+                            <button
+                                onPointerDown={(e) => {
+                                    const target = e.currentTarget;
+                                    target.setPointerCapture(e.pointerId);
+
+                                    pressStartTimeRef.current = Date.now();
+                                    if (!isRecording) {
+                                        startRecording();
+                                    }
+                                }}
+                                onPointerUp={() => {
+                                    const duration = Date.now() - pressStartTimeRef.current;
+                                    // If held for more than 400ms, stop on release (PC logic)
+                                    if (duration > 400 && isRecording) {
+                                        stopRecording();
+                                    }
+                                }}
+                                onPointerCancel={() => {
+                                    if (isRecording) stopRecording();
+                                }}
+                                onClick={() => {
+                                    const duration = Date.now() - pressStartTimeRef.current;
+                                    // Prevents the same tap from starting and stopping the recording
+                                    // If duration is too short (< 50ms), it's likely the same gesture that started it
+                                    if (duration > 50 && duration <= 400 && isRecording) {
+                                        stopRecording();
+                                    }
+                                }}
+                                onContextMenu={(e) => e.preventDefault()}
+                                className={`size-24 rounded-full flex items-center justify-center transition-all shadow-2xl relative select-none
+                                        ${isRecording
+                                        ? 'bg-rose-500 text-white scale-110 ring-8 ring-rose-500/20'
+                                        : 'bg-primary text-white hover:scale-105 active:scale-95'}`}
+                                style={{ touchAction: 'none', WebkitTouchCallout: 'none' } as React.CSSProperties}
+                            >
+                                {isRecording && <div className="absolute inset-0 rounded-full animate-ping bg-rose-500/30"></div>}
+                                <span className="material-symbols-outlined !text-4xl">
+                                    {isRecording ? 'graphic_eq' : 'mic'}
+                                </span>
+                            </button>
+
+                            <button
+                                onClick={playMyRecording}
+                                disabled={!recordedBlob || isRecording}
+                                className={`size-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300
+                                        ${(!recordedBlob || isRecording)
+                                        ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed opacity-50'
+                                        : 'bg-emerald-500 text-white hover:scale-105 active:scale-95 bubble-in'}`}
+                            >
+                                <span className="material-symbols-outlined !text-3xl">play_arrow</span>
+                            </button>
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                            <p className="text-sm font-black text-ghost-grey dark:text-slate-400 uppercase tracking-[0.2em]">
+                                {isRecording ? 'Recording Now...' : 'Hold to record your voice'}
+                            </p>
+                            {debugLogs.length > 0 && (
+                                <div className="flex flex-col gap-1 w-full max-w-[200px]">
+                                    {debugLogs.map((log, i) => (
+                                        <div key={i} className="flex justify-between items-center text-[9px] font-mono border-l-2 border-primary/20 pl-2 py-0.5">
+                                            <span className={`font-bold ${log.includes('Error') ? 'text-rose-500' : 'text-ghost-grey dark:text-slate-400'}`}>
+                                                {log.split(': ')[0]}
+                                            </span>
+                                            <span className="text-primary/70">{log.split(': ')[1] || ''}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {recognizedText && (
+                        <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-black/5 dark:border-white/5 space-y-4 animate-in fade-in slide-in-from-bottom-4">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black uppercase text-ghost-grey tracking-widest">Recognized Transcription</span>
+                                {recordedBlob && (
+                                    <button onClick={playMyRecording} className="text-primary flex items-center gap-1.5 text-xs font-black">
+                                        <span className="material-symbols-outlined !text-sm">play_circle</span>
+                                        Playback
+                                    </button>
+                                )}
+                            </div>
+                            <p className="text-2xl font-black text-charcoal dark:text-white leading-relaxed">{recognizedText}</p>
+                        </div>
+                    )}
+                </div>
+
+                <div className="flex gap-4">
+                    {answered && (
+                        <button
+                            onClick={handleNext}
+                            className="w-full py-5 bg-primary text-white rounded-3xl font-black text-xl shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all animate-in slide-in-from-right-4"
+                        >
+                            Next
+                        </button>
+                    )}
+                </div>
         </div>
+            </main >
+    <audio ref={audioRef} className="hidden" />
+        </div >
     );
 };
 
