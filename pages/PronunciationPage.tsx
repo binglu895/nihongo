@@ -35,7 +35,6 @@ const PronunciationPage: React.FC = () => {
     const mimeTypeRef = useRef<string>('audio/webm');
     const isStartingRef = useRef<boolean>(false);
     const isRecordingRef = useRef<boolean>(false);
-    const hasAnsweredRef = useRef<boolean>(false);
 
     useEffect(() => {
         initQuiz();
@@ -64,10 +63,6 @@ const PronunciationPage: React.FC = () => {
                 const text = finalTranscript || interimTranscript;
                 setRecognizedText(text);
                 recognizedTextRef.current = text;
-            };
-
-            recog.onstart = () => {
-                hasAnsweredRef.current = false;
             };
 
             recog.onend = () => {
@@ -102,111 +97,87 @@ const PronunciationPage: React.FC = () => {
     };
 
     const initQuiz = async () => {
-        try {
-            setLoading(true);
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                navigate('/');
-                return;
-            }
+        setLoading(true);
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            navigate('/');
+            return;
+        }
 
-            const { data: profile } = await supabase.from('profiles').select('current_level, preferred_language, daily_goal').eq('id', user.id).single();
-            const currentLevel = profile?.current_level || 'N5';
-            const goal = profile?.daily_goal || 10;
-            const levelNumber = parseInt(currentLevel.replace('N', '')) || 5;
-            const difficulty = 6 - levelNumber;
+        const { data: profile } = await supabase.from('profiles').select('current_level, preferred_language, daily_goal').eq('id', user.id).single();
+        const currentLevel = profile?.current_level || 'N5';
+        const goal = profile?.daily_goal || 10;
+        const levelNumber = parseInt(currentLevel.replace('N', '')) || 5;
+        const difficulty = 6 - levelNumber;
 
-            setPreferredLang(profile?.preferred_language || 'English');
+        setPreferredLang(profile?.preferred_language || 'English');
 
-            const mode = searchParams.get('mode');
-            const isReview = mode === 'review';
-            setIsReviewMode(isReview);
+        const mode = searchParams.get('mode');
+        const isReview = mode === 'review';
+        setIsReviewMode(isReview);
 
-            let questionData: any[] = [];
-            const now = new Date().toISOString();
-            const todayStart = new Date();
-            todayStart.setHours(0, 0, 0, 0);
+        let questionData: any[] = [];
+        const now = new Date().toISOString();
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
 
-            if (isReview) {
-                const { data: dueProgress } = await supabase
-                    .from('user_pronunciation_progress')
-                    .select('question_id')
-                    .eq('user_id', user.id)
-                    .lte('next_review_at', now);
+        if (isReview) {
+            const { data: dueProgress } = await supabase
+                .from('user_pronunciation_progress')
+                .select('question_id')
+                .eq('user_id', user.id)
+                .lte('next_review_at', now);
 
-                const { count: completedToday } = await supabase
-                    .from('user_pronunciation_progress')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('user_id', user.id)
-                    .gte('last_reviewed_at', todayStart.toISOString())
-                    .gt('next_review_at', now);
+            const { count: completedToday } = await supabase
+                .from('user_pronunciation_progress')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', user.id)
+                .gte('last_reviewed_at', todayStart.toISOString())
+                .gt('next_review_at', now);
 
-                setReviewedTodayCount(completedToday || 0);
-                const dueIds = dueProgress?.map(p => p.question_id) || [];
-                setTotalDueToday(dueIds.length + (completedToday || 0));
+            setReviewedTodayCount(completedToday || 0);
+            const dueIds = dueProgress?.map(p => p.question_id) || [];
+            setTotalDueToday(dueIds.length + (completedToday || 0));
 
-                if (dueIds.length > 0) {
-                    const { data } = await supabase
-                        .from('pronunciation_questions')
-                        .select('*')
-                        .eq('difficulty', difficulty)
-                        .eq('is_active', true)
-                        .in('id', dueIds);
-                    questionData = data || [];
-                }
-            } else {
-                const { data: learnedProgress } = await supabase
-                    .from('user_pronunciation_progress')
-                    .select('question_id')
-                    .eq('user_id', user.id)
-                    .gt('correct_count', 0);
-
-                const learnedIds = learnedProgress?.map(p => p.question_id) || [];
-                let query = supabase.from('pronunciation_questions').select('*').eq('difficulty', difficulty).eq('is_active', true);
-
-                // Use .not...in in a safer way if there are too many IDs
-                if (learnedIds.length > 0 && learnedIds.length < 500) {
-                    query = query.not('id', 'in', `(${learnedIds.join(',')})`);
-                }
-
-                const { data } = await query.limit(goal);
+            if (dueIds.length > 0) {
+                const { data } = await supabase
+                    .from('pronunciation_questions')
+                    .select('*')
+                    .eq('difficulty', difficulty)
+                    .eq('is_active', true)
+                    .in('id', dueIds);
                 questionData = data || [];
             }
+        } else {
+            const { data: learnedProgress } = await supabase
+                .from('user_pronunciation_progress')
+                .select('question_id')
+                .eq('user_id', user.id)
+                .gt('correct_count', 0);
 
-            if (questionData.length > 0) {
-                setQuestions(questionData.sort(() => Math.random() - 0.5));
+            const learnedIds = learnedProgress?.map(p => p.question_id) || [];
+            let query = supabase.from('pronunciation_questions').select('*').eq('difficulty', difficulty).eq('is_active', true);
+            if (learnedIds.length > 0) {
+                query = query.not('id', 'in', `(${learnedIds.join(',')})`);
             }
-
-            // Global progress calculation - optimized
-            const { count: totalCount } = await supabase
-                .from('pronunciation_questions')
-                .select('*', { count: 'exact', head: true })
-                .eq('difficulty', difficulty);
-
-            const { data: qPack } = await supabase
-                .from('pronunciation_questions')
-                .select('id')
-                .eq('difficulty', difficulty);
-
-            const qIds = qPack?.map(q => q.id) || [];
-            let learnedCount = 0;
-
-            if (qIds.length > 0) {
-                const { count } = await supabase
-                    .from('user_pronunciation_progress')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('user_id', user.id)
-                    .gt('correct_count', 0)
-                    .in('question_id', qIds.slice(0, 1000)); // Limit to prevent Supabase error
-                learnedCount = count || 0;
-            }
-
-            setOverallProgress({ learned: learnedCount, total: totalCount || 0 });
-        } catch (error) {
-            console.error('Failed to initialize pronunciation quiz:', error);
-        } finally {
-            setLoading(false);
+            const { data } = await query.limit(goal);
+            questionData = data || [];
         }
+
+        if (questionData.length > 0) {
+            setQuestions(questionData.sort(() => Math.random() - 0.5));
+        }
+
+        // Global progress
+        const { count: total } = await supabase.from('pronunciation_questions').select('*', { count: 'exact', head: true }).eq('difficulty', difficulty);
+        const { count: learned } = await supabase.from('user_pronunciation_progress')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', user.id)
+            .gt('correct_count', 0)
+            .in('question_id', (await supabase.from('pronunciation_questions').select('id').eq('difficulty', difficulty)).data?.map(p => p.id) || []);
+
+        setOverallProgress({ learned: learned || 0, total: total || 0 });
+        setLoading(false);
     };
 
     const updateSRS = async (isCorrect: boolean) => {
@@ -263,7 +234,6 @@ const PronunciationPage: React.FC = () => {
         if (isStartingRef.current || isRecording) return;
         isStartingRef.current = true;
         isRecordingRef.current = true;
-        hasAnsweredRef.current = false;
 
         setRecognizedText('');
         recognizedTextRef.current = '';
@@ -334,14 +304,6 @@ const PronunciationPage: React.FC = () => {
                 console.error("Stop recognition failed:", e);
             }
         }
-
-        // Fallback: manually trigger checkAnswer if it hasn't happened yet
-        // Give it 300ms for natural onend to fire, otherwise force it
-        setTimeout(() => {
-            if (!hasAnsweredRef.current) {
-                checkAnswer();
-            }
-        }, 300);
     };
 
     const getAudioUrl = (originalUrl: string) => {
@@ -454,9 +416,7 @@ const PronunciationPage: React.FC = () => {
     };
 
     const checkAnswer = () => {
-        if (hasAnsweredRef.current) return;
-        hasAnsweredRef.current = true;
-
+        if (answered) return;
         const text = recognizedTextRef.current;
 
         // Force answered state to true so Next button shows up
