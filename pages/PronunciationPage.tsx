@@ -77,7 +77,10 @@ const PronunciationPage: React.FC = () => {
 
             recog.onerror = (event: any) => {
                 console.error('Speech recognition error:', event.error);
-                setIsRecording(false);
+                // ONLY reset if we aren't manually recording (handles SpeechRec crashes)
+                if (!isRecordingRef.current) {
+                    setIsRecording(false);
+                }
             };
 
             setRecognition(recog);
@@ -664,10 +667,14 @@ const PronunciationPage: React.FC = () => {
                                             stopRecording();
                                         }
                                     }}
+                                    onPointerCancel={() => {
+                                        if (isRecording) stopRecording();
+                                    }}
                                     onClick={() => {
                                         const duration = Date.now() - pressStartTimeRef.current;
-                                        // If it was a short click (<400ms), it's a toggle
-                                        if (duration <= 400 && isRecording) {
+                                        // Prevents the same tap from starting and stopping the recording
+                                        // If duration is too short (< 50ms), it's likely the same gesture that started it
+                                        if (duration > 50 && duration <= 400 && isRecording) {
                                             stopRecording();
                                         }
                                     }}
