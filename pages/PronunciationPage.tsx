@@ -40,11 +40,24 @@ const PronunciationPage: React.FC = () => {
     const mimeTypeRef = useRef<string>('audio/webm');
     const isStartingRef = useRef<boolean>(false);
     const isRecordingRef = useRef<boolean>(false);
+    const persistentStreamRef = useRef<MediaStream | null>(null);
+
+    const stopPersistentStream = () => {
+        if (persistentStreamRef.current) {
+            persistentStreamRef.current.getTracks().forEach(track => track.stop());
+            persistentStreamRef.current = null;
+        }
+    };
+
 
     useEffect(() => {
         initQuiz();
         setupSpeech();
+        return () => {
+            stopPersistentStream();
+        };
     }, [searchParams, isTranscriptionOnly]);
+
 
     const setupSpeech = () => {
         // Recognition setup
@@ -270,9 +283,14 @@ const PronunciationPage: React.FC = () => {
         }
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            let stream = persistentStreamRef.current;
+            if (!stream || !stream.active) {
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                persistentStreamRef.current = stream;
+            }
 
             // Detect supported MIME types (iOS fallback)
+
             const types = ['audio/webm', 'audio/mp4', 'audio/ogg', 'audio/wav'];
             let selectedType = 'audio/webm';
             for (const type of types) {
@@ -293,8 +311,9 @@ const PronunciationPage: React.FC = () => {
             mediaRecorder.onstop = () => {
                 const blob = new Blob(chunksRef.current, { type: mimeTypeRef.current });
                 setRecordedBlob(blob);
-                stream.getTracks().forEach(track => track.stop());
+                // PERSISTENCE: We no longer stop tracks here to keep the mic "warm" for the next question
             };
+
 
             if (!isTranscriptionOnly) {
                 mediaRecorder.start();
@@ -495,8 +514,10 @@ const PronunciationPage: React.FC = () => {
             setRecordedBlob(null);
             setLastGainedXP(null);
         } else {
+            stopPersistentStream();
             navigate('/dashboard');
         }
+
     };
 
     const handleReport = async (reason: 'invalid_question' | 'incorrect_answer') => {
@@ -587,9 +608,16 @@ const PronunciationPage: React.FC = () => {
                             {isReviewMode ? "You've finished your pronunciation session for today." : "You've mastered all pronunciation challenges in this level!"}
                         </p>
                     </div>
-                    <button onClick={() => navigate('/dashboard')} className="w-full py-5 bg-primary text-white font-black rounded-3xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
+                    <button
+                        onClick={() => {
+                            stopPersistentStream();
+                            navigate('/dashboard');
+                        }}
+                        className="w-full py-5 bg-primary text-white font-black rounded-3xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
+                    >
                         Return to Dashboard
                     </button>
+
                 </div>
             </div>
         );
@@ -604,10 +632,17 @@ const PronunciationPage: React.FC = () => {
                     <div className="h-full bg-primary transition-all duration-500" style={{ width: `${(isReviewMode ? (totalDueToday > 0 ? reviewedTodayCount / totalDueToday : 0) : ((currentIdx + 1) / questions.length)) * 100}%` }}></div>
                 </div>
                 <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-                    <button onClick={() => navigate('/dashboard')} className="flex items-center gap-2 text-ghost-grey hover:text-primary transition-colors font-bold text-sm">
+                    <button
+                        onClick={() => {
+                            stopPersistentStream();
+                            navigate('/dashboard');
+                        }}
+                        className="flex items-center gap-2 text-ghost-grey hover:text-primary transition-colors font-bold text-sm"
+                    >
                         <span className="material-symbols-outlined !text-xl">arrow_back</span>
                         <span>Exit</span>
                     </button>
+
                     <div className="flex flex-col items-center">
                         <div className="text-[10px] font-black uppercase tracking-[0.2em] text-ghost-grey">Pronunciation Practice</div>
                         <div className="text-[10px] font-bold text-primary">
