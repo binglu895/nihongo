@@ -184,7 +184,7 @@ const PronunciationPage: React.FC = () => {
             if (learnedIds.length > 0) {
                 query = query.not('id', 'in', `(${learnedIds.join(',')})`);
             }
-            const { data } = await query.limit(goal);
+            const { data } = await query;
             questionData = data || [];
         }
 
